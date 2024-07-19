@@ -1,0 +1,6 @@
+[submodule "libdragon"]
+	path = libdragon
+	url = git@github.com:DragonMinded/libdragon.git
+[submodule "libpokemegb"]
+	path = libpokemegb
+	url = git@github.com:risingPhil/libpokemegb.git
