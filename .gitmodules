@@ -1,7 +1,4 @@
 [submodule "libpokemegb"]
 	path = libpokemegb
 	url = git@github.com:risingPhil/libpokemegb.git
-[submodule "libdragon"]
-	path = libdragon
-	url = https://github.com/DragonMinded/libdragon
-	branch = fd34d090adab1858815cf8e2c035ed4cd5e283a6
+
