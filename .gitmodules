@@ -2,3 +2,7 @@
 	path = libpokemegb
 	url = git@github.com:risingPhil/libpokemegb.git
 
+[submodule "libdragon"]
+	path = libdragon
+	url = https://github.com/DragonMinded/libdragon
+	branch = trunk
