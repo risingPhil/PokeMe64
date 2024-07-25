@@ -149,8 +149,8 @@ void InitTransferPakScene::setupTPakDetectWidget()
 
 void InitTransferPakScene::setupDialog(DialogWidgetStyle& style)
 {
-    style.backgroundSprite = menu9SliceSprite_;
-    style.backgroundSpriteSettings = {
+    style.background.sprite = menu9SliceSprite_;
+    style.background.spriteSettings = {
         .renderMode = SpriteRenderMode::NINESLICE,
         .srcRect = { 6, 6, 6, 6 }
     };

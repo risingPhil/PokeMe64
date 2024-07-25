@@ -40,30 +40,34 @@ typedef struct MenuItemStyle
      * width and height for the MenuItemWidget
      */
     Dimensions size;
-    /**
-     * (optional) background sprite
-     */
-    sprite_t* backgroundSprite;
-    /*
-     * RenderSettings that influence how the backgroundSprite is
-     * being rendered
-     */
-    SpriteRenderSettings backgroundSpriteSettings;
+    struct {
+        /**
+         * (optional) background sprite
+         */
+        sprite_t* sprite;
+        /*
+        * RenderSettings that influence how the backgroundSprite is
+        * being rendered
+        */
+        SpriteRenderSettings spriteSettings;
+    } background;
 
-    /**
-     * (optional) icon sprite
-     */
-    sprite_t* iconSprite;
+    struct {
+        /**
+         * (optional) icon sprite
+         */
+        sprite_t* sprite;
 
-    /**
-     * RenderSettings that influence how the iconSprite is being rendered
-     */
-    SpriteRenderSettings iconSpriteSettings;
-    
-    /**
-     * relative bounds of the icon sprite in relation to the MenuItem widget
-     */
-    Rectangle iconSpriteBounds;
+        /**
+         * RenderSettings that influence how the iconSprite is being rendered
+         */
+        SpriteRenderSettings spriteSettings;
+        
+        /**
+         * relative bounds of the icon sprite in relation to the MenuItem widget
+         */
+        Rectangle spriteBounds;
+    } icon;
     /**
      * These are the text settings for when the MenuItemWidget is NOT focused by the user
      */

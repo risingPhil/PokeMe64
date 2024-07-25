@@ -84,15 +84,15 @@ void MenuItemWidget::render(RDPQGraphics& gfx, const Rectangle& parentBounds)
         return;
     }
     Rectangle myBounds = {.x = parentBounds.x, .y = parentBounds.y, .width = style_.size.width, .height = style_.size.height};
-    if(style_.backgroundSprite)
+    if(style_.background.sprite)
     {
-        gfx.drawSprite(myBounds, style_.backgroundSprite, style_.backgroundSpriteSettings);
+        gfx.drawSprite(myBounds, style_.background.sprite, style_.background.spriteSettings);
     }
 
-    if(style_.iconSprite)
+    if(style_.icon.sprite)
     {
-        const Rectangle iconSpriteBounds = addOffset(style_.iconSpriteBounds, myBounds);
-        gfx.drawSprite(iconSpriteBounds, style_.iconSprite, style_.iconSpriteSettings);
+        const Rectangle iconSpriteBounds = addOffset(style_.icon.spriteBounds, myBounds);
+        gfx.drawSprite(iconSpriteBounds, style_.icon.sprite, style_.icon.spriteSettings);
     }
 
     myBounds.x += style_.leftMargin;

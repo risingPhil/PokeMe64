@@ -1,10 +1,39 @@
 #include "widget/DialogWidget.h"
+#include "widget/ListItemFiller.h"
 #include "core/RDPQGraphics.h"
 
 #include <cstdarg>
 
+/**
+ * @brief Releases either a single DialogData entry or its entire chain.
+ */
+static void releaseEntry(DialogData* data, bool releaseAllEntries)
+{
+    DialogData* cur = data;
+    DialogData* next = nullptr;
+    do
+    {
+        if(cur)
+        {
+            next = cur->next;
+            if(cur->options.shouldDeleteWhenDone && cur->options.items)
+            {
+                delete[] cur->options.items;
+                cur->options.items = nullptr;
+            }
+            if(cur->shouldDeleteWhenDone)
+            {
+                delete cur;
+            }   
+        }
+        cur = next;
+
+    } while(releaseAllEntries && cur);
+}
+
 DialogWidget::DialogWidget(AnimationManager& animationManager)
-    : animationManager_(animationManager)
+    : dialogOptionList_(animationManager)
+    , animationManager_(animationManager)
     , bounds_({0})
     , style_({0})
     , data_(nullptr)
@@ -14,10 +43,13 @@ DialogWidget::DialogWidget(AnimationManager& animationManager)
     , visible_(true)
     , btnAPressedOnPrevCheck_(false)
 {
+    dialogOptionList_.setVisible(false);
 }
 
 DialogWidget::~DialogWidget()
 {
+    releaseEntry(data_, true);
+    data_ = nullptr;
 }
 
 const DialogWidgetStyle& DialogWidget::getStyle() const
@@ -28,11 +60,36 @@ const DialogWidgetStyle& DialogWidget::getStyle() const
 void DialogWidget::setStyle(const DialogWidgetStyle& style)
 {
     style_ = style;
+    
+    VerticalListStyle& listStyle = dialogOptionList_.getStyle();
+    listStyle.background.sprite = style.background.sprite;
+    listStyle.background.spriteSettings = style.background.spriteSettings;
+    listStyle.margin.left = style.margin.left;
+    listStyle.margin.right = style.margin.right;
+    listStyle.margin.top = style.margin.top;
+    listStyle.margin.bottom = style.margin.bottom;
+    listStyle.autogrow.enabled = true;
+    listStyle.autogrow.shouldGrowUpWards = true;
+    dialogOptionList_.setBounds(style.dialogOptions.bounds);
 }
 
 void DialogWidget::setData(DialogData* data)
 {
+    dialogOptionList_.clearWidgets();
+    dialogOptionList_.setVisible(false);
+    dialogOptionList_.setFocused(false);
+    releaseEntry(data_, true);
+
     data_ = data;
+
+    if(data_ && data->options.items)
+    {
+        ListItemFiller<VerticalList, MenuItemData, MenuItemWidget, MenuItemStyle> filler(dialogOptionList_);
+
+        filler.addItems(data->options.items, data->options.number, style_.dialogOptions.style);
+        dialogOptionList_.setVisible(true);
+        dialogOptionList_.setFocused(focused_);
+    }
 }
 
 void DialogWidget::appendDialogData(DialogData* data)
@@ -59,6 +116,11 @@ bool DialogWidget::isFocused() const
 void DialogWidget::setFocused(bool focused)
 {
     focused_ = focused;
+
+    if(data_ && data_->options.number)
+    {
+        dialogOptionList_.setFocused(focused);
+    }
 }
 
 bool DialogWidget::isVisible() const
@@ -102,18 +164,33 @@ void DialogWidget::advanceDialog()
         }
         return;
     }
-    const DialogData* oldEntry = data_;
+    
+    DialogData* oldEntry = data_;
     data_ = data_->next;
+    
+    releaseEntry(oldEntry, false);
 
-    if(oldEntry->shouldReleaseWhenDone)
+    dialogOptionList_.clearWidgets();
+    dialogOptionList_.setFocused(false);
+    dialogOptionList_.setVisible(false);
+    if(data_->options.items)
     {
-        delete oldEntry;
-        oldEntry = nullptr;
+        ListItemFiller<VerticalList, MenuItemData, MenuItemWidget, MenuItemStyle> filler(dialogOptionList_);
+
+        filler.addItems(data_->options.items, data_->options.number, style_.dialogOptions.style);
+        dialogOptionList_.setVisible(true);
+        dialogOptionList_.setFocused(focused_);
     }
+
 }
 
 bool DialogWidget::handleUserInput(const joypad_inputs_t& userInput)
 {
+    // if dialog options are displayed and focused, the VerticalList widget needs to handle the key events
+    if(dialogOptionList_.isFocused())
+    {
+        return dialogOptionList_.handleUserInput(userInput);
+    }
     // make sure the user needs to release the button before handling the A button again
     // if we don't do that, a different component might react to the same a button press
     if(btnAPressedOnPrevCheck_)
@@ -141,9 +218,9 @@ void DialogWidget::render(RDPQGraphics& gfx, const Rectangle& parentBounds)
 
     const Rectangle myBounds = addOffset(bounds_, parentBounds);
     // render the background first, if any.
-    if(style_.backgroundSprite)
+    if(style_.background.sprite)
     {
-        gfx.drawSprite(myBounds, style_.backgroundSprite, style_.backgroundSpriteSettings);
+        gfx.drawSprite(myBounds, style_.background.sprite, style_.background.spriteSettings);
     }
 
     if(!data_)
@@ -151,29 +228,31 @@ void DialogWidget::render(RDPQGraphics& gfx, const Rectangle& parentBounds)
         return;
     }
 
-    if(data_->characterSprite && data_->characterSpriteVisible)
+    if(data_->character.sprite && data_->character.spriteVisible)
     {
-        const Rectangle absoluteCharBounds = addOffset(data_->characterSpriteBounds, myBounds);
-        gfx.drawSprite(absoluteCharBounds, data_->characterSprite, data_->characterSpriteSettings);
+        const Rectangle absoluteCharBounds = addOffset(data_->character.spriteBounds, myBounds);
+        gfx.drawSprite(absoluteCharBounds, data_->character.sprite, data_->character.spriteSettings);
     }
 
-    if(data_->buttonSprite && data_->buttonSpriteVisible)
+    if(data_->button.sprite && data_->button.spriteVisible)
     {
-        const Rectangle absoluteButtonSpriteBounds = addOffset(data_->buttonSpriteBounds, myBounds);
-        gfx.drawSprite(absoluteButtonSpriteBounds, data_->buttonSprite, data_->buttonSpriteSettings);
+        const Rectangle absoluteButtonSpriteBounds = addOffset(data_->button.spriteBounds, myBounds);
+        gfx.drawSprite(absoluteButtonSpriteBounds, data_->button.sprite, data_->button.spriteSettings);
     }
 
     if(data_->text[0] != '\0')
     {
         const Rectangle textBounds = {
-            .x = myBounds.x + style_.marginLeft,
-            .y = myBounds.y + style_.marginTop,
-            .width = myBounds.width - style_.marginLeft - style_.marginRight,
-            .height = myBounds.height - style_.marginTop - style_.marginBottom
+            .x = myBounds.x + style_.margin.left,
+            .y = myBounds.y + style_.margin.top,
+            .width = myBounds.width - style_.margin.left - style_.margin.right,
+            .height = myBounds.height - style_.margin.top - style_.margin.bottom
         };
 
         gfx.drawText(textBounds, data_->text, style_.textSettings);
     }
+
+    dialogOptionList_.render(gfx, parentBounds);
 }
 
 bool DialogWidget::isAdvanceAllowed() const

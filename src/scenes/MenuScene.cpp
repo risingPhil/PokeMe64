@@ -21,9 +21,7 @@ MenuScene::MenuScene(SceneDependencies& deps, void* context)
     , listFocusChainSegment_(WidgetFocusChainSegment{
         .current = &menuList_
     })
-    , fontStyleYellowId_(1)
     , bButtonPressed_(false)
-    , singleMessageDialog_({0})
 {
 }
 
@@ -131,33 +129,19 @@ SceneDependencies& MenuScene::getDependencies()
     return deps_;
 }
 
-void MenuScene::showSingleMessage(const DialogData& messageData)
-{
-    singleMessageDialog_ = messageData;
-    showDialog(&singleMessageDialog_);
-}
-
-void MenuScene::setupFonts()
-{
-    SceneWithDialogWidget::setupFonts();
-
-    const rdpq_fontstyle_t arialYellow = {
-        .color = RGBA32(0xFF, 0xFF, 0x00, 0xFF),
-        .outline_color = RGBA32(0, 0, 0, 0xFF)
-    };
-
-    deps_.fontManager.registerFontStyle(arialId_, fontStyleYellowId_, arialYellow);
-}
-
 void MenuScene::setupMenu()
 {
     const VerticalListStyle listStyle = {
-        .backgroundSprite = menu9SliceSprite_,
-        .backgroundSpriteSettings = {
-            .renderMode = SpriteRenderMode::NINESLICE,
-            .srcRect = { 6, 6, 6, 6 }
+        .background = {
+            .sprite = menu9SliceSprite_,
+            .spriteSettings = {
+                .renderMode = SpriteRenderMode::NINESLICE,
+                .srcRect = { 6, 6, 6, 6 }
+            }
         },
-        .marginTop = 5
+        .margin = {
+            .top = 5
+        }
     };
 
     const CursorStyle cursorStyle = {
@@ -201,8 +185,8 @@ void MenuScene::setupMenu()
 
 void MenuScene::setupDialog(DialogWidgetStyle& style)
 {
-    style.backgroundSprite = menu9SliceSprite_;
-    style.backgroundSpriteSettings = {
+    style.background.sprite = menu9SliceSprite_;
+    style.background.spriteSettings = {
         .renderMode = SpriteRenderMode::NINESLICE,
         .srcRect = { 6, 6, 6, 6 }
     };

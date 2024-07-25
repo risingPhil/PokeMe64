@@ -14,6 +14,8 @@ public:
     void destroy() override;
 
     void render(RDPQGraphics& gfx, const Rectangle& sceneBounds) override;
+
+    void advanceDialog();
 protected:
     virtual void setupFonts();
     virtual void setupDialog(DialogWidgetStyle& style);
@@ -22,6 +24,7 @@ protected:
     WidgetFocusChainSegment dialogFocusChainSegment_;
     uint8_t arialId_;
     uint8_t fontStyleWhiteId_;
+    uint8_t fontStyleYellowId_;
 private:
 };
 

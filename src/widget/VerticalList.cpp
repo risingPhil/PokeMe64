@@ -137,7 +137,7 @@ bool VerticalList::focusNext()
     ++focusedWidgetIndex_;
     
     changeStatus.curFocus = widgetList_[focusedWidgetIndex_];
-    changeStatus.focusBounds = calculateListWidgetBounds(widgetBoundsList_[focusedWidgetIndex_], windowMinY_, bounds_.x + listStyle_.marginLeft, bounds_.y + listStyle_.marginTop);
+    changeStatus.focusBounds = calculateListWidgetBounds(widgetBoundsList_[focusedWidgetIndex_], windowMinY_, bounds_.x + listStyle_.margin.left, bounds_.y + listStyle_.margin.top);
     widgetList_[focusedWidgetIndex_]->setFocused(true);
 
     const int32_t scrollAmountY = scrollWindowToFocusedWidget();
@@ -165,7 +165,7 @@ bool VerticalList::focusPrevious()
     --focusedWidgetIndex_;
 
     changeStatus.curFocus = widgetList_[focusedWidgetIndex_];
-    changeStatus.focusBounds = calculateListWidgetBounds(widgetBoundsList_[focusedWidgetIndex_], windowMinY_, bounds_.x + listStyle_.marginLeft, bounds_.y + listStyle_.marginTop);
+    changeStatus.focusBounds = calculateListWidgetBounds(widgetBoundsList_[focusedWidgetIndex_], windowMinY_, bounds_.x + listStyle_.margin.left, bounds_.y + listStyle_.margin.top);
     widgetList_[focusedWidgetIndex_]->setFocused(true);
     
     const int32_t scrollAmountY = scrollWindowToFocusedWidget();
@@ -187,7 +187,7 @@ void VerticalList::addWidget(IWidget *widget)
         widget->setFocused(focused_);
 
         FocusChangeStatus changeStatus = {
-            .focusBounds = calculateListWidgetBounds(widgetBoundsList_[focusedWidgetIndex_], windowMinY_, bounds_.x + listStyle_.marginLeft, bounds_.y + listStyle_.marginTop),
+            .focusBounds = calculateListWidgetBounds(widgetBoundsList_[focusedWidgetIndex_], windowMinY_, bounds_.x + listStyle_.margin.left, bounds_.y + listStyle_.margin.top),
             .prevFocus = nullptr,
             .curFocus = widget
         };
@@ -198,12 +198,19 @@ void VerticalList::addWidget(IWidget *widget)
         const Rectangle lastWidgetBounds = widgetBoundsList_.back();
         widgetBoundsList_.push_back(Rectangle{.x = 0, .y = lastWidgetBounds.y + lastWidgetBounds.height + listStyle_.verticalSpacingBetweenWidgets, .width = widgetSize.width, .height = widgetSize.height});
     }
+    autoGrowBounds();
 }
 
 void VerticalList::clearWidgets()
 {
     widgetList_.clear();
     widgetBoundsList_.clear();
+    focusedWidgetIndex_ = 0;
+}
+
+VerticalListStyle& VerticalList::getStyle()
+{
+    return listStyle_;
 }
 
 void VerticalList::setStyle(const VerticalListStyle& style)
@@ -232,7 +239,7 @@ void VerticalList::setFocused(bool isFocused)
     widgetList_[focusedWidgetIndex_]->setFocused(focused_);
 
     FocusChangeStatus changeStatus = {
-        .focusBounds = calculateListWidgetBounds(widgetBoundsList_[focusedWidgetIndex_], windowMinY_, bounds_.x + listStyle_.marginLeft, bounds_.y + listStyle_.marginTop)
+        .focusBounds = calculateListWidgetBounds(widgetBoundsList_[focusedWidgetIndex_], windowMinY_, bounds_.x + listStyle_.margin.left, bounds_.y + listStyle_.margin.top)
     };
 
     if(isFocused)
@@ -318,11 +325,11 @@ void VerticalList::render(RDPQGraphics& gfx, const Rectangle& parentBounds)
         return;
     }
 
-    const uint32_t innerListHeight = getInnerListHeight(bounds_, listStyle_.marginTop, listStyle_.marginBottom);
+    const uint32_t innerListHeight = getInnerListHeight(bounds_, listStyle_.margin.top, listStyle_.margin.bottom);
     uint32_t i;
     const Rectangle myBounds = addOffset(bounds_, parentBounds);
-    const int topX = myBounds.x + listStyle_.marginLeft;
-    const int topY = myBounds.y + listStyle_.marginTop;
+    const int topX = myBounds.x + listStyle_.margin.left;
+    const int topY = myBounds.y + listStyle_.margin.top;
 
     // store previous clipping rectangle to restore later
 //    const Rectangle prevClipRect = gfx.getClippingRectangle();
@@ -330,9 +337,9 @@ void VerticalList::render(RDPQGraphics& gfx, const Rectangle& parentBounds)
 //    gfx.setClippingRectangle(myBounds);
 
     // render the background first, if any.
-    if(listStyle_.backgroundSprite)
+    if(listStyle_.background.sprite)
     {
-        gfx.drawSprite(myBounds, listStyle_.backgroundSprite, listStyle_.backgroundSpriteSettings);
+        gfx.drawSprite(myBounds, listStyle_.background.sprite, listStyle_.background.spriteSettings);
     }
 
     if(widgetList_.empty())
@@ -416,7 +423,7 @@ int32_t VerticalList::scrollWindowToFocusedWidget()
     // the reason is the use of isWidgetInsideWindow() inside the render() function to cull entries from the render window.
     // We could potentially eliminate this by expanding the check to allow a partially visible entry to be rendered.
     // But for my goals, this is currently not needed, so I claim YAGNI for now.
-    const uint32_t innerListHeight = getInnerListHeight(bounds_, listStyle_.marginTop, listStyle_.marginBottom);
+    const uint32_t innerListHeight = getInnerListHeight(bounds_, listStyle_.margin.top, listStyle_.margin.bottom);
     const int32_t windowScrollYNeeded = getVerticalWindowScrollNeededToMakeWidgetFullyVisible(widgetBoundsList_[focusedWidgetIndex_], innerListHeight, windowMinY_);
     if(windowScrollYNeeded != 0)
     {
@@ -436,4 +443,27 @@ void VerticalList::notifyFocusListeners(const FocusChangeStatus& status)
     {
         listener->focusChanged(status);
     }
+}
+
+void VerticalList::autoGrowBounds()
+{
+    if(!listStyle_.autogrow.enabled)
+    {
+        return;
+    }
+
+    const Rectangle& lastWidgetBounds = widgetBoundsList_.back();
+    int heightToConsider = lastWidgetBounds.y + lastWidgetBounds.height + listStyle_.margin.top + listStyle_.margin.bottom;
+    if(listStyle_.autogrow.maxHeight && listStyle_.autogrow.maxHeight < heightToConsider)
+    {
+        heightToConsider = listStyle_.autogrow.maxHeight;
+    }
+
+    if(listStyle_.autogrow.shouldGrowUpWards)
+    {
+        const int heightDiff = abs(heightToConsider - bounds_.height);
+        bounds_.y -= heightDiff;
+    }
+
+    bounds_.height = heightToConsider;
 }

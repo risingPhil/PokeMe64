@@ -18,6 +18,8 @@ TransferPakSaveManager::TransferPakSaveManager(TransferPakManager& pakManager)
     : pakManager_(pakManager)
     , sramOffset_(0)
 {
+    // reset back to sram bank 0
+    pakManager_.switchGBSRAMBank(0);
 }
 
 TransferPakSaveManager::~TransferPakSaveManager()

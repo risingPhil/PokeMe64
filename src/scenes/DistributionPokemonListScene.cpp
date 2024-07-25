@@ -162,12 +162,16 @@ void DistributionPokemonListScene::onDialogDone()
 void DistributionPokemonListScene::setupMenu()
 {
     const VerticalListStyle listStyle = {
-        .backgroundSprite = menu9SliceSprite_,
-        .backgroundSpriteSettings = {
-            .renderMode = SpriteRenderMode::NINESLICE,
-            .srcRect = { 6, 6, 6, 6 }
+        .background = {
+            .sprite = menu9SliceSprite_,
+            .spriteSettings = {
+                .renderMode = SpriteRenderMode::NINESLICE,
+                .srcRect = { 6, 6, 6, 6 }
+            }
         },
-        .marginTop = 5,
+        .margin = {
+            .top = 5
+        }
     };
 
     menuList_.setStyle(listStyle);

@@ -1,7 +1,8 @@
 #ifndef _DIALOGWIDGET_H
 #define _DIALOGWIDGET_H
 
-#include "widget/IWidget.h"
+#include "widget/VerticalList.h"
+#include "widget/MenuItemWidget.h"
 #include "core/Sprite.h"
 #include "core/RDPQGraphics.h"
 
@@ -13,32 +14,52 @@ typedef struct DialogData
 {
     char text[DIALOG_TEXT_SIZE];
     // optional sprite of a character that is saying the dialog text
-    sprite_t* characterSprite;
-    SpriteRenderSettings characterSpriteSettings;
-    // bounds of the character sprite relative to the widget
-    Rectangle characterSpriteBounds;
-    bool characterSpriteVisible;
-    sprite_t* buttonSprite;
-    SpriteRenderSettings buttonSpriteSettings;
-    // bounds of the button sprite relative to the widget
-    Rectangle buttonSpriteBounds;
-    bool buttonSpriteVisible;
+    struct {
+        sprite_t* sprite;
+        SpriteRenderSettings spriteSettings;
+        // bounds of the character sprite relative to the widget
+        Rectangle spriteBounds;
+        bool spriteVisible;
+    } character;
+    // optional button sprite
+    struct {
+        sprite_t* sprite;
+        SpriteRenderSettings spriteSettings;
+        // bounds of the button sprite relative to the widget
+        Rectangle spriteBounds;
+        bool spriteVisible;
+    } button;
+    // use this struct if you want to provide dialog options
+    struct {
+        MenuItemData* items;
+        uint8_t number;
+        bool shouldDeleteWhenDone;
+    } options;
+
     // The next Dialog
     struct DialogData* next;
-    bool shouldReleaseWhenDone;
+    bool shouldDeleteWhenDone;
     bool userAdvanceBlocked;
     //TODO: dialog sound
 } DialogData;
 
 typedef struct DialogWidgetStyle
 {
-    sprite_t* backgroundSprite;
-    SpriteRenderSettings backgroundSpriteSettings;
+    struct {
+        sprite_t* sprite;
+        SpriteRenderSettings spriteSettings;
+    } background;
+    struct {
+        Rectangle bounds;
+        MenuItemStyle style;
+    } dialogOptions;
     TextRenderSettings textSettings;
-    int marginLeft;
-    int marginRight;
-    int marginTop;
-    int marginBottom;
+    struct {
+        int left;
+        int right;
+        int top;
+        int bottom;
+    } margin;
 } DialogWidgetStyle;
 
 /**
@@ -95,6 +116,7 @@ private:
      */
     bool isAdvanceAllowed() const;
 
+    VerticalList dialogOptionList_;
     AnimationManager& animationManager_;
     Rectangle bounds_;
     DialogWidgetStyle style_;

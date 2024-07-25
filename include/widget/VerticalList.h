@@ -53,39 +53,62 @@ private:
  */
 typedef struct VerticalListStyle
 {
-    /**
-     * @brief (optional) a background sprite to render the background of 
-     * the widget
-     */
-    sprite_t* backgroundSprite;
-    /**
-     * @brief (optional) render settings for rendering the background sprite (if any)
-     * 
-     */
-    SpriteRenderSettings backgroundSpriteSettings;
-    /**
-     * @brief left margin -> the widgets will start rendering after this x spacing offset from the left edge of the list
-     */
-    int marginLeft;
-    /**
-     * @brief right margin -> the widgets will stop rendering x pixels from the right of this list
-     */
-    int marginRight;
-    /**
-     * @brief top margin -> the widgets will start rendering after this y spacing offset from the top edge of the list
-     * 
-     */
-    int marginTop;
-    /**
-     * @brief bottom margin -> the widgets will stop rendering y pixels from the bottom edge of this list.
-     * 
-     */
-    int marginBottom;
+    struct {
+        /**
+         * @brief (optional) a background sprite to render the background of 
+         * the widget
+         */
+        sprite_t* sprite;
+        /**
+         * @brief (optional) render settings for rendering the background sprite (if any)
+         * 
+         */
+        SpriteRenderSettings spriteSettings;
+    } background;
+
+    struct {
+        /**
+         * @brief left margin -> the widgets will start rendering after this x spacing offset from the left edge of the list
+         */
+        int left;
+        /**
+         * @brief right margin -> the widgets will stop rendering x pixels from the right of this list
+         */
+        int right;
+        /**
+         * @brief top margin -> the widgets will start rendering after this y spacing offset from the top edge of the list
+         */
+        int top;
+        /**
+         * @brief bottom margin -> the widgets will stop rendering y pixels from the bottom edge of this list.
+         */
+        int bottom;
+    } margin;
 
     /**
      * @brief the amount of spacing (in pixels) between 2 list widgets (default: 0)
      */
     int verticalSpacingBetweenWidgets;
+
+    /**
+     * @brief should grow automaticaly with each item
+     */
+    struct {
+        /**
+         * Whether the list should grow its bounds whenever items are added
+         */
+        bool enabled;
+        
+        /**
+         * defines the direction the list should grow in. true for upwards, false for downwards
+         */
+        bool shouldGrowUpWards;
+
+        /**
+         * Maximum height the list should grow towards
+         */
+        uint16_t maxHeight;
+    } autogrow;
 } VerticalListStyle;
 
 /**
@@ -117,7 +140,9 @@ public:
     void addWidget(IWidget* widget);
     void clearWidgets();
 
+    VerticalListStyle& getStyle();
     void setStyle(const VerticalListStyle& style);
+    
     void setViewWindowStartY(uint32_t windowStartY);
 
     bool isFocused() const override;
@@ -145,6 +170,7 @@ private:
     int32_t scrollWindowToFocusedWidget();
     void moveWindow(int32_t yAmount);
     void notifyFocusListeners(const FocusChangeStatus& status);
+    void autoGrowBounds();
 
     MoveVerticalListWindowAnimation moveWindowAnimation_;
     IWidgetList widgetList_;

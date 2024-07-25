@@ -38,17 +38,10 @@ public:
 
     SceneDependencies& getDependencies();
 
-    /**
-     * This is a helper function to show a single message to the user.
-     * It should only be used for simple situations. (feedback on a function executed directly in the menu for example)
-     */
-    void showSingleMessage(const DialogData& messageData);
+    virtual void showDialog(DialogData* diagData);
 protected:
     virtual void setupMenu();
-    void setupFonts() override;
     void setupDialog(DialogWidgetStyle& style) override;
-
-    virtual void showDialog(DialogData* diagData);
 
     MenuSceneContext* context_;
     sprite_t* menu9SliceSprite_;
@@ -57,10 +50,8 @@ protected:
     CursorWidget cursorWidget_;
     ListItemFiller<VerticalList, MenuItemData, MenuItemWidget, MenuItemStyle>  menuListFiller_;
     WidgetFocusChainSegment listFocusChainSegment_;
-    uint8_t fontStyleYellowId_;
     bool bButtonPressed_;
 private:
-    DialogData singleMessageDialog_;
 };
 
 void deleteMenuSceneContext(void* context);

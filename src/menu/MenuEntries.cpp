@@ -5,6 +5,16 @@ MenuItemData gen1MenuEntries[] = {
     {
         .title = "Event Pokémon",
         .onConfirmAction = goToGen1DistributionPokemonMenu
+    },
+    {
+        .title = "Teach Pikachu Surf",
+        .onConfirmAction = gen1PrepareToTeachPikachu,
+        .itemParam = &MOVE_SURF
+    },
+    {
+        .title = "Teach Pikachu Fly",
+        .onConfirmAction = gen1PrepareToTeachPikachu,
+        .itemParam = &MOVE_FLY
     }
 };
 
