@@ -12,6 +12,7 @@ I'm happy to accept pull requests if the community wants to do them.
 - Inject Generation 1 Distribution event Pokémon into Gen 1 cartridges. In practice, this just means all kinds of variants of Mew.
 - Inject Generation 2 Distribution event Pokémon into Gen 2 cartridges. This includes the Pokémon Center New York (PCNY) Distribution event ones.
 - Inject GS Ball into an actual Pokémon Crystal gameboy cartridge
+- Teach Pikachu Surf/Fly on Gen 1 cartridges
 
 # Limitations
 - Right now, this library only supports the international (English) versions of the games. (as far as I know)
