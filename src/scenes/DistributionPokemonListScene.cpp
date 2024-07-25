@@ -2,32 +2,6 @@
 #include "scenes/SceneManager.h"
 #include "transferpak/TransferPakManager.h"
 
-static uint8_t calculateMainDataChecksum(ISaveManager& saveManager)
-{
-    Gen1Checksum checksum;
-    const uint16_t checksummedDataStart = 0x598;
-    const uint16_t checksummedDataEnd = 0x1523;
-    const uint16_t numBytes = checksummedDataEnd - checksummedDataStart;
-    uint16_t i;
-    uint8_t temp = 0;
-    uint8_t byte;
-
-    saveManager.seekToBankOffset(1, checksummedDataStart);
-
-    debugf("Checksum - dumping bytes:\r\n");
-    for(i=0; i < numBytes; ++i)
-    {
-        saveManager.readByte(byte);
-        debugf(" %02x", byte);
-        checksum.addByte(byte);
-        temp += byte;
-    }
-
-    uint8_t ret = checksum.get();
-    debugf("\r\ntemp=%02x, ret=%02x\r\n", temp, ret);
-    return ret;
-}
-
 static DistributionPokemonListSceneContext* convert(void* context)
 {
     return static_cast<DistributionPokemonListSceneContext*>(context);
@@ -134,8 +108,6 @@ void DistributionPokemonListScene::injectPokemon(const void* data)
     }
 
     deps_.tpakManager.finishWrites();
-
-    calculateMainDataChecksum(saveManager_);
 
     // The reason is the same as previous setRAMEnabled(false) statement above
     deps_.tpakManager.setRAMEnabled(false);
