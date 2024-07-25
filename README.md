@@ -17,7 +17,7 @@ I'm happy to accept pull requests if the community wants to do them.
 - Teach Pikachu Surf/Fly on Gen 1 cartridges
 
 # Limitations
-- Right now, this library only supports the international (English) versions of the games. (as far as I know)
+- Right now, this rom only supports the international (English) versions of the games. (as far as I know)
 
 # Build
 
