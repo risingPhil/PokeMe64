@@ -43,7 +43,7 @@ MenuItemData gen2CrystalMenuEntries[] = {
         .onConfirmAction = goToGen2PCNYDistributionPokemonMenu,
     },
     {
-        .title = "Receive GS Ball",
+        .title = "Unlock GS Ball",
         .onConfirmAction = gen2ReceiveGSBall
     }
 };

@@ -346,9 +346,10 @@ void gen2ReceiveGSBall(void* context, const void* param)
     }
     else
     {
-        keyItemPocket.add(POKEMON_CRYSTAL_ITEM_ID_GS_BALL, 1);
+        gameReader.unlockGsBallEvent();
         gameReader.finishSave();
-        setDialogDataText(*messageData, "%s obtained a GS Ball!", trainerName);
+        tpakManager.finishWrites();
+        setDialogDataText(*messageData, "GS Ball event unlocked! Please go to the Golden Rod Pokémon Center and try to leave!", trainerName);
     }
     scene->showDialog(messageData);
 }
