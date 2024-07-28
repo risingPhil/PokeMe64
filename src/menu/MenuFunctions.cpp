@@ -317,39 +317,18 @@ void gen2ReceiveGSBall(void* context, const void* param)
     DialogData* messageData = new DialogData{
         .shouldDeleteWhenDone = true
     };
-    bool alreadyHasOne = false;
 
     tpakManager.setRAMEnabled(true);
 
     const char* trainerName = gameReader.getTrainerName();
-    Gen2ItemList keyItemPocket = gameReader.getItemList(Gen2ItemListType::GEN2_ITEMLISTTYPE_KEYITEMPOCKET);
-    if(keyItemPocket.getCount() > 0)
-    {
-        uint8_t itemId;
-        uint8_t itemCount;
-        bool gotEntry = keyItemPocket.getEntry(0, itemId, itemCount);
-
-        while(gotEntry)
-        {
-            if(itemId == POKEMON_CRYSTAL_ITEM_ID_GS_BALL)
-            {
-                alreadyHasOne = true;
-                break;
-            }
-            gotEntry = keyItemPocket.getNextEntry(itemId, itemCount);
-        }
-    }
+  
+    // the unlockGsBallEvent() function does all the work. It's even repeatable!
+    gameReader.unlockGsBallEvent();
+    gameReader.finishSave();
+    tpakManager.finishWrites();
+    tpakManager.setRAMEnabled(false);
     
-    if(alreadyHasOne)
-    {
-        setDialogDataText(*messageData, "It appears you already have one!");
-    }
-    else
-    {
-        gameReader.unlockGsBallEvent();
-        gameReader.finishSave();
-        tpakManager.finishWrites();
-        setDialogDataText(*messageData, "GS Ball event unlocked! Please go to the Golden Rod Pokémon Center and try to leave!", trainerName);
-    }
+    setDialogDataText(*messageData, "GS Ball event unlocked! Please go to the Golden Rod Pokémon Center and try to leave!", trainerName);
+
     scene->showDialog(messageData);
 }
