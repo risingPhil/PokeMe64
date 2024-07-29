@@ -20,7 +20,7 @@ I'm happy to accept pull requests if the community wants to do them.
 # Limitations
 - Right now, this rom only supports the international (English) versions of the games.
 
-But I've heard from /u/bluemooncinco on reddit that the rom crashes on gen 1 French and Spanish, but Spanish gen 2 games appear to work. But your mileage may vary, as I haven't personally tested any games besides the international (English) ones. The main reason why other languages may or may not work is because the relevant data is at different positions inside the game data.
+But I've heard from /u/bluemooncinco on reddit that PokeMe64 crashes on gen 1 French and Spanish, but Spanish gen 2 games appear to work. But your mileage may vary, as I haven't personally tested any games besides the international (English) ones. The main reason why other languages may or may not work is because the relevant data is at different positions inside the game data.
 
 # Build
 
@@ -47,9 +47,9 @@ NOTE: It's been reported that Everdrive 64 users may have to disable the CRC che
 This project was created to preserve/improve access to the original Distribution event pokémon from Gen1 and Gen2 for actual Pokémon gameboy cartridges. You could kinda do this with a gb operator and a pc.
 But having it done with a Nintendo 64 feels more "real"/"official" and is easier if you have the console and Transfer pak.
 
-# Future potential improvements (ideas)
+# Future potential improvements (ideas/roadmap)
 
-## UI
+## UI ideas
 - Make the initial transfer pack detect screen show the gameboy cartridge image of the game that was detected and some kind of icon when there's an error.
 - Add stats screen after receiving the pokémon which shows the original gameboy sprite but without the white background.
 - In the pokémon list, show the mini menu sprite that you would also see in the party menu in the gameboy games
@@ -63,7 +63,7 @@ But having it done with a Nintendo 64 feels more "real"/"official" and is easier
 - Add some background music (Creative commons remakes/remixes of the original music (Maybe a looped chunk of [Ramstar - Route 24](https://www.youtube.com/watch?v=ih53Nb34vbM)?)
 - Have a "music" widget that shows up to name the song(s) that I end up using when it/they start(s) playing. (similar to how [Need For Speed - Most Wanted (original)](https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWk37230YvbMHaMchN8dzQiRrO66VofThpcbvUTFMoplDbkQKBVUFcIabbNCnzZ0KpuxcAQmrXQjBlqv_bvi6v6xpjmPxs3tJ-ZI_GhOn3xe5DW7XpMbtnCKFcbBQ-l_zzbrIIV4smBpth/s1600/_mwmusic.jpg) used to show this)
 
-## Features
+## Feature ideas
 - Support reproduction cartridges (in libpokemegb)
 - Support other language versions (in libpokemegb)
 - Make it possible to backup your cartridge save file onto the flashcart PokeMe64 is running from.
