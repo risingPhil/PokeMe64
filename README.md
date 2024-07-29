@@ -15,9 +15,12 @@ I'm happy to accept pull requests if the community wants to do them.
 - Inject Generation 2 Distribution event Pokémon into Gen 2 cartridges. This includes the Pokémon Center New York (PCNY) Distribution event ones.
 - Inject GS Ball into an actual Pokémon Crystal gameboy cartridge
 - Teach Pikachu Surf/Fly on Gen 1 cartridges
+- You don't have to use the transfer pak in controller 1. You can have it in a separate controller if you want. But the UI is still controlled with controller 1.
 
 # Limitations
-- Right now, this rom only supports the international (English) versions of the games. (as far as I know)
+- Right now, this rom only supports the international (English) versions of the games.
+
+But I've heard from /u/bluemooncinco on reddit that the rom crashes on gen 1 French and Spanish, but Spanish gen 2 games appear to work. But your mileage may vary, as I haven't personally tested any games besides the international (English) ones. The main reason why other languages may or may not work is because the relevant data is at different positions inside the game data.
 
 # Build
 
@@ -28,7 +31,7 @@ To build it, set up a [build environment for libdragon](https://github.com/Drago
     libdragon make -j 12
 
 # Usage
-WARNING: Do not insert or remove your gameboy cartridge, N64 transfer pak or controller while the Nintendo 64 is powered on. Doing so might corrupt your save file!
+WARNING: Do not insert or remove your gameboy cartridge, N64 transfer pak or controller while the Nintendo 64 is powered on. Doing so might corrupt your save file or just plainly won't work! (header validation check may fail)
 
 - Copy PokeMe64.z64 to your Nintendo 64 flash cartridge. (such as Everdrive64, Super 64, ED64Plus, ...)
 - Have your Nintendo 64 powered off. (IMPORTANT)
@@ -38,26 +41,35 @@ WARNING: Do not insert or remove your gameboy cartridge, N64 transfer pak or con
 - Load the PokeMe64.z64 rom
 - Follow the instructions
 
+NOTE: It's been reported that Everdrive 64 users may have to disable the CRC check to get the rom to run. This is a per-game setting you can enable in the Everdrive 64 menu. So far, it's only been reported for Everdrive 64 v3, but it likely applies to other variants as well. (reported by /u/bluemooncinco on reddit)
+
 # Goal
 This project was created to preserve/improve access to the original Distribution event pokémon from Gen1 and Gen2 for actual Pokémon gameboy cartridges. You could kinda do this with a gb operator and a pc.
 But having it done with a Nintendo 64 feels more "real"/"official" and is easier if you have the console and Transfer pak.
 
 # Future potential improvements (ideas)
-- UI: Make the initial transfer pack detect screen show the gameboy cartridge image of the game that was detected and some kind of icon when there's an error.
-- UI: Add stats screen after receiving the pokémon which shows the original gameboy sprite but without the white background.
-- UI: In the pokémon list, show the mini menu sprite that you would also see in the party menu in the gameboy games
-- UI: add some background images and potentially sprites here and there.
-- UI: add some acquisition sound effects from the gameboy games
-- UI: add a skippable "trade" 3D animation sequence when you receive a distribution pokémon. The idea is to have a pokéball go into a green mario pipe on either a Nintendo 64 3D model or Nintendo 64 3D logo model. Then follow the pipe with the camera and have the pokéball drop onto a huge 3D representation of the gameboy cartridge before opening the pokéball which then triggers the stats screen.
-- UI: Have a 3D intro animation that shows a pokeball opening, a Nintendo 64 logo appearing, slightly jumping and playing the "NINTENDO sixtyfoouuuuuuuuur" meme sound
-- UI: Add a menu item to let you buy missing version exclusive pokémon from other versions of the generation with in-game currency. (such as Mankey for Blue or Vulpix for Red). The original games are getting expensive, so this would be a good help for people who can only afford/are willing to buy/play a single game for the generation.
-- Support reproduction cartridges (in libpokemegb)
-- Support other language versions (in libpokemegb)
-- Make it possible to display your cartridge save file as a QR code and contribute to the 3DS' [PKSM](https://github.com/FlagBrew/PKSM) project to migrate the save file easily from gameboy cartridge to 3DS.
+
+## UI
+- Make the initial transfer pack detect screen show the gameboy cartridge image of the game that was detected and some kind of icon when there's an error.
+- Add stats screen after receiving the pokémon which shows the original gameboy sprite but without the white background.
+- In the pokémon list, show the mini menu sprite that you would also see in the party menu in the gameboy games
+- add some background images and potentially sprites here and there.
+- add some acquisition sound effects from the gameboy games
+- add a skippable "trade" 3D animation sequence when you receive a distribution pokémon. The idea is to have a pokéball go into a green mario pipe on either a Nintendo 64 3D model or Nintendo 64 3D logo model. Then follow the pipe with the camera and have the pokéball drop onto a huge 3D representation of the gameboy cartridge before opening the pokéball which then triggers the stats screen.
+- Have a 3D intro animation that shows a pokeball opening, a Nintendo 64 logo appearing, slightly jumping and playing the "NINTENDO sixtyfoouuuuuuuuur" meme sound
+- Add a menu item to let you buy missing version exclusive pokémon from other versions of the generation with in-game currency. (such as Mankey for Blue or Vulpix for Red). The original games are getting expensive, so this would be a good help for people who can only afford/are willing to buy/play a single game for the generation.
 - Add Credits screen
 - Add a menu item that informs you about the existence of [Poke Transporter GB](https://github.com/GearsProgress/Poke_Transporter_GB) for transferring to Gen3
 - Add some background music (Creative commons remakes/remixes of the original music (Maybe a looped chunk of [Ramstar - Route 24](https://www.youtube.com/watch?v=ih53Nb34vbM)?)
 - Have a "music" widget that shows up to name the song(s) that I end up using when it/they start(s) playing. (similar to how [Need For Speed - Most Wanted (original)](https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWk37230YvbMHaMchN8dzQiRrO66VofThpcbvUTFMoplDbkQKBVUFcIabbNCnzZ0KpuxcAQmrXQjBlqv_bvi6v6xpjmPxs3tJ-ZI_GhOn3xe5DW7XpMbtnCKFcbBQ-l_zzbrIIV4smBpth/s1600/_mwmusic.jpg) used to show this)
+
+## Features
+- Support reproduction cartridges (in libpokemegb)
+- Support other language versions (in libpokemegb)
+- Make it possible to backup your cartridge save file onto the flashcart PokeMe64 is running from.
+- Make it possible to display your cartridge save file as a QR code and contribute to the 3DS' [PKSM](https://github.com/FlagBrew/PKSM) project to migrate the save file easily from gameboy cartridge to 3DS.
+- Unlock Mystery Gift decorations like the Pikachu Bed and Tentacool Doll that were left inaccessible in Gold/Silver/Crystal due to bugs in Pokemon Stadium 2 (suggested by /u/MermaidRaccoon on reddit)
+- Make it possible to swap gameboy cartridge after using the reset button on the N64. (suggested by /u/bluemooncinco on reddit)
 
 I'm likely going to postpone the 3D stuff (intro and "trade" sequence) until I have implemented a lot of the other ideas here.
 
