@@ -41,7 +41,7 @@ public:
      * WARNING: If you specify a sceneContext, you MUST also specify a deleteContextFunc callback function pointer.
      * This is needed because you can't call delete() on a void*. And we need to keep the context around in the sceneHistory for as long as it needs to
      */
-    void switchScene(SceneType sceneType, void (*deleteContextFunc)(void*) = nullptr, void* sceneContext = nullptr);
+    void switchScene(SceneType sceneType, void (*deleteContextFunc)(void*) = nullptr, void* sceneContext = nullptr, bool deleteHistory = false);
     
     /**
      * @brief Switch back to the previous scene in the history stack

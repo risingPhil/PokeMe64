@@ -1,6 +1,16 @@
 #include "core/Application.h"
 #include "scenes/IScene.h"
 
+static Application* appInstance = nullptr;
+static void resetInterruptHandler()
+{
+    if(!appInstance)
+    {
+        return;
+    }
+    appInstance->onResetInterrupt();
+}
+
 Application::Application()
     : graphics_()
     , animationManager_()
@@ -9,15 +19,21 @@ Application::Application()
     , sceneManager_(graphics_, animationManager_, fontManager_, tpakManager_)
     , sceneBounds_({0})
 {
+    appInstance = this;
 }
 
 Application::~Application()
 {
+    tpakManager_.setPower(false);
+    unregister_RESET_handler(resetInterruptHandler);
+
     graphics_.destroy();
 
     display_close();
     timer_close();
     joypad_close();
+
+    appInstance = nullptr;
 }
 
 void Application::init()
@@ -37,6 +53,8 @@ void Application::init()
     //display_init(RESOLUTION_320x240, DEPTH_16_BPP, 3, GAMMA_NONE, ANTIALIAS_RESAMPLE_FETCH_ALWAYS);
 
     sceneManager_.switchScene(SceneType::INIT_TRANSFERPAK);
+
+    register_RESET_handler(resetInterruptHandler);
 }
 
 void Application::run()
@@ -56,4 +74,9 @@ void Application::run()
 
         graphics_.finishAndShowFrame();
     }
+}
+
+void Application::onResetInterrupt()
+{
+    tpakManager_.setPower(false);
 }

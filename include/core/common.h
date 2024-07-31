@@ -1,6 +1,21 @@
 #ifndef _CORE_COMMON_H
 #define _CORE_COMMON_H
 
+typedef struct Point
+{
+    int x;
+    int y;
+} Point;
+
+typedef struct FloatPoint
+{
+    float x;
+    float y;
+} FloatPoint;
+
+typedef Point Vector;
+typedef FloatPoint FloatVector;
+
 typedef struct Dimensions
 {
     int width;
@@ -26,6 +41,10 @@ bool isZeroSizeRectangle(const Rectangle& rect);
  * the width and height of rectangle a
  */
 Rectangle addOffset(const Rectangle& a, const Rectangle& b);
+
+bool isPointInsideRectangle(const Rectangle& a, const Point& p);
+
+bool doRectanglesOverlap(const Rectangle& a, const Rectangle& b);
 
 /**
  * @brief Extract a Dimensions struct from a Rectangle that only contains the width and height

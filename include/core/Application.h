@@ -16,6 +16,8 @@ public:
     void init();
 
     void run();
+
+    void onResetInterrupt();
 protected:
 private:
     RDPQGraphics graphics_;

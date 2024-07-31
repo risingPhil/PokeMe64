@@ -10,7 +10,7 @@ static const uint16_t sramBankStartGBAddress = 0xA000;
 
 TransferPakManager::TransferPakManager()
     : port_(JOYPAD_PORT_1)
-    , wasPoweredAtLeastOnce_(false)
+    , isPoweredOn_(false)
     , currentSRAMBank_(0)
     , readBufferBankOffset_(0xFFFF)
     , writeBufferSRAMBankOffset_(0xFFFF)
@@ -30,8 +30,11 @@ joypad_port_t TransferPakManager::getPort() const
 
 void TransferPakManager::setPort(joypad_port_t port)
 {
+    if(isPoweredOn_)
+    {
+        setPower(false);
+    }
     port_ = port;
-    wasPoweredAtLeastOnce_ = false;
 }
 
 bool TransferPakManager::hasTransferPak()
@@ -47,31 +50,48 @@ bool TransferPakManager::hasTransferPak()
     return (type == JOYPAD_ACCESSORY_TYPE_TRANSFER_PAK);
 }
 
+bool TransferPakManager::isPoweredOn() const
+{
+    return isPoweredOn_;
+}
+
 bool TransferPakManager::setPower(bool on)
 {
+    uint8_t status;
     int ret;
 
-    if(!wasPoweredAtLeastOnce_)
+    if(on)
     {
-        if(!on)
-        {
-            return true;
-        }
         ret = tpak_init(static_cast<int>(port_));
         if(ret)
         {
             debugf("[TransferPakManager]: %s: tpak_init got error %d\r\n", __FUNCTION__, ret);
         }
-        wasPoweredAtLeastOnce_ = true;
+
+        status = getStatus();
+        while(!(status | TPAK_STATUS_READY))
+        {
+            debugf("[TransferPakManager]: %s: ERROR: transfer pak not ready yet. Current status is %hu\r\n", __FUNCTION__, status);
+            status = getStatus();
+        }
+        isPoweredOn_ = true;
     }
     else
     {
-        ret = tpak_set_power(port_, on);
+        ret = tpak_set_access(port_, false);
         if(ret)
         {
-            debugf("[TransferPakManager]: %s: tpak_set_power got error %d\r\n", __FUNCTION__, ret);
+            debugf("[TransferPakManager]: %s: tpak_set_access got error %d\r\n", __FUNCTION__, ret);
         }
+
+        ret = tpak_set_power(port_, false);
+        if(ret)
+        {
+            debugf("[TransferPakManager]: %s: tpak_set_access got error %d\r\n", __FUNCTION__, ret);
+        }
+        isPoweredOn_ = false;
     }
+
     return (!ret);
 }
 

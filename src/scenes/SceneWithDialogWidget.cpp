@@ -73,6 +73,12 @@ void SceneWithDialogWidget::advanceDialog()
     dialogWidget_.advanceDialog();
 }
 
+void SceneWithDialogWidget::showDialog(DialogData* diagData)
+{
+    dialogWidget_.setVisible(true);
+    dialogWidget_.setData(diagData);
+}
+
 void SceneWithDialogWidget::setupFonts()
 {
     arialId_ = deps_.fontManager.getFont("rom://Arial.font64");

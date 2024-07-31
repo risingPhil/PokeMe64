@@ -1,6 +1,8 @@
 #include "scenes/MenuScene.h"
 #include "core/FontManager.h"
 #include "scenes/SceneManager.h"
+#include "transferpak/TransferPakManager.h"
+#include "menu/MenuFunctions.h"
 
 #include <cstdio>
 
@@ -78,7 +80,7 @@ void MenuScene::render(RDPQGraphics& gfx, const Rectangle& sceneBounds)
         .fontId = arialId_,
         .fontStyleId = fontStyleWhiteId_
     };
-    gfx.drawText(Rectangle{40, 10, 280, 16}, "PokeMe64 by risingPhil. Very early version...", renderSettings);
+    gfx.drawText(Rectangle{40, 10, 280, 16}, "PokeMe64 by risingPhil. Version 0.1", renderSettings);
 }
 
 bool MenuScene::handleUserInput(joypad_port_t port, const joypad_inputs_t& inputs)
@@ -98,7 +100,22 @@ bool MenuScene::handleUserInput(joypad_port_t port, const joypad_inputs_t& input
     {
         // b button release occurred. Switch back to previous scene.
         bButtonPressed_ = false;
-        deps_.sceneManager.goBackToPreviousScene();
+
+        if(context_->bButtonMeansUserWantsToSwitchCartridge)
+        {
+            DialogData* diag = new DialogData{
+                .shouldDeleteWhenDone = true
+            };
+
+            setDialogDataText(*diag, "Please turn the console off to switch gameboy cartridges!");
+
+            showDialog(diag);
+        }
+        else
+        {
+            // now do the actual switch back to the previous scene
+            deps_.sceneManager.goBackToPreviousScene();
+        }
         return true;
     }
     return false;
@@ -199,10 +216,9 @@ void MenuScene::setupDialog(DialogWidgetStyle& style)
 
 void MenuScene::showDialog(DialogData* diagData)
 {
+    SceneWithDialogWidget::showDialog(diagData);
     menuList_.setVisible(false);
     cursorWidget_.setVisible(false);
-    dialogWidget_.setVisible(true);
-    dialogWidget_.setData(diagData);
     setFocusChain(&dialogFocusChainSegment_);
 }
 

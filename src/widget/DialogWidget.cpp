@@ -1,5 +1,4 @@
 #include "widget/DialogWidget.h"
-#include "widget/ListItemFiller.h"
 #include "core/RDPQGraphics.h"
 
 #include <cstdarg>
@@ -33,6 +32,7 @@ static void releaseEntry(DialogData* data, bool releaseAllEntries)
 
 DialogWidget::DialogWidget(AnimationManager& animationManager)
     : dialogOptionList_(animationManager)
+    , dialogOptionListFiller_(dialogOptionList_)
     , animationManager_(animationManager)
     , bounds_({0})
     , style_({0})
@@ -76,6 +76,8 @@ void DialogWidget::setStyle(const DialogWidgetStyle& style)
 void DialogWidget::setData(DialogData* data)
 {
     dialogOptionList_.clearWidgets();
+    // the filler is the owner of the widgets. They need to be properly destroyed
+    dialogOptionListFiller_.deleteWidgets();
     dialogOptionList_.setVisible(false);
     dialogOptionList_.setFocused(false);
     releaseEntry(data_, true);
@@ -84,9 +86,7 @@ void DialogWidget::setData(DialogData* data)
 
     if(data_ && data->options.items)
     {
-        ListItemFiller<VerticalList, MenuItemData, MenuItemWidget, MenuItemStyle> filler(dialogOptionList_);
-
-        filler.addItems(data->options.items, data->options.number, style_.dialogOptions.style);
+        dialogOptionListFiller_.addItems(data->options.items, data->options.number, style_.dialogOptions.style);
         dialogOptionList_.setVisible(true);
         dialogOptionList_.setFocused(focused_);
     }
@@ -171,13 +171,13 @@ void DialogWidget::advanceDialog()
     releaseEntry(oldEntry, false);
 
     dialogOptionList_.clearWidgets();
+    // the filler is the owner of the widgets. They need to be properly destroyed
+    dialogOptionListFiller_.deleteWidgets();
     dialogOptionList_.setFocused(false);
     dialogOptionList_.setVisible(false);
     if(data_->options.items)
     {
-        ListItemFiller<VerticalList, MenuItemData, MenuItemWidget, MenuItemStyle> filler(dialogOptionList_);
-
-        filler.addItems(data_->options.items, data_->options.number, style_.dialogOptions.style);
+        dialogOptionListFiller_.addItems(data_->options.items, data_->options.number, style_.dialogOptions.style);
         dialogOptionList_.setVisible(true);
         dialogOptionList_.setFocused(focused_);
     }

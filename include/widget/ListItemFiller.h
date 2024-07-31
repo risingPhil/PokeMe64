@@ -26,11 +26,7 @@ public:
 
     ~ListItemFiller()
     {
-        for(ListItemWidgetType* item : widgets_)
-        {
-            delete item;
-        }
-        widgets_.clear();
+        deleteWidgets();
     }
 
     void addItems(ListDataType* dataList, size_t dataListSize, const MenuItemStyle& itemStyle)
@@ -43,6 +39,15 @@ public:
             itemWidget->setStyle(itemStyle);
             list_.addWidget(itemWidget);
         }
+    }
+
+    void deleteWidgets()
+    {
+        for(ListItemWidgetType* item : widgets_)
+        {
+            delete item;
+        }
+        widgets_.clear();
     }
 protected:
 private:

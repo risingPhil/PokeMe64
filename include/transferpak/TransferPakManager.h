@@ -42,6 +42,7 @@ public:
     void setPort(joypad_port_t port);
 
     bool hasTransferPak();
+    bool isPoweredOn() const;
     bool setPower(bool on);
     uint8_t getStatus();
 
@@ -92,7 +93,7 @@ public:
 protected:
 private:
     joypad_port_t port_;
-    bool wasPoweredAtLeastOnce_;
+    bool isPoweredOn_;
     uint8_t currentSRAMBank_;
     uint16_t readBufferBankOffset_;
     uint16_t writeBufferSRAMBankOffset_;

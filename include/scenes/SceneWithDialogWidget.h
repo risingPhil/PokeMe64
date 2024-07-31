@@ -16,6 +16,7 @@ public:
     void render(RDPQGraphics& gfx, const Rectangle& sceneBounds) override;
 
     void advanceDialog();
+    virtual void showDialog(DialogData* diagData);
 protected:
     virtual void setupFonts();
     virtual void setupDialog(DialogWidgetStyle& style);

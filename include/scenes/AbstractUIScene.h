@@ -49,6 +49,8 @@ typedef struct WidgetFocusChainSegment
 class AbstractUIScene : public IScene
 {
 public:
+    static const uint16_t MINIMUM_TIME_BETWEEN_INPUT_EVENTS;
+
     AbstractUIScene(SceneDependencies& deps);
     virtual ~AbstractUIScene();
 

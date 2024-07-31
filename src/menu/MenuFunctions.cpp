@@ -13,6 +13,10 @@
 const Move MOVE_SURF = Move::SURF;
 const Move MOVE_FLY = Move::FLY;
 
+// based on https://github.com/kwsch/PKHeX/blob/master/PKHeX.Core/Resources/text/script/gen2/flags_c_en.txt
+const uint16_t GEN2_EVENTFLAG_DECORATION_PIKACHU_BED = 679;
+const uint16_t GEN2_EVENTFLAG_DECORATION_TENTACOOL_DOLL = 715;
+
 typedef struct Gen1TeachPikachuParams
 {
     Move moveType;
@@ -71,9 +75,17 @@ static uint8_t gen1FindPikachuInParty(Gen1Party& party)
     return foundIndex;
 }
 
-void printMessage(void* context, const void*)
+static const char* convertGen2EventFlagToString(uint16_t eventFlagIndex)
 {
-    debugf((const char*)context);
+    switch(eventFlagIndex)
+    {
+    case GEN2_EVENTFLAG_DECORATION_PIKACHU_BED:
+        return "Pikachu Bed";
+    case GEN2_EVENTFLAG_DECORATION_TENTACOOL_DOLL:
+        return "Tentacool doll";
+    default:
+        return "UNKNOWN";
+    }
 }
 
 void activateFrameLog(void* context, const void*)
@@ -82,6 +94,12 @@ void activateFrameLog(void* context, const void*)
     RDPQGraphics& gfx = scene->getDependencies().gfx;
     debugf("Triggering RDPQ log for 1 frame!\r\n");
     gfx.triggerDebugFrame();
+}
+
+void advanceDialog(void* context, const void*)
+{
+    MenuScene* scene = static_cast<MenuScene*>(context);
+    scene->advanceDialog();
 }
 
 void goToTestScene(void* context, const void* param)
@@ -330,5 +348,37 @@ void gen2ReceiveGSBall(void* context, const void* param)
     
     setDialogDataText(*messageData, "GS Ball event unlocked! Please go to the Golden Rod Pokémon Center and try to leave!", trainerName);
 
+    scene->showDialog(messageData);
+}
+
+void gen2SetEventFlag(void* context, const void* param)
+{
+    MenuScene* scene = static_cast<MenuScene*>(context);
+    TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
+    TransferPakRomReader romReader(tpakManager);
+    TransferPakSaveManager saveManager(tpakManager);
+    Gen2GameReader gameReader(romReader, saveManager, static_cast<Gen2GameType>(scene->getDependencies().specificGenVersion));
+    DialogData* messageData = new DialogData{
+        .shouldDeleteWhenDone = true
+    };
+    const uint16_t eventFlagIndex = *static_cast<const uint16_t*>(param);
+
+    tpakManager.setRAMEnabled(true);
+
+    const char* trainerName = gameReader.getTrainerName();
+    if(gameReader.getEventFlag(eventFlagIndex))
+    {
+        setDialogDataText(*messageData, "%s already has %s!", trainerName, convertGen2EventFlagToString(eventFlagIndex));
+    }
+    else
+    {
+        gameReader.setEventFlag(eventFlagIndex, true);
+        gameReader.finishSave();
+        tpakManager.finishWrites();
+
+        setDialogDataText(*messageData, "%s has unlocked %s!", trainerName, convertGen2EventFlagToString(eventFlagIndex));
+    }
+
+    tpakManager.setRAMEnabled(false);
     scene->showDialog(messageData);
 }

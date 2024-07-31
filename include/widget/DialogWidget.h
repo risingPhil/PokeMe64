@@ -3,8 +3,7 @@
 
 #include "widget/VerticalList.h"
 #include "widget/MenuItemWidget.h"
-#include "core/Sprite.h"
-#include "core/RDPQGraphics.h"
+#include "widget/ListItemFiller.h"
 
 #define DIALOG_TEXT_SIZE 512
 
@@ -117,6 +116,7 @@ private:
     bool isAdvanceAllowed() const;
 
     VerticalList dialogOptionList_;
+    ListItemFiller<VerticalList, MenuItemData, MenuItemWidget, MenuItemStyle> dialogOptionListFiller_;
     AnimationManager& animationManager_;
     Rectangle bounds_;
     DialogWidgetStyle style_;

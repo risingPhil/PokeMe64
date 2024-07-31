@@ -13,6 +13,7 @@ typedef struct MenuSceneContext
 {
     MenuItemData* menuEntries;
     uint32_t numMenuEntries;
+    bool bButtonMeansUserWantsToSwitchCartridge;
 } MenuSceneContext;
 
 /**
@@ -38,7 +39,7 @@ public:
 
     SceneDependencies& getDependencies();
 
-    virtual void showDialog(DialogData* diagData);
+    void showDialog(DialogData* diagData) override;
 protected:
     virtual void setupMenu();
     void setupDialog(DialogWidgetStyle& style) override;

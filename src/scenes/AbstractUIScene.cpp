@@ -2,7 +2,7 @@
 #include "core/DragonUtils.h"
 #include "widget/IWidget.h"
 
-static uint16_t minimumTimeBetweenInputEventsInMs = 150;
+const uint16_t AbstractUIScene::MINIMUM_TIME_BETWEEN_INPUT_EVENTS = 150;
 
 AbstractUIScene::AbstractUIScene(SceneDependencies& deps)
     : deps_(deps)
@@ -23,7 +23,7 @@ void AbstractUIScene::processUserInput()
     }
 
     const uint64_t now = get_ticks();
-    if(TICKS_TO_MS(now - lastInputHandleTime_) < minimumTimeBetweenInputEventsInMs)
+    if(TICKS_TO_MS(now - lastInputHandleTime_) < MINIMUM_TIME_BETWEEN_INPUT_EVENTS)
     {
         // not enough time has passed since last handled input event. Ignore
         return;

@@ -3,7 +3,7 @@
 
 MenuItemWidget::MenuItemWidget()
     : data_()
-    , style_()
+    , style_({0})
     , focused_(false)
     , visible_(true)
     , aButtonPressed_(false)
@@ -70,9 +70,8 @@ bool MenuItemWidget::handleUserInput(const joypad_inputs_t& userInput)
     }
     else if(aButtonPressed_)
     {
-        execute();
         aButtonPressed_ = false;
-        return true;
+        return execute();
     }
     return false;
 }
@@ -104,7 +103,12 @@ void MenuItemWidget::render(RDPQGraphics& gfx, const Rectangle& parentBounds)
     gfx.drawText(myBounds, data_.title, (focused_) ? style_.titleFocused : style_.titleNotFocused);
 }
 
-void MenuItemWidget::execute()
+bool MenuItemWidget::execute()
 {
-    data_.onConfirmAction(data_.context, data_.itemParam);
+    if(data_.onConfirmAction)
+    {
+        data_.onConfirmAction(data_.context, data_.itemParam);
+        return true;
+    }
+    return false;
 }

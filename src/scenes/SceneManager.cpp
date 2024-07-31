@@ -29,10 +29,15 @@ SceneManager::~SceneManager()
     unloadScene(scene_);
 }
 
-void SceneManager::switchScene(SceneType type, void (*deleteContextFunc)(void*), void* sceneContext)
+void SceneManager::switchScene(SceneType type, void (*deleteContextFunc)(void*), void* sceneContext, bool deleteHistory)
 {
     newSceneType_ = type;
     newSceneContext_ = sceneContext;
+
+    if(deleteHistory)
+    {
+        clearHistory();
+    }
 
     sceneHistory_.push_back(SceneHistorySegment{
         .type = type,

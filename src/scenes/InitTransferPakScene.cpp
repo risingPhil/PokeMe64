@@ -77,7 +77,8 @@ void InitTransferPakScene::onDialogDone()
     {
         menuContext = new MenuSceneContext({
             .menuEntries = gen1MenuEntries,
-            .numMenuEntries = static_cast<uint32_t>(gen1MenuEntriesSize / sizeof(gen1MenuEntries[0]))
+            .numMenuEntries = static_cast<uint32_t>(gen1MenuEntriesSize / sizeof(gen1MenuEntries[0])),
+            .bButtonMeansUserWantsToSwitchCartridge = true
         });
     }
     else if(gen2Type != Gen2GameType::INVALID)
@@ -86,14 +87,16 @@ void InitTransferPakScene::onDialogDone()
         {
             menuContext = new MenuSceneContext({
                 .menuEntries = gen2CrystalMenuEntries,
-                .numMenuEntries = static_cast<uint32_t>(gen2CrystalMenuEntriesSize / sizeof(gen2CrystalMenuEntries[0]))
+                .numMenuEntries = static_cast<uint32_t>(gen2CrystalMenuEntriesSize / sizeof(gen2CrystalMenuEntries[0])),
+                .bButtonMeansUserWantsToSwitchCartridge = true
             });
         }
         else
         {
             menuContext = new MenuSceneContext({
                 .menuEntries = gen2MenuEntries,
-                .numMenuEntries = static_cast<uint32_t>(gen2MenuEntriesSize / sizeof(gen2MenuEntries[0]))
+                .numMenuEntries = static_cast<uint32_t>(gen2MenuEntriesSize / sizeof(gen2MenuEntries[0])),
+                .bButtonMeansUserWantsToSwitchCartridge = true
             });
         }
     }

@@ -115,7 +115,7 @@ protected:
     /**
      * Executes the onConfirmAction callback (if any)
      */
-    void execute();
+    bool execute();
 private:
     MenuItemData data_;
     MenuItemStyle style_;

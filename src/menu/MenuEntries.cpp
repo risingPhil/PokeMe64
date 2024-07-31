@@ -28,6 +28,16 @@ MenuItemData gen2MenuEntries[] = {
     {
         .title = "PCNY Pokémon",
         .onConfirmAction = goToGen2PCNYDistributionPokemonMenu,
+    },
+    {
+        .title = "Unlock Pikachu Bed",
+        .onConfirmAction = gen2SetEventFlag,
+        .itemParam = &GEN2_EVENTFLAG_DECORATION_PIKACHU_BED
+    },
+    {
+        .title = "Unlock Tentacool Doll",
+        .onConfirmAction = gen2SetEventFlag,
+        .itemParam = &GEN2_EVENTFLAG_DECORATION_TENTACOOL_DOLL
     }
 };
 
@@ -45,6 +55,16 @@ MenuItemData gen2CrystalMenuEntries[] = {
     {
         .title = "Unlock GS Ball",
         .onConfirmAction = gen2ReceiveGSBall
+    },
+    {
+        .title = "Unlock Pikachu Bed",
+        .onConfirmAction = gen2SetEventFlag,
+        .itemParam = &GEN2_EVENTFLAG_DECORATION_PIKACHU_BED
+    },
+    {
+        .title = "Unlock Tentacool Doll",
+        .onConfirmAction = gen2SetEventFlag,
+        .itemParam = &GEN2_EVENTFLAG_DECORATION_TENTACOOL_DOLL
     }
 };
 
