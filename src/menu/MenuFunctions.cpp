@@ -15,6 +15,7 @@ const Move MOVE_FLY = Move::FLY;
 
 // based on https://github.com/kwsch/PKHeX/blob/master/PKHeX.Core/Resources/text/script/gen2/flags_c_en.txt
 const uint16_t GEN2_EVENTFLAG_DECORATION_PIKACHU_BED = 679;
+const uint16_t GEN2_EVENTFLAG_DECORATION_UNOWN_DOLL = 712;
 const uint16_t GEN2_EVENTFLAG_DECORATION_TENTACOOL_DOLL = 715;
 
 typedef struct Gen1TeachPikachuParams

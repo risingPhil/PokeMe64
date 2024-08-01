@@ -10,6 +10,7 @@ extern const Move MOVE_SURF;
 extern const Move MOVE_FLY;
 
 extern const uint16_t GEN2_EVENTFLAG_DECORATION_PIKACHU_BED;
+extern const uint16_t GEN2_EVENTFLAG_DECORATION_UNOWN_DOLL;
 extern const uint16_t GEN2_EVENTFLAG_DECORATION_TENTACOOL_DOLL;
 
 void activateFrameLog(void* context, const void* param);

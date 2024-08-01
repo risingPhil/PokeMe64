@@ -35,6 +35,11 @@ MenuItemData gen2MenuEntries[] = {
         .itemParam = &GEN2_EVENTFLAG_DECORATION_PIKACHU_BED
     },
     {
+        .title = "Unlock Unown Doll",
+        .onConfirmAction = gen2SetEventFlag,
+        .itemParam = &GEN2_EVENTFLAG_DECORATION_UNOWN_DOLL
+    },
+    {
         .title = "Unlock Tentacool Doll",
         .onConfirmAction = gen2SetEventFlag,
         .itemParam = &GEN2_EVENTFLAG_DECORATION_TENTACOOL_DOLL
@@ -60,6 +65,11 @@ MenuItemData gen2CrystalMenuEntries[] = {
         .title = "Unlock Pikachu Bed",
         .onConfirmAction = gen2SetEventFlag,
         .itemParam = &GEN2_EVENTFLAG_DECORATION_PIKACHU_BED
+    },
+    {
+        .title = "Unlock Unown Doll",
+        .onConfirmAction = gen2SetEventFlag,
+        .itemParam = &GEN2_EVENTFLAG_DECORATION_UNOWN_DOLL
     },
     {
         .title = "Unlock Tentacool Doll",
