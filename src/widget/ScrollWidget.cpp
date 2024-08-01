@@ -110,15 +110,28 @@ uint32_t MoveScrollWidgetWindowAnimation::getDurationInMs() const
 
 void MoveScrollWidgetWindowAnimation::start(const Point& startPoint, const Point& endPoint)
 {
+    currentTimePos_ = 0.f;
     windowStartPoint_ = startPoint;
     windowEndPoint_ = endPoint;
 }
 
+void MoveScrollWidgetWindowAnimation::extend(const Point& endPoint)
+{
+    const Point currentPoint = calculatePoint(currentTimePos_);
+    start(currentPoint, endPoint);
+}
+
 void MoveScrollWidgetWindowAnimation::apply(float pos)
+{
+    const Point newWindowStart = calculatePoint(pos);
+    list_->setWindowStart(newWindowStart);
+}
+
+Point MoveScrollWidgetWindowAnimation::calculatePoint(float pos)
 {
     const int px = static_cast<int>(ceil(windowStartPoint_.x + (pos * (windowEndPoint_.x - windowStartPoint_.x))));
     const int py = static_cast<int>(ceil(windowStartPoint_.y + (pos * (windowEndPoint_.y - windowStartPoint_.y))));
-    list_->setWindowStart(Point{px, py});
+    return Point{px, py};
 }
 
 ScrollWidget::ScrollWidget(AnimationManager& animManager)
@@ -195,6 +208,12 @@ void ScrollWidget::removeWidget(IWidget* widget)
     recalculateWindowSize();
 }
 
+void ScrollWidget::clearWidgets()
+{
+    widgets_.clear();
+    windowBounds_ = {0};
+}
+
 bool ScrollWidget::handleUserInput(const joypad_inputs_t& userInput)
 {
     if(!focused_ || style_.scrollStep == 0)
@@ -203,21 +222,25 @@ bool ScrollWidget::handleUserInput(const joypad_inputs_t& userInput)
     }
 
     const FloatVector scrollDirection = determineScrollDirection(userInput);
+//  debugf("[ScrollWidget]: %s: scrollDirection [%f, %f]\r\n", __FUNCTION__, scrollDirection.x, scrollDirection.y);
     if(scrollDirection.x == 0.f && scrollDirection.y == 0.f)
     {
         return false;
     }
-    if(!windowAnimation_.isFinished())
-    {
-        windowAnimation_.skipToEnd();
-    }
 
-    const Point windowStartPoint = {.x = windowBounds_.x, .y = windowBounds_.y};
     Point windowEndPoint = {.x = windowBounds_.x, .y = windowBounds_.y};
-
     windowEndPoint.x += static_cast<int>(ceil(scrollDirection.x * style_.scrollStep));
     windowEndPoint.y += static_cast<int>(ceil(scrollDirection.y * style_.scrollStep));
-    windowAnimation_.start(windowStartPoint, windowEndPoint);
+
+    if(!windowAnimation_.isFinished())
+    {
+        windowAnimation_.extend(windowEndPoint);
+    }
+    else
+    {
+        const Point windowStartPoint = {.x = windowBounds_.x, .y = windowBounds_.y};
+        windowAnimation_.start(windowStartPoint, windowEndPoint);
+    }
 
     return true;
 }

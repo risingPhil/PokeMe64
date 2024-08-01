@@ -33,9 +33,12 @@ public:
     uint32_t getDurationInMs() const override;
 
     void start(const Point& startPoint, const Point& endPoint);
+    void extend(const Point& endPoint);
 protected:
     void apply(float pos) override;
 private:
+    Point calculatePoint(float pos);
+
     ScrollWidget* list_;
     Point windowStartPoint_;
     Point windowEndPoint_;
@@ -69,6 +72,7 @@ public:
 
     void addWidget(IWidget* widget);
     void removeWidget(IWidget* widget);
+    void clearWidgets();
 
     bool handleUserInput(const joypad_inputs_t& userInput) override;
     void render(RDPQGraphics& gfx, const Rectangle& parentBounds) override;

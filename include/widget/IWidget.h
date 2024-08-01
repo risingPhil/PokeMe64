@@ -12,6 +12,7 @@ class RDPQGraphics;
 class IWidget
 {
 public:
+    virtual ~IWidget(){}
     /**
      * @brief Returns whether the widget is currently focused
      */
