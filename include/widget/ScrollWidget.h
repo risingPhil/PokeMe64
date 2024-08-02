@@ -14,6 +14,10 @@ typedef struct ScrollWidgetStyle
 {
     // it defines the amount of pixels we should scroll when the analog stick or dpad is used.
     uint8_t scrollStep;
+    // whitespace to leave at the end of the scroll window (horizontal)
+    uint16_t marginRight;
+    // whitespace to leave at the end of the scroll window (vertical)
+    uint16_t marginBottom;
 } ScrollWidgetStyle;
 
 /**
@@ -33,12 +37,9 @@ public:
     uint32_t getDurationInMs() const override;
 
     void start(const Point& startPoint, const Point& endPoint);
-    void extend(const Point& endPoint);
 protected:
     void apply(float pos) override;
 private:
-    Point calculatePoint(float pos);
-
     ScrollWidget* list_;
     Point windowStartPoint_;
     Point windowEndPoint_;

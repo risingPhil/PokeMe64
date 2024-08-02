@@ -47,7 +47,9 @@ void TestScene::init()
     debugf("Hello Phil! Your tv type is: %s\r\n", tvtypeToString(get_tv_type()));
 
     const ScrollWidgetStyle scrollStyle = {
-        .scrollStep = 10
+        .scrollStep = 15,
+        .marginRight = 50,
+        .marginBottom = 50
     };
 
     scrollWidget_.setBounds(Rectangle{0, 0, 320, 240});

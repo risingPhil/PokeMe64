@@ -58,18 +58,27 @@ static FloatVector determineScrollDirection(const joypad_inputs_t& userInput)
         // analog stick
         int8_t absXVal = static_cast<int8_t>(abs(userInput.stick_x));
         int8_t absYVal = static_cast<int8_t>(abs(userInput.stick_y));
+        float resultX = 0.f;
+        float resultY = 0.f;
+
         if(absXVal < ANALOG_STICK_MIN_THRESHOLD && absYVal < ANALOG_STICK_MIN_THRESHOLD)
         {
             return FloatPoint{0.f, 0.f};
         }
 
         // clamp the x and y values to ANALOG_STICK_MAX_THRESHOLD
-        absXVal = (absXVal > ANALOG_STICK_MAX_THRESHOLD) ? ANALOG_STICK_MAX_THRESHOLD : absXVal;
-        absYVal = (absYVal > ANALOG_STICK_MAX_THRESHOLD) ? ANALOG_STICK_MAX_THRESHOLD : absYVal;
-
-        // remove the dead zone and map the resulting range to 0.f-1.f
-        float resultX = static_cast<float>(absXVal - ANALOG_STICK_MIN_THRESHOLD) * STICK_RANGE_UNIT;
-        float resultY = static_cast<float>(absYVal - ANALOG_STICK_MIN_THRESHOLD) * STICK_RANGE_UNIT;
+        if(absXVal > ANALOG_STICK_MIN_THRESHOLD)
+        {
+            absXVal = (absXVal > ANALOG_STICK_MAX_THRESHOLD) ? ANALOG_STICK_MAX_THRESHOLD : absXVal;
+            // remove the dead zone and map the resulting range to 0.f-1.f
+            resultX = static_cast<float>(absXVal - ANALOG_STICK_MIN_THRESHOLD) * STICK_RANGE_UNIT;
+        }
+        if(absYVal > ANALOG_STICK_MIN_THRESHOLD)
+        {
+            absYVal = (absYVal > ANALOG_STICK_MAX_THRESHOLD) ? ANALOG_STICK_MAX_THRESHOLD : absYVal;
+            // remove the dead zone and map the resulting range to 0.f-1.f
+            resultY = static_cast<float>(absYVal - ANALOG_STICK_MIN_THRESHOLD) * STICK_RANGE_UNIT;
+        }
 
         if(userInput.stick_x < 0)
         {
@@ -115,23 +124,12 @@ void MoveScrollWidgetWindowAnimation::start(const Point& startPoint, const Point
     windowEndPoint_ = endPoint;
 }
 
-void MoveScrollWidgetWindowAnimation::extend(const Point& endPoint)
-{
-    const Point currentPoint = calculatePoint(currentTimePos_);
-    start(currentPoint, endPoint);
-}
-
 void MoveScrollWidgetWindowAnimation::apply(float pos)
-{
-    const Point newWindowStart = calculatePoint(pos);
-    list_->setWindowStart(newWindowStart);
-}
-
-Point MoveScrollWidgetWindowAnimation::calculatePoint(float pos)
 {
     const int px = static_cast<int>(ceil(windowStartPoint_.x + (pos * (windowEndPoint_.x - windowStartPoint_.x))));
     const int py = static_cast<int>(ceil(windowStartPoint_.y + (pos * (windowEndPoint_.y - windowStartPoint_.y))));
-    return Point{px, py};
+    const Point newWindowStart{px, py};
+    list_->setWindowStart(newWindowStart);
 }
 
 ScrollWidget::ScrollWidget(AnimationManager& animManager)
@@ -222,25 +220,33 @@ bool ScrollWidget::handleUserInput(const joypad_inputs_t& userInput)
     }
 
     const FloatVector scrollDirection = determineScrollDirection(userInput);
-//  debugf("[ScrollWidget]: %s: scrollDirection [%f, %f]\r\n", __FUNCTION__, scrollDirection.x, scrollDirection.y);
     if(scrollDirection.x == 0.f && scrollDirection.y == 0.f)
     {
         return false;
     }
 
+    const Point windowStartPoint = {.x = windowBounds_.x, .y = windowBounds_.y};
     Point windowEndPoint = {.x = windowBounds_.x, .y = windowBounds_.y};
+
     windowEndPoint.x += static_cast<int>(ceil(scrollDirection.x * style_.scrollStep));
     windowEndPoint.y += static_cast<int>(ceil(scrollDirection.y * style_.scrollStep));
-
-    if(!windowAnimation_.isFinished())
+    if(windowEndPoint.x < 0)
     {
-        windowAnimation_.extend(windowEndPoint);
+        windowEndPoint.x = 0;
     }
-    else
+    if(windowEndPoint.y < 0)
     {
-        const Point windowStartPoint = {.x = windowBounds_.x, .y = windowBounds_.y};
-        windowAnimation_.start(windowStartPoint, windowEndPoint);
+        windowEndPoint.y = 0;
     }
+    if(windowEndPoint.x + bounds_.width > windowBounds_.width)
+    {
+        windowEndPoint.x = windowBounds_.width - bounds_.width;
+    }
+    if(windowEndPoint.y + bounds_.height > windowBounds_.height)
+    {
+        windowEndPoint.y = windowBounds_.height - bounds_.height;
+    }
+    windowAnimation_.start(windowStartPoint, windowEndPoint);
 
     return true;
 }
@@ -314,11 +320,11 @@ void ScrollWidget::growWindow(IWidget* widget)
 
     if(widgetMaxX > windowBounds_.width)
     {
-        windowBounds_.width = widgetMaxX;
+        windowBounds_.width = widgetMaxX + style_.marginRight;
     }
     if(widgetMaxY > windowBounds_.height)
     {
-        windowBounds_.height = widgetMaxY;
+        windowBounds_.height = widgetMaxY + style_.marginBottom;
     }
 }
 
