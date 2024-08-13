@@ -60,4 +60,17 @@ typedef struct SpriteRenderSettings
     float rotationAngle;
 } SpriteRenderSettings;
 
+typedef struct SurfaceRenderSettings
+{
+    /**
+     * Source region within the sprite that needs to be rendered (partial rendering)
+     */
+    Rectangle srcRect;
+
+    /**
+     * @brief Rotation angle in radians
+     */
+    float rotationAngle;
+} SurfaceRenderSettings;
+
 #endif

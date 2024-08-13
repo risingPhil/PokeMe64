@@ -62,6 +62,7 @@ private:
 
     std::vector<SceneHistorySegment> sceneHistory_;
     SceneDependencies sceneDeps_;
+    uint64_t blockInputStartTime_;
     IScene* scene_;
     SceneType newSceneType_;
     void* newSceneContext_;

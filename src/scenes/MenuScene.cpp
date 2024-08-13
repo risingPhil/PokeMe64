@@ -158,6 +158,10 @@ void MenuScene::setupMenu()
         },
         .margin = {
             .top = 5
+        },
+        .autogrow = {
+            .enabled = true,
+            .maxHeight = 150
         }
     };
 
@@ -169,7 +173,7 @@ void MenuScene::setupMenu()
     };
 
     menuList_.setStyle(listStyle);
-    menuList_.setBounds(Rectangle{100, 30, 150, 150});
+    menuList_.setBounds(Rectangle{100, 30, 150, 0});
     menuList_.setVisible(true);
     cursorWidget_.setStyle(cursorStyle);
     cursorWidget_.setVisible(true);

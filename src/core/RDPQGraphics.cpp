@@ -167,6 +167,35 @@ static void render_sprite_ninegrid(const Rectangle &dstRect, sprite_t *sprite, c
     render_sprite_normal(curDest, sprite, {.renderMode = SpriteRenderMode::NORMAL, .srcRect = curSrc});
 }
 
+// same as render_sprite_normal, but for surface_t
+static void render_surface(const Rectangle &dstRect, const surface_t *surface, const SurfaceRenderSettings &renderSettings)
+{
+    if (!isZeroSizeRectangle(renderSettings.srcRect))
+    {
+        const rdpq_blitparms_t blitParams = {
+            .s0 = renderSettings.srcRect.x,
+            .t0 = renderSettings.srcRect.y,
+            .width = renderSettings.srcRect.width,
+            .height = renderSettings.srcRect.height,
+            .scale_x = static_cast<float>(dstRect.width) / renderSettings.srcRect.width,
+            .scale_y = static_cast<float>(dstRect.height) / renderSettings.srcRect.height,
+            .theta = renderSettings.rotationAngle
+        };
+
+        rdpq_tex_blit(surface, dstRect.x, dstRect.y, &blitParams);
+    }
+    else
+    {
+        const rdpq_blitparms_t blitParams = {
+            .scale_x = static_cast<float>(dstRect.width) / surface->width,
+            .scale_y = static_cast<float>(dstRect.height) / surface->height,
+            .theta = renderSettings.rotationAngle
+        };
+
+        rdpq_tex_blit(surface, dstRect.x, dstRect.y, &blitParams);
+    }
+}
+
 RDPQGraphics::RDPQGraphics()
     : clipRect_({0})
     , initialized_(false)
@@ -280,6 +309,27 @@ void RDPQGraphics::drawSprite(const Rectangle &dstRect, sprite_t *sprite, const 
     default:
         break;
     }
+}
+
+void RDPQGraphics::drawSurface(const Rectangle& dstRect, const surface_t* surface, const SurfaceRenderSettings& renderSettings)
+{
+    rdpq_mode_begin();
+    rdpq_set_mode_standard();
+    rdpq_mode_alphacompare(1); // colorkey (draw pixel with alpha >= 1)
+    switch(surface_get_format(surface))
+    {
+        case FMT_RGBA32:
+        case FMT_IA8:
+        case FMT_IA16:
+            rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
+            break;
+        default:
+            break;
+    }
+    rdpq_mode_filter(FILTER_BILINEAR);
+    rdpq_mode_end();
+
+    render_surface(dstRect, surface, renderSettings);
 }
 
 const Rectangle& RDPQGraphics::getClippingRectangle() const

@@ -37,6 +37,7 @@ filesystem/%.sprite: assets/%.png
 	$(N64_MKSPRITE) $(MKSPRITE_FLAGS) -o filesystem "$<"
 
 filesystem/Arial.font64: MKFONT_FLAGS+=--size 11 --outline 1.0 --char-spacing 1.0 --range 20-E9
+filesystem/Arial-small.font64: MKFONT_FLAGS+=--size 10 --outline 1.0 --char-spacing 1.0 --range 20-E9
 
 filesystem/menu-bg-9slice.sprite: MKSPRITE_FLAGS += -f RGBA16
 

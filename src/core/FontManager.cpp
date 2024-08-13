@@ -16,6 +16,7 @@ uint8_t FontManager::getFont(const char* fontUri)
             .fontId = nextFontId_
         };
         fontMap_.emplace(fontUri, entry);
+        ++nextFontId_;
 
         rdpq_text_register_font(entry.fontId, entry.font);
         return entry.fontId;

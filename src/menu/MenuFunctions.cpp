@@ -2,6 +2,8 @@
 #include "menu/MenuEntries.h"
 #include "core/RDPQGraphics.h"
 #include "scenes/DistributionPokemonListScene.h"
+#include "scenes/StatsScene.h"
+#include "scenes/MenuScene.h"
 #include "scenes/SceneManager.h"
 #include "gen2/Gen2GameReader.h"
 #include "transferpak/TransferPakManager.h"
@@ -114,7 +116,6 @@ void goToTestScene(void* context, const void* param)
 void goToGen1DistributionPokemonMenu(void* context, const void*)
 {
     goToDistributionPokemonListMenu(context, DistributionPokemonListType::GEN1);
-    
 }
 
 void goToGen2DistributionPokemonMenu(void* context, const void*)
@@ -125,6 +126,17 @@ void goToGen2DistributionPokemonMenu(void* context, const void*)
 void goToGen2PCNYDistributionPokemonMenu(void* context, const void* param)
 {
     goToDistributionPokemonListMenu(context, DistributionPokemonListType::GEN2_POKEMON_CENTER_NEW_YORK);
+}
+
+void goToGen2DecorationMenu(void* context, const void* param)
+{
+    MenuScene* scene = static_cast<MenuScene*>(context);
+    auto newSceneContext = new MenuSceneContext{
+        .menuEntries = gen2DecorationMenuEntries,
+        .numMenuEntries = gen2DecorationMenuEntriesSize / sizeof(gen2DecorationMenuEntries[0])
+    };
+
+    scene->getDependencies().sceneManager.switchScene(SceneType::MENU, deleteMenuSceneContext, newSceneContext);
 }
 
 void gen1PrepareToTeachPikachu(void* context, const void* param)

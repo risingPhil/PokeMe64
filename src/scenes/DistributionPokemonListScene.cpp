@@ -1,5 +1,6 @@
 #include "scenes/DistributionPokemonListScene.h"
 #include "scenes/SceneManager.h"
+#include "scenes/StatsScene.h"
 #include "transferpak/TransferPakManager.h"
 
 static DistributionPokemonListSceneContext* convert(void* context)
@@ -68,27 +69,38 @@ void DistributionPokemonListScene::triggerPokemonInjection(const void* data)
 
 void DistributionPokemonListScene::injectPokemon(const void* data)
 {
+    StatsSceneContext* statsContext;
     const Gen1DistributionPokemon* g1Poke;
     const Gen2DistributionPokemon* g2Poke;
     const char* trainerName;
-    const char* pokeName;
 
     deps_.tpakManager.setRAMEnabled(true);
+
+    statsContext = new StatsSceneContext{
+        .showReceivedPokemonDialog = true
+    };
 
     switch(convert(context_)->listType)
     {
     case DistributionPokemonListType::GEN1:
         g1Poke = static_cast<const Gen1DistributionPokemon*>(data);
-        trainerName = gen1Reader_.getTrainerName();
-        pokeName = gen1Reader_.getPokemonName(g1Poke->poke.poke_index);
-        gen1Reader_.addDistributionPokemon((*g1Poke));
+        statsContext->poke_g1 = g1Poke->poke;
+        // I have not used gen1Reader_->addDistributionPokemon here because I want to show the resulting pokemon in a stats screen
+        // gen1_prepareDistributionPokemon() + addPokemon() gives me access to the resulting Gen1TrainerPokemon instance
+        // in which things are done like IV generation, OT name decision, OT id
+        gen1_prepareDistributionPokemon(gen1Reader_, (*g1Poke), statsContext->poke_g1, trainerName);
+        gen1Reader_.addPokemon(statsContext->poke_g1, trainerName);
         break;
     case DistributionPokemonListType::GEN2:
     case DistributionPokemonListType::GEN2_POKEMON_CENTER_NEW_YORK:
         g2Poke = static_cast<const Gen2DistributionPokemon*>(data);
-        trainerName = gen2Reader_.getTrainerName();
-        pokeName = gen2Reader_.getPokemonName(g2Poke->poke.poke_index);
-        gen2Reader_.addDistributionPokemon((*g2Poke));
+        statsContext->poke_g2 = g2Poke->poke;
+        statsContext->isEgg = g2Poke->isEgg;
+        // I have not used gen2Reader_->addDistributionPokemon here because I want to show the resulting pokemon in a stats screen
+        // gen2_prepareDistributionPokemon() + addPokemon() gives me access to the resulting Gen2TrainerPokemon instance
+        // in which things are done like IV generation, OT name decision, OT id, shininess
+        gen2_prepareDistributionPokemon(gen2Reader_, (*g2Poke), statsContext->poke_g2, trainerName);
+        gen2Reader_.addPokemon(statsContext->poke_g2, trainerName);
         gen2Reader_.finishSave();
         break;
     default:
@@ -104,6 +116,8 @@ void DistributionPokemonListScene::injectPokemon(const void* data)
          * to MBC3
          */
         deps_.tpakManager.setRAMEnabled(false);
+        delete statsContext;
+        statsContext = nullptr;
         return;
     }
 
@@ -112,12 +126,9 @@ void DistributionPokemonListScene::injectPokemon(const void* data)
     // The reason is the same as previous setRAMEnabled(false) statement above
     deps_.tpakManager.setRAMEnabled(false);
 
-    // operation done. Now the dialog can be advanced and we can show confirmation that the user got the pokémon
-    dialogWidget_.advanceDialog();
+    deps_.sceneManager.switchScene(SceneType::STATS, deleteStatsSceneContext, statsContext);
 
-    setDialogDataText(diag_, "%s received %s!", trainerName, pokeName);
-    diag_.userAdvanceBlocked = false;
-    showDialog(&diag_);
+    // operation done. Now the dialog can be advanced and we can show confirmation that the user got the pokémon
 }
 
 void DistributionPokemonListScene::onDialogDone()

@@ -17,6 +17,7 @@ enum class SceneType
     INIT_TRANSFERPAK,
     MENU,
     DISTRIBUTION_POKEMON_LIST,
+    STATS,
     TEST
 };
 

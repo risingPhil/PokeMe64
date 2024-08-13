@@ -15,6 +15,7 @@ typedef struct TextRenderSettings
 } TextRenderSettings;
 
 typedef struct SpriteRenderSettings SpriteRenderSettings;
+typedef struct SurfaceRenderSettings SurfaceRenderSettings;
 
 /**
  * @brief This class abstracts operations done with the RDPQ graphics API in libdragon
@@ -63,6 +64,11 @@ public:
      * with the specified SpriteRenderSettings. Please refer to SpriteRenderSettings for more info.
      */
     void drawSprite(const Rectangle& dstRect, sprite_t* sprite, const SpriteRenderSettings& renderSettings);
+
+    /**
+     * Same as drawSprite() but then for surface_t objects
+     */
+    void drawSurface(const Rectangle& dstRect, const surface_t* surface, const SurfaceRenderSettings& renderSettings);
 
     const Rectangle& getClippingRectangle() const;
     void setClippingRectangle(const Rectangle& clipRect);

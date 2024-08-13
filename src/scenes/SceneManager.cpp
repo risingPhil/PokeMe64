@@ -1,9 +1,12 @@
 #include "scenes/SceneManager.h"
 #include "scenes/TestScene.h"
+#include "scenes/StatsScene.h"
 #include "scenes/InitTransferPakScene.h"
 #include "scenes/DistributionPokemonListScene.h"
 
 #include <libdragon.h>
+
+static const uint16_t INPUT_BLOCK_TIME_AFTER_NEW_SCENE_IN_MS = 500;
 
 SceneManager::SceneManager(RDPQGraphics& gfx, AnimationManager& animationManager, FontManager& fontManager, TransferPakManager& tpakManager)
     : sceneHistory_()
@@ -44,6 +47,8 @@ void SceneManager::switchScene(SceneType type, void (*deleteContextFunc)(void*),
         .context = sceneContext,
         .deleteContextFunc = deleteContextFunc
     });
+
+    blockInputStartTime_ = get_ticks();
 }
 
 void SceneManager::goBackToPreviousScene()
@@ -80,6 +85,18 @@ void SceneManager::handleUserInput()
     {
         return;
     }
+
+    if(blockInputStartTime_)
+    {
+        const uint64_t now = get_ticks();
+        if(TICKS_TO_MS(now - blockInputStartTime_) < INPUT_BLOCK_TIME_AFTER_NEW_SCENE_IN_MS)
+        {
+            return;
+        }
+        // enough time has passed. reset the blockInputStartTime_
+        blockInputStartTime_ = 0;
+    }
+
     scene_->processUserInput();
 }
 
@@ -111,6 +128,9 @@ void SceneManager::loadScene()
             break;
         case SceneType::DISTRIBUTION_POKEMON_LIST:
             scene_ = new DistributionPokemonListScene(sceneDeps_, newSceneContext_);
+            break;
+        case SceneType::STATS:
+            scene_ = new StatsScene(sceneDeps_, newSceneContext_);
             break;
         case SceneType::TEST:
             scene_ = new TestScene(sceneDeps_, newSceneContext_);
