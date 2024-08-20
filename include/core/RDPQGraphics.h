@@ -8,11 +8,23 @@
 
 typedef struct TextRenderSettings
 {
+    /**
+     * @brief The libdragon font id (used as handle) as known by libdragon. FontManager manages the various fonts
+     */
     uint8_t fontId;
+    /**
+     * @brief The style id used to render the text. (this is a handle/id to a previously registered rdpq_fontstyle_t struct for the fontId specified earlier)
+     */
     uint8_t fontStyleId;
     int16_t charSpacing; ///< Extra spacing between chars (in addition to glyph width and kerning)
     int16_t lineSpacing; ///< Extra spacing between lines (in addition to font height)
+    /**
+     * @brief The horizontal alignment of the text
+     */
     rdpq_align_t halign;
+    /**
+     * @brief The vertical alignment of the text
+     */
     rdpq_valign_t valign;
 } TextRenderSettings;
 
