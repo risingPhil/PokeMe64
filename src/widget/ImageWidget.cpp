@@ -57,7 +57,10 @@ void ImageWidget::setBounds(const Rectangle& bounds)
 
 Dimensions ImageWidget::getSize() const
 {
-    return style_.size;
+    return Dimensions{
+        .width = bounds_.width,
+        .height = bounds_.height
+    };
 }
 
 void ImageWidget::setConfirmAction(void (*onConfirmAction)(void*), void* context)

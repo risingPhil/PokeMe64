@@ -105,5 +105,11 @@ void TextWidget::render(RDPQGraphics& gfx, const Rectangle& parentBounds)
     TextRenderSettings& renderSettings = (focused_) ? style_.renderSettingsFocused : style_.renderSettingsNotFocused;
 
     const Rectangle absoluteBounds = addOffset(bounds_, parentBounds);
+
+    if((style_.backgroundColor_ & 0x1))
+    {
+        gfx.fillRectangle(absoluteBounds, color_from_packed16(style_.backgroundColor_));
+    }
+
     gfx.drawText(absoluteBounds, text_, renderSettings);
 }

@@ -7,7 +7,6 @@
 
 typedef struct ImageWidgetStyle
 {
-    Dimensions size;
     struct {
         /**
          * (optional) background sprite

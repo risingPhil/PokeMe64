@@ -62,14 +62,12 @@ void TestScene::init()
     const Dimensions pokeballDimensions = {.width = pokeballSprite_->width, .height = pokeballSprite_->height};
 
     TextWidgetStyle type1Style = {
-        .size = {textDimensions.width, textDimensions.height},
         .renderSettingsNotFocused = {
             .fontId = fontId
         }
     };
 
     ImageWidgetStyle type2Style = {
-        .size = oakDimensions,
         .image = {
             .sprite = oakSprite_,
             .spriteBounds = {0, 0, oakDimensions.width, oakDimensions.height}
@@ -77,7 +75,6 @@ void TestScene::init()
     };
 
     ImageWidgetStyle type3Style = {
-        .size = pokeballDimensions,
         .image = {
             .sprite = pokeballSprite_,
             .spriteBounds = {0, 0, pokeballDimensions.width, pokeballDimensions.height}

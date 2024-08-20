@@ -12,6 +12,8 @@ typedef struct TextRenderSettings
     uint8_t fontStyleId;
     int16_t charSpacing; ///< Extra spacing between chars (in addition to glyph width and kerning)
     int16_t lineSpacing; ///< Extra spacing between lines (in addition to font height)
+    rdpq_align_t halign;
+    rdpq_valign_t valign;
 } TextRenderSettings;
 
 typedef struct SpriteRenderSettings SpriteRenderSettings;

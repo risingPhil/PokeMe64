@@ -39,6 +39,13 @@ filesystem/%.sprite: assets/%.png
 filesystem/Arial.font64: MKFONT_FLAGS+=--size 11 --outline 1.0 --char-spacing 1.0 --range 20-E9
 filesystem/Arial-small.font64: MKFONT_FLAGS+=--size 10 --outline 1.0 --char-spacing 1.0 --range 20-E9
 
+filesystem/logo-libdragon.sprite: MKSPRITE_FLAGS += -f RGBA32
+filesystem/logo-bulbagarden.sprite: MKSPRITE_FLAGS += -f RGBA32
+filesystem/logo-retrogamemechanicsexplained.sprite: MKSPRITE_FLAGS += -f RGBA32
+filesystem/logo-datacrystal.sprite: MKSPRITE_FLAGS += -f RGBA32
+filesystem/logo-pkhex.sprite: MKSPRITE_FLAGS += -f RGBA32
+filesystem/logo-gbdevio.sprite: MKSPRITE_FLAGS += -f RGBA32
+filesystem/logo-nesdevwiki.sprite: MKSPRITE_FLAGS += -f RGBA32
 filesystem/menu-bg-9slice.sprite: MKSPRITE_FLAGS += -f RGBA16
 
 pokemegb:

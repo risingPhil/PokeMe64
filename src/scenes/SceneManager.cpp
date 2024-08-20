@@ -1,6 +1,7 @@
 #include "scenes/SceneManager.h"
 #include "scenes/TestScene.h"
 #include "scenes/StatsScene.h"
+#include "scenes/AboutScene.h"
 #include "scenes/InitTransferPakScene.h"
 #include "scenes/DistributionPokemonListScene.h"
 
@@ -134,6 +135,9 @@ void SceneManager::loadScene()
             break;
         case SceneType::TEST:
             scene_ = new TestScene(sceneDeps_, newSceneContext_);
+            break;
+        case SceneType::ABOUT:
+            scene_ = new AboutScene(sceneDeps_, newSceneContext_);
             break;
         default:
             break;

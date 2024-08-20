@@ -18,7 +18,8 @@ enum class SceneType
     MENU,
     DISTRIBUTION_POKEMON_LIST,
     STATS,
-    TEST
+    TEST,
+    ABOUT
 };
 
 typedef struct SceneDependencies

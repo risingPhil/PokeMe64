@@ -90,13 +90,13 @@ bool MenuScene::handleUserInput(joypad_port_t port, const joypad_inputs_t& input
         return true;
     }
 
-    if(inputs.btn.b)
+    if(inputs.btn.b && !bButtonPressed_)
     {
         // we will only handle b button release.
         bButtonPressed_ = true;
         return true;
     }
-    else if(bButtonPressed_)
+    else if(!inputs.btn.b && bButtonPressed_)
     {
         // b button release occurred. Switch back to previous scene.
         bButtonPressed_ = false;

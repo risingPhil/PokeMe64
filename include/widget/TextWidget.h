@@ -6,9 +6,9 @@
 
 typedef struct TextWidgetStyle
 {
-    Dimensions size;
     TextRenderSettings renderSettingsFocused;
     TextRenderSettings renderSettingsNotFocused;
+    uint16_t backgroundColor_; // RGBA16
 } TextWidgetStyle;
 
 /**
