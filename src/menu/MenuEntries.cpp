@@ -15,6 +15,10 @@ MenuItemData gen1MenuEntries[] = {
         .title = "Teach Pikachu Fly",
         .onConfirmAction = gen1PrepareToTeachPikachu,
         .itemParam = &MOVE_FLY
+    },
+    {
+        .title = "About",
+        .onConfirmAction = goToAboutScene
     }
 };
 
@@ -32,6 +36,10 @@ MenuItemData gen2MenuEntries[] = {
     {
         .title = "Unlock Decoration",
         .onConfirmAction = goToGen2DecorationMenu
+    },
+    {
+        .title = "About",
+        .onConfirmAction = goToAboutScene
     }
 };
 
@@ -53,6 +61,10 @@ MenuItemData gen2CrystalMenuEntries[] = {
     {
         .title = "Unlock Decoration",
         .onConfirmAction = goToGen2DecorationMenu
+    },
+    {
+        .title = "About",
+        .onConfirmAction = goToAboutScene
     }
 };
 
