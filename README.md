@@ -16,6 +16,7 @@ I'm happy to accept pull requests if the community wants to do them.
 - Inject GS Ball into an actual Pokémon Crystal gameboy cartridge
 - Teach Pikachu Surf/Fly on Gen 1 cartridges
 - You don't have to use the transfer pak in controller 1. You can have it in a separate controller if you want. But the UI is still controlled with controller 1.
+- Unlock Mystery Gift decorations like the Pikachu Bed and Tentacool Doll that were left inaccessible in Gold/Silver/Crystal due to bugs in Pokemon Stadium 2 (suggested by /u/MermaidRaccoon on reddit)
 
 # Limitations
 - Right now, this rom only supports the international (English) versions of the games.
@@ -51,14 +52,12 @@ But having it done with a Nintendo 64 feels more "real"/"official" and is easier
 
 ## UI ideas
 - Make the initial transfer pack detect screen show the gameboy cartridge image of the game that was detected and some kind of icon when there's an error.
-- Add stats screen after receiving the pokémon which shows the original gameboy sprite but without the white background.
 - In the pokémon list, show the mini menu sprite that you would also see in the party menu in the gameboy games
 - add some background images and potentially sprites here and there.
 - add some acquisition sound effects from the gameboy games
 - add a skippable "trade" 3D animation sequence when you receive a distribution pokémon. The idea is to have a pokéball go into a green mario pipe on either a Nintendo 64 3D model or Nintendo 64 3D logo model. Then follow the pipe with the camera and have the pokéball drop onto a huge 3D representation of the gameboy cartridge before opening the pokéball which then triggers the stats screen.
 - Have a 3D intro animation that shows a pokeball opening, a Nintendo 64 logo appearing, slightly jumping and playing the "NINTENDO sixtyfoouuuuuuuuur" meme sound
 - Add a menu item to let you buy missing version exclusive pokémon from other versions of the generation with in-game currency. (such as Mankey for Blue or Vulpix for Red). The original games are getting expensive, so this would be a good help for people who can only afford/are willing to buy/play a single game for the generation.
-- Add Credits screen
 - Add a menu item that informs you about the existence of [Poke Transporter GB](https://github.com/GearsProgress/Poke_Transporter_GB) for transferring to Gen3
 - Add some background music (Creative commons remakes/remixes of the original music (Maybe a looped chunk of [Ramstar - Route 24](https://www.youtube.com/watch?v=ih53Nb34vbM)?)
 - Have a "music" widget that shows up to name the song(s) that I end up using when it/they start(s) playing. (similar to how [Need For Speed - Most Wanted (original)](https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWk37230YvbMHaMchN8dzQiRrO66VofThpcbvUTFMoplDbkQKBVUFcIabbNCnzZ0KpuxcAQmrXQjBlqv_bvi6v6xpjmPxs3tJ-ZI_GhOn3xe5DW7XpMbtnCKFcbBQ-l_zzbrIIV4smBpth/s1600/_mwmusic.jpg) used to show this)
@@ -68,7 +67,6 @@ But having it done with a Nintendo 64 feels more "real"/"official" and is easier
 - Support other language versions (in libpokemegb)
 - Make it possible to backup your cartridge save file onto the flashcart PokeMe64 is running from.
 - Make it possible to display your cartridge save file as a QR code and contribute to the 3DS' [PKSM](https://github.com/FlagBrew/PKSM) project to migrate the save file easily from gameboy cartridge to 3DS.
-- Unlock Mystery Gift decorations like the Pikachu Bed and Tentacool Doll that were left inaccessible in Gold/Silver/Crystal due to bugs in Pokemon Stadium 2 (suggested by /u/MermaidRaccoon on reddit)
 - Make it possible to swap gameboy cartridge after using the reset button on the N64. (suggested by /u/bluemooncinco on reddit)
 
 I'm likely going to postpone the 3D stuff (intro and "trade" sequence) until I have implemented a lot of the other ideas here.
