@@ -6,6 +6,9 @@
 #include "widget/ImageWidget.h"
 #include "widget/TextWidget.h"
 
+/**
+ * @brief This scene shows the version number and credits of the PokeMe64 project.
+ */
 class AboutScene : public AbstractUIScene
 {
 public:
