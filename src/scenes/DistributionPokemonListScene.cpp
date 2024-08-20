@@ -100,7 +100,7 @@ void DistributionPokemonListScene::injectPokemon(const void* data)
         // gen2_prepareDistributionPokemon() + addPokemon() gives me access to the resulting Gen2TrainerPokemon instance
         // in which things are done like IV generation, OT name decision, OT id, shininess
         gen2_prepareDistributionPokemon(gen2Reader_, (*g2Poke), statsContext->poke_g2, trainerName);
-        gen2Reader_.addPokemon(statsContext->poke_g2, trainerName);
+        gen2Reader_.addPokemon(statsContext->poke_g2, g2Poke->isEgg, trainerName);
         gen2Reader_.finishSave();
         break;
     default:
