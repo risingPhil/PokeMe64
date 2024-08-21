@@ -5,10 +5,12 @@
 #include "animations/IAnimation.h"
 #include <vector>
 
-typedef std::vector<IWidget*> WidgetList;
-
+class IScrollWindowListener;
 class ScrollWidget;
 class AnimationManager;
+
+typedef std::vector<IWidget*> WidgetList;
+typedef std::vector<IScrollWindowListener*> ScrollWindowListenerList;
 
 typedef struct ScrollWidgetStyle
 {
@@ -84,16 +86,8 @@ public:
      */
     void setWindowStart(const Point& windowStart);
 
-    /**
-     * @brief Indicates the percentage at which the current window position is at horizontally
-     *  in relation to the entire window
-     */
-    float getWindowProgressX() const;
-    /**
-     * @brief Indicates the percentage at which the current window position is at vertically
-     *  in relation to the entire window
-     */
-    float getWindowProgressY() const;
+    void registerScrollWindowListener(IScrollWindowListener* listener);
+    void unregisterScrollWindowListener(IScrollWindowListener* listener);
 protected:
 private:
     /**
@@ -107,8 +101,11 @@ private:
      */
     void recalculateWindowSize();
 
+    void notifyScrollWindowListeners();
+
     MoveScrollWidgetWindowAnimation windowAnimation_;
     WidgetList widgets_;
+    ScrollWindowListenerList scrollWindowListeners_;
     ScrollWidgetStyle style_;
     AnimationManager& animManager_;
     Rectangle bounds_;

@@ -1,4 +1,5 @@
 #include "widget/ScrollWidget.h"
+#include "widget/IScrollWindowListener.h"
 #include "core/common.h"
 #include "scenes/AbstractUIScene.h"
 #include "animations/AnimationManager.h"
@@ -135,6 +136,7 @@ void MoveScrollWidgetWindowAnimation::apply(float pos)
 ScrollWidget::ScrollWidget(AnimationManager& animManager)
     : windowAnimation_(this)
     , widgets_()
+    , scrollWindowListeners_()
     , style_({0})
     , animManager_(animManager)
     , bounds_({0})
@@ -194,6 +196,7 @@ void ScrollWidget::addWidget(IWidget* widget)
 {
     widgets_.push_back(widget);
     growWindow(widget);
+    notifyScrollWindowListeners();
 }
 
 void ScrollWidget::removeWidget(IWidget* widget)
@@ -210,6 +213,7 @@ void ScrollWidget::clearWidgets()
 {
     widgets_.clear();
     windowBounds_ = {0};
+    notifyScrollWindowListeners();
 }
 
 bool ScrollWidget::handleUserInput(const joypad_inputs_t& userInput)
@@ -297,18 +301,22 @@ void ScrollWidget::setWindowStart(const Point& windowStart)
 {
     windowBounds_.x = windowStart.x;
     windowBounds_.y = windowStart.y;
+
+    notifyScrollWindowListeners();
 }
 
-float ScrollWidget::getWindowProgressX() const
+void ScrollWidget::registerScrollWindowListener(IScrollWindowListener* listener)
 {
-    const float maxX = windowBounds_.width - bounds_.width;
-    return static_cast<float>(windowBounds_.x) / maxX;
+    scrollWindowListeners_.push_back(listener);
 }
 
-float ScrollWidget::getWindowProgressY() const
+void ScrollWidget::unregisterScrollWindowListener(IScrollWindowListener* listener)
 {
-    const double maxY = windowBounds_.height - bounds_.height;
-    return static_cast<float>(windowBounds_.y) / maxY;
+    auto it = std::find(scrollWindowListeners_.begin(), scrollWindowListeners_.end(), listener);
+    if(it != scrollWindowListeners_.end())
+    {
+        scrollWindowListeners_.erase(it);
+    }
 }
 
 void ScrollWidget::growWindow(IWidget* widget)
@@ -335,5 +343,19 @@ void ScrollWidget::recalculateWindowSize()
     for(IWidget* widget : widgets_)
     {
         growWindow(widget);
+    }
+    notifyScrollWindowListeners();
+}
+
+void ScrollWidget::notifyScrollWindowListeners()
+{
+    const ScrollWindowUpdate update = {
+        .scrollWindowRectangle = {.x = windowBounds_.x, .y = windowBounds_.y, .width = bounds_.width, .height = bounds_.height},
+        .totalSize = {.width = windowBounds_.width, .height = windowBounds_.height}
+    };
+
+    for(IScrollWindowListener* listener : scrollWindowListeners_)
+    {
+        listener->onScrollWindowChanged(update);
     }
 }
