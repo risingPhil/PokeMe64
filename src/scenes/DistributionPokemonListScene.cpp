@@ -154,11 +154,15 @@ void DistributionPokemonListScene::setupMenu()
         },
         .margin = {
             .top = 5
+        },
+        .autogrow = {
+            .enabled = true,
+            .maxHeight = 200
         }
     };
 
     menuList_.setStyle(listStyle);
-    menuList_.setBounds(Rectangle{20, 20, 280, 150});
+    menuList_.setBounds(Rectangle{20, 20, 280, 0});
     menuList_.setVisible(true);
 
     cursorWidget_.setVisible(false);

@@ -2,6 +2,7 @@
 #define ISCROLLWINDOWLISTENER_H
 
 #include "core/common.h"
+#include "core/DragonUtils.h"
 
 /**
  * This struct contains the various things to know about the scroll window
@@ -20,6 +21,8 @@ typedef struct ScrollWindowUpdate
      */
     Dimensions totalSize;
 } ScrollWindowUpdate;
+
+bool canScrollTo(const ScrollWindowUpdate& info, UINavigationDirection direction);
 
 /**
  * This class allows you to react to changes to the scroll window of a widget.

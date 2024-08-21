@@ -338,9 +338,9 @@ bool VerticalList::handleUserInput(const joypad_inputs_t& userInput)
         return hasFocusedWidgetHandledInput;
     }
 
-    const UINavigationKey navKey = determineUINavigationKey(userInput, NavigationInputSourceType::BOTH);
+    const UINavigationDirection navDirection = determineUINavigationDirection(userInput, NavigationInputSourceType::BOTH);
 
-    if(navKey == UINavigationKey::UP)
+    if(navDirection == UINavigationDirection::UP)
     {
         if(focusedWidgetIndex_ < 1)
         {
@@ -348,7 +348,7 @@ bool VerticalList::handleUserInput(const joypad_inputs_t& userInput)
         }
         return focusPrevious();
     }
-    else if(navKey == UINavigationKey::DOWN)
+    else if(navDirection == UINavigationDirection::DOWN)
     {
         if(focusedWidgetIndex_ == widgetList_.size() - 1)
         {
