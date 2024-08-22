@@ -3,11 +3,13 @@
 
 #include "scenes/SceneWithDialogWidget.h"
 #include "widget/VerticalList.h"
+#include "widget/ImageWidget.h"
 #include "widget/DialogWidget.h"
 #include "widget/CursorWidget.h"
 #include "widget/MenuItemWidget.h"
 #include "widget/ListItemFiller.h"
 #include "widget/IFocusListener.h"
+#include "widget/IScrollWindowListener.h"
 
 typedef struct MenuSceneContext
 {
@@ -20,7 +22,7 @@ typedef struct MenuSceneContext
  * @brief A scene showing a menu
  * 
  */
-class MenuScene : public SceneWithDialogWidget, public IFocusListener
+class MenuScene : public SceneWithDialogWidget, public IFocusListener, public IScrollWindowListener
 {
 public:
     MenuScene(SceneDependencies& deps, void* context);
@@ -36,6 +38,7 @@ public:
     virtual void onDialogDone();
 
     void focusChanged(const FocusChangeStatus& status) override;
+    void onScrollWindowChanged(const ScrollWindowUpdate& update) override;
 
     SceneDependencies& getDependencies();
 
@@ -47,7 +50,11 @@ protected:
     MenuSceneContext* context_;
     sprite_t* menu9SliceSprite_;
     sprite_t* cursorSprite_;
+    sprite_t* uiArrowUpSprite_;
+    sprite_t* uiArrowDownSprite_;
     VerticalList menuList_;
+    ImageWidget scrollArrowUp_;
+    ImageWidget scrollArrowDown_;
     CursorWidget cursorWidget_;
     ListItemFiller<VerticalList, MenuItemData, MenuItemWidget, MenuItemStyle>  menuListFiller_;
     WidgetFocusChainSegment listFocusChainSegment_;

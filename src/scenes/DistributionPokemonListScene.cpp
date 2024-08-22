@@ -3,6 +3,10 @@
 #include "scenes/StatsScene.h"
 #include "transferpak/TransferPakManager.h"
 
+static const Rectangle menuListBounds = {20, 20, 280, 0};
+static const Rectangle imgScrollArrowUpBounds = {.x = 154, .y = 14, .width = 11, .height = 6};
+static const Rectangle imgScrollArrowDownBounds = {.x = 154, .y = 220, .width = 11, .height = 6};
+
 static DistributionPokemonListSceneContext* convert(void* context)
 {
     return static_cast<DistributionPokemonListSceneContext*>(context);
@@ -162,8 +166,9 @@ void DistributionPokemonListScene::setupMenu()
     };
 
     menuList_.setStyle(listStyle);
-    menuList_.setBounds(Rectangle{20, 20, 280, 0});
+    menuList_.setBounds(menuListBounds);
     menuList_.setVisible(true);
+    menuList_.registerScrollWindowListener(this);
 
     cursorWidget_.setVisible(false);
 
@@ -182,6 +187,28 @@ void DistributionPokemonListScene::setupMenu()
     };
 
     menuListFiller_.addItems(context_->menuEntries, context_->numMenuEntries, itemStyle);
+
+    const ImageWidgetStyle scrollArrowUpStyle = {
+        .image = {
+            .sprite = uiArrowUpSprite_,
+            .spriteBounds = {0, 0, imgScrollArrowUpBounds.width, imgScrollArrowUpBounds.height}
+        }
+    };
+
+    scrollArrowUp_.setStyle(scrollArrowUpStyle);
+    scrollArrowUp_.setBounds(imgScrollArrowUpBounds);
+
+    const ImageWidgetStyle scrollArrowDownStyle = {
+        .image = {
+            .sprite = uiArrowDownSprite_,
+            .spriteBounds = { 0, 0, imgScrollArrowDownBounds.width, imgScrollArrowDownBounds.height}
+        }
+    };
+
+    // note: even though autogrow is turned on for the vertical list, it doesn't matter for the down arrow.
+    // because when the list is still growing, no scrolling is needed anyway, so the arrow would be invisible anyway.
+    scrollArrowDown_.setStyle(scrollArrowDownStyle);
+    scrollArrowDown_.setBounds(imgScrollArrowDownBounds);
 }
 
 void DistributionPokemonListScene::loadDistributionPokemonList()
