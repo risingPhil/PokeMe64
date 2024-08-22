@@ -3,13 +3,13 @@
 
 #include <libdragon.h>
 
-enum class UINavigationKey
+enum class UINavigationDirection
 {
-    NONE,
     UP,
     RIGHT,
     DOWN,
-    LEFT
+    LEFT,
+    MAX
 };
 
 enum class NavigationInputSourceType
@@ -24,6 +24,6 @@ enum class NavigationInputSourceType
  * This function determines whether the joypad_inputs_t has analog or dpad positions/presses that could be considered for UI navigation.
  * If so, it will return the most prominent direction.
  */
-const UINavigationKey determineUINavigationKey(joypad_inputs_t inputs, NavigationInputSourceType sourceType);
+const UINavigationDirection determineUINavigationDirection(joypad_inputs_t inputs, NavigationInputSourceType sourceType);
 
 #endif

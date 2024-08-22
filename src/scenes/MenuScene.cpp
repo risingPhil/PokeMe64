@@ -5,6 +5,11 @@
 #include "menu/MenuFunctions.h"
 
 #include <cstdio>
+#include <cmath>
+
+static const Rectangle menuListBounds = {100, 30, 150, 0};
+static const Rectangle imgScrollArrowUpBounds = {.x = 170, .y = 24, .width = 11, .height = 6};
+static const Rectangle imgScrollArrowDownBounds = {.x = 170, .y = 180, .width = 11, .height = 6};
 
 static void dialogFinishedCallback(void* context)
 {
@@ -17,7 +22,11 @@ MenuScene::MenuScene(SceneDependencies& deps, void* context)
     , context_(static_cast<MenuSceneContext*>(context))
     , menu9SliceSprite_(nullptr)
     , cursorSprite_(nullptr)
+    , uiArrowUpSprite_(nullptr)
+    , uiArrowDownSprite_(nullptr)
     , menuList_(deps.animationManager)
+    , scrollArrowUp_()
+    , scrollArrowDown_()
     , cursorWidget_(deps.animationManager)
     , menuListFiller_(menuList_)
     , listFocusChainSegment_(WidgetFocusChainSegment{
@@ -47,6 +56,8 @@ void MenuScene::init()
     // load these sprites before the parent init because setupDialog(style) will need them
     menu9SliceSprite_ = sprite_load("rom://menu-bg-9slice.sprite");
     cursorSprite_ = sprite_load("rom://hand-cursor.sprite");
+    uiArrowUpSprite_ = sprite_load("rom://ui-arrow-up.sprite");
+    uiArrowDownSprite_ = sprite_load("rom://ui-arrow-down.sprite");
 
     SceneWithDialogWidget::init();
 
@@ -58,16 +69,25 @@ void MenuScene::init()
 void MenuScene::destroy()
 {
     menuList_.unregisterFocusListener(this);
+    menuList_.unregisterScrollWindowListener(this);
     menuList_.clearWidgets();
     menuList_.setStyle({0});
     cursorWidget_.setStyle({0});
+    scrollArrowUp_.setStyle({0});
+    scrollArrowDown_.setStyle({0});
 
     // destroy the parent before releasing the sprites because the dialog widget
     // may still have a reference to them
     SceneWithDialogWidget::destroy();
 
+    sprite_free(uiArrowDownSprite_);
+    uiArrowDownSprite_ = nullptr;
+    sprite_free(uiArrowUpSprite_);
+    uiArrowUpSprite_ = nullptr;
     sprite_free(cursorSprite_);
+    cursorSprite_ = nullptr;
     sprite_free(menu9SliceSprite_);
+    menu9SliceSprite_ = nullptr;
 }
 
 void MenuScene::render(RDPQGraphics& gfx, const Rectangle& sceneBounds)
@@ -75,12 +95,8 @@ void MenuScene::render(RDPQGraphics& gfx, const Rectangle& sceneBounds)
     menuList_.render(gfx, sceneBounds);
     cursorWidget_.render(gfx, sceneBounds);
     SceneWithDialogWidget::render(gfx, sceneBounds);
-
-    TextRenderSettings renderSettings = {
-        .fontId = arialId_,
-        .fontStyleId = fontStyleWhiteId_
-    };
-    gfx.drawText(Rectangle{40, 10, 280, 16}, "PokeMe64 by risingPhil. Version 0.1", renderSettings);
+    scrollArrowUp_.render(gfx, sceneBounds);
+    scrollArrowDown_.render(gfx, sceneBounds);
 }
 
 bool MenuScene::handleUserInput(joypad_port_t port, const joypad_inputs_t& inputs)
@@ -141,6 +157,12 @@ void MenuScene::focusChanged(const FocusChangeStatus& status)
     cursorWidget_.moveToBounds(newCursorBounds);
 }
 
+void MenuScene::onScrollWindowChanged(const ScrollWindowUpdate& update)
+{
+    scrollArrowUp_.setVisible(canScrollTo(update, UINavigationDirection::UP));
+    scrollArrowDown_.setVisible(canScrollTo(update, UINavigationDirection::DOWN));
+}
+
 SceneDependencies& MenuScene::getDependencies()
 {
     return deps_;
@@ -173,11 +195,12 @@ void MenuScene::setupMenu()
     };
 
     menuList_.setStyle(listStyle);
-    menuList_.setBounds(Rectangle{100, 30, 150, 0});
+    menuList_.setBounds(menuListBounds);
     menuList_.setVisible(true);
     cursorWidget_.setStyle(cursorStyle);
     cursorWidget_.setVisible(true);
     menuList_.registerFocusListener(this);
+    menuList_.registerScrollWindowListener(this);
 
     const MenuItemStyle itemStyle = {
         .size = {150, 16},
@@ -202,6 +225,28 @@ void MenuScene::setupMenu()
     }
 
     menuListFiller_.addItems(context_->menuEntries, context_->numMenuEntries, itemStyle);
+
+    const ImageWidgetStyle scrollArrowUpStyle = {
+        .image = {
+            .sprite = uiArrowUpSprite_,
+            .spriteBounds = {0, 0, imgScrollArrowUpBounds.width, imgScrollArrowUpBounds.height}
+        }
+    };
+
+    scrollArrowUp_.setStyle(scrollArrowUpStyle);
+    scrollArrowUp_.setBounds(imgScrollArrowUpBounds);
+
+    const ImageWidgetStyle scrollArrowDownStyle = {
+        .image = {
+            .sprite = uiArrowDownSprite_,
+            .spriteBounds = { 0, 0, imgScrollArrowDownBounds.width, imgScrollArrowDownBounds.height}
+        }
+    };
+
+    // note: even though autogrow is turned on for the vertical list, it doesn't matter for the down arrow.
+    // because when the list is still growing, no scrolling is needed anyway, so the arrow would be invisible anyway.
+    scrollArrowDown_.setStyle(scrollArrowDownStyle);
+    scrollArrowDown_.setBounds(imgScrollArrowDownBounds);
 }
 
 void MenuScene::setupDialog(DialogWidgetStyle& style)

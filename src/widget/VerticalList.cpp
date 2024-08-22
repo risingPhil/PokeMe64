@@ -1,6 +1,7 @@
 #include "widget/VerticalList.h"
 #include "widget/IWidget.h"
 #include "widget/IFocusListener.h"
+#include "widget/IScrollWindowListener.h"
 #include "core/RDPQGraphics.h"
 #include "animations/AnimationManager.h"
 #include "core/DragonUtils.h"
@@ -105,6 +106,7 @@ VerticalList::VerticalList(AnimationManager& animationManager)
     , widgetList_()
     , widgetBoundsList_()
     , focusListeners_()
+    , scrollWindowListeners_()
     , listStyle_({0})
     , bounds_({0})
     , windowMinY_(0)
@@ -195,10 +197,48 @@ void VerticalList::addWidget(IWidget *widget)
     }
     else
     {
-        const Rectangle lastWidgetBounds = widgetBoundsList_.back();
+        const Rectangle& lastWidgetBounds = widgetBoundsList_.back();
         widgetBoundsList_.push_back(Rectangle{.x = 0, .y = lastWidgetBounds.y + lastWidgetBounds.height + listStyle_.verticalSpacingBetweenWidgets, .width = widgetSize.width, .height = widgetSize.height});
     }
     autoGrowBounds();
+    notifyScrollWindowListeners();
+}
+
+void VerticalList::removeWidget(IWidget* widget)
+{
+    const auto listSize = widgetList_.size();
+    for(uint16_t i = 0; i < listSize; ++i)
+    {
+        if(widgetList_[i] != widget)
+        {
+            continue;
+        }
+        //found the widget
+        // if the widget -that we're about to remove- is focused, we need to move the focus to a different widget
+        if(widgetList_[i]->isFocused() && listSize > 1)
+        {
+            // if the to-be-removed widget is the last one in the list, we need to focus the one before it.
+            // if it's not, we'll focus the next one
+            uint16_t newFocusIndex;
+            if(i < (listSize - 1))
+            {
+                newFocusIndex = i + 1;
+                // the next list item will move to the current position after the erase() call
+                focusedWidgetIndex_ = i;
+            }
+            else
+            {
+                newFocusIndex = i - 1;
+                focusedWidgetIndex_ = newFocusIndex;
+            }
+            widgetList_[newFocusIndex]->setFocused(true);
+        }
+
+        widgetList_.erase(widgetList_.begin() + i);
+        widgetBoundsList_.erase(widgetBoundsList_.begin() + i);
+        rebuildLayout();
+        break;
+    }
 }
 
 void VerticalList::clearWidgets()
@@ -206,6 +246,7 @@ void VerticalList::clearWidgets()
     widgetList_.clear();
     widgetBoundsList_.clear();
     focusedWidgetIndex_ = 0;
+    notifyScrollWindowListeners();
 }
 
 VerticalListStyle& VerticalList::getStyle()
@@ -222,6 +263,7 @@ void VerticalList::setStyle(const VerticalListStyle& style)
 void VerticalList::setViewWindowStartY(uint32_t windowStartY)
 {
     windowMinY_ = windowStartY;
+    notifyScrollWindowListeners();
 }
 
 bool VerticalList::isFocused() const
@@ -296,9 +338,9 @@ bool VerticalList::handleUserInput(const joypad_inputs_t& userInput)
         return hasFocusedWidgetHandledInput;
     }
 
-    const UINavigationKey navKey = determineUINavigationKey(userInput, NavigationInputSourceType::BOTH);
+    const UINavigationDirection navDirection = determineUINavigationDirection(userInput, NavigationInputSourceType::BOTH);
 
-    if(navKey == UINavigationKey::UP)
+    if(navDirection == UINavigationDirection::UP)
     {
         if(focusedWidgetIndex_ < 1)
         {
@@ -306,7 +348,7 @@ bool VerticalList::handleUserInput(const joypad_inputs_t& userInput)
         }
         return focusPrevious();
     }
-    else if(navKey == UINavigationKey::DOWN)
+    else if(navDirection == UINavigationDirection::DOWN)
     {
         if(focusedWidgetIndex_ == widgetList_.size() - 1)
         {
@@ -399,8 +441,52 @@ void VerticalList::unregisterFocusListener(IFocusListener* focusListener)
     }
 }
 
+void VerticalList::registerScrollWindowListener(IScrollWindowListener* listener)
+{
+    scrollWindowListeners_.push_back(listener);
+}
+
+void VerticalList::unregisterScrollWindowListener(IScrollWindowListener* listener)
+{
+    auto it = std::find(scrollWindowListeners_.begin(), scrollWindowListeners_.end(), listener);
+    if(it != scrollWindowListeners_.end())
+    {
+        scrollWindowListeners_.erase(it);
+    }
+}
+
+void VerticalList::notifyScrollWindowListeners()
+{
+    int totalHeight;
+
+    if(widgetList_.empty())
+    {
+        totalHeight = 0;
+    }
+    else
+    {
+        const Rectangle& lastWidgetBounds = widgetBoundsList_.back();
+        totalHeight = lastWidgetBounds.y + lastWidgetBounds.height;   
+    }
+
+    // calculate the size of the scroll panel with the margins subtracted
+    const uint32_t innerListHeight = getInnerListHeight(bounds_, listStyle_.margin.top, listStyle_.margin.bottom);
+
+    const ScrollWindowUpdate update = {
+        .scrollWindowRectangle = {.x = 0, .y = static_cast<int>(windowMinY_), .width = bounds_.width, .height = static_cast<int>(innerListHeight)},
+        .totalSize = {.width = bounds_.width, .height = totalHeight}
+    };
+
+    for(IScrollWindowListener* listener : scrollWindowListeners_)
+    {
+        listener->onScrollWindowChanged(update);
+    }
+}
+
 void VerticalList::rebuildLayout()
 {
+    Rectangle focusedWidgetBounds;
+    IWidget* focusedWidget;
     int lastWidgetEndY = 0;
     if(widgetList_.empty())
     {
@@ -415,6 +501,27 @@ void VerticalList::rebuildLayout()
         widgetBoundsList_[i] = {.x = 0, .y = lastWidgetEndY, .width = widgetSize.width, .height = widgetSize.height};
         lastWidgetEndY += widgetSize.height + listStyle_.verticalSpacingBetweenWidgets;
     }
+    
+    if(!widgetList_.empty())
+    {
+        focusedWidgetBounds = widgetBoundsList_[focusedWidgetIndex_];
+        focusedWidget = widgetList_[focusedWidgetIndex_];
+    }
+    else
+    {
+        // HACK: safety net in case the list is empty (to avoid an out-of-bounds list access crash)
+        // the use of windowMinY_ here is to compensate for what calculateListWidgetBounds is calculating
+        focusedWidgetBounds = Rectangle{.x = 0, .y = static_cast<int>(windowMinY_), .width = 0, .height = 0};
+        focusedWidget = nullptr;
+    }
+    
+    const FocusChangeStatus changeStatus = {
+        .focusBounds = calculateListWidgetBounds(focusedWidgetBounds, windowMinY_, bounds_.x + listStyle_.margin.left, bounds_.y + listStyle_.margin.top),
+        .curFocus = focusedWidget
+    };
+
+    notifyFocusListeners(changeStatus);
+    notifyScrollWindowListeners();
 }
 
 int32_t VerticalList::scrollWindowToFocusedWidget()
@@ -447,7 +554,7 @@ void VerticalList::notifyFocusListeners(const FocusChangeStatus& status)
 
 void VerticalList::autoGrowBounds()
 {
-    if(!listStyle_.autogrow.enabled)
+    if(!listStyle_.autogrow.enabled || widgetList_.empty())
     {
         return;
     }
