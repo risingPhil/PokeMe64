@@ -3,6 +3,29 @@
 #include "transferpak/TransferPakRomReader.h"
 #include "transferpak/TransferPakSaveManager.h"
 
+/**
+ * @brief This function allows you to specify a 32 bit RGBA color by specifying separate color components
+ * and converting it to a RGBA16 uint16_t value at compile time
+ * 
+ * @param r 8 bit red value
+ * @param g 8 bit green value
+ * @param b 8 bit blue value
+ * @param a 8 bit alpha value 
+ */
+constexpr uint16_t colorToRGBA16(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+{
+    return (((uint16_t)r >> 3) << 11) | (((uint16_t)g >> 3) << 6) | (((uint16_t)b >> 3) << 1) | (a >> 7);
+}
+
+static const Rectangle textBounds = {0, 60, 200, 20};
+
+static const uint16_t paletteBlue[] = {0, colorToRGBA16(0x20, 0x30, 0x81, 0xFF), colorToRGBA16(0x15, 0x3B, 0xB0, 0xFF), 0, 0, 0, 0, 0};
+static const uint16_t paletteRed[] = {0, colorToRGBA16(0xA7, 0x1F, 0x1B, 0xFF), colorToRGBA16(0xAA, 0x2A, 0x2A, 0xFF), 0, 0, 0, 0, 0};
+static const uint16_t paletteYellow[] = {0, colorToRGBA16(0xEA, 0xA8, 0x2C, 0xFF), colorToRGBA16(0xF4, 0xB0, 0x2E, 0xFF), 0, 0, 0, 0, 0};
+static const uint16_t paletteGold[] = {0, colorToRGBA16(0x8A, 0x86, 0x48, 0xFF), colorToRGBA16(0x88, 0x89, 0x4B, 0xFF), 0, 0, 0, 0, 0};
+static const uint16_t paletteSilver[] = {0, colorToRGBA16(0x90, 0x8D, 0x85, 0xFF), colorToRGBA16(0xA2, 0x9E, 0x98, 0xFF), 0, 0, 0, 0, 0};
+static const uint16_t paletteCrystal[] = {0, colorToRGBA16(0x55, 0x7A, 0x77, 0xFF), colorToRGBA16(0x72, 0x9E, 0xA4, 0xFF), 0, 0, 0, 0, 0};
+
 #if 0
 #include "gen2/Gen2GameReader.h"
 static void doRandomShit(TransferPakManager& tpakManager)
@@ -22,20 +45,26 @@ TransferPakDetectionWidget::TransferPakDetectionWidget(AnimationManager& animMan
     , animManager_(animManager)
     , tpakManager_(pakManager)
     , bounds_({0})
-    , textBounds_({.x = 0, .y = 0, .width = 200, .height = 20})
     , currentState_(TransferPakWidgetState::UNKNOWN)
     , previousInputState_({0})
     , gen1Type_(Gen1GameType::INVALID)
     , gen2Type_(Gen2GameType::INVALID)
     , stateChangedCallback_(nullptr)
     , stateChangedCallbackContext_(nullptr)
+    , cartridgeIconSprite_(nullptr)
+    , cartridgeIconRenderSettings_({
+        
+    })
     , focused_(false)
     , visible_(true)
 {
+    cartridgeIconSprite_ = sprite_load("rom://cartridge_icon.sprite");
 }
 
 TransferPakDetectionWidget::~TransferPakDetectionWidget()
 {
+    sprite_free(cartridgeIconSprite_);
+    cartridgeIconSprite_ = nullptr;
 }
 
 bool TransferPakDetectionWidget::isFocused() const
@@ -95,6 +124,10 @@ bool TransferPakDetectionWidget::handleUserInput(const joypad_inputs_t& userInpu
 
 void TransferPakDetectionWidget::render(RDPQGraphics& gfx, const Rectangle& parentBounds)
 {
+    //gfx.fillRectangle(bounds_, RGBA32(0xFF, 0, 0, 0xFF));
+    const Rectangle absoluteIconBounds = {bounds_.x + ((bounds_.width - 53) / 2), bounds_.y, 53, 60};
+    gfx.drawSprite(absoluteIconBounds, cartridgeIconSprite_, cartridgeIconRenderSettings_);
+
     switch(currentState_)
     {
     case TransferPakWidgetState::UNKNOWN:
@@ -155,6 +188,7 @@ void TransferPakDetectionWidget::switchState(TransferPakWidgetState previousStat
         switchState(state, newState);
         return;
     case TransferPakWidgetState::GAME_FOUND:
+        selectCartridgeIconPalette();
 //      doRandomShit(tpakManager_);
         break;
     default:
@@ -170,13 +204,13 @@ void TransferPakDetectionWidget::switchState(TransferPakWidgetState previousStat
 
 void TransferPakDetectionWidget::renderUnknownState(RDPQGraphics& gfx, const Rectangle& parentBounds)
 {
-    const Rectangle absoluteTextBounds = addOffset(textBounds_, bounds_);
-    gfx.drawText(absoluteTextBounds, "Press A to check the transfer pak...", style_.textSettings);
+    const Rectangle absoluteTextBounds = addOffset(textBounds, bounds_);
+    gfx.drawText(absoluteTextBounds, "Press A...", style_.textSettings);
 }
 
 void TransferPakDetectionWidget::renderErrorState(RDPQGraphics& gfx, const Rectangle& parentBounds)
 {
-    const Rectangle absoluteTextBounds = addOffset(textBounds_, bounds_);
+    const Rectangle absoluteTextBounds = addOffset(textBounds, bounds_);
     const char* errorText;
 
     switch(currentState_)
@@ -238,4 +272,48 @@ bool TransferPakDetectionWidget::detectGameType()
     gen2Type_ = gen2_determineGameType(cartridgeHeader);
 
     return (gen1Type_ != Gen1GameType::INVALID || gen2Type_ != Gen2GameType::INVALID);
+}
+
+void TransferPakDetectionWidget::selectCartridgeIconPalette()
+{
+    if(gen1Type_ != Gen1GameType::INVALID)
+    {
+        switch(gen1Type_)
+        {
+        case Gen1GameType::BLUE:
+            cartridgeIconRenderSettings_.customPalette.numColors = sizeof(paletteBlue) / sizeof(paletteBlue[0]);
+            cartridgeIconRenderSettings_.customPalette.colorsRGBA16 = paletteBlue;
+            break;
+        case Gen1GameType::RED:
+            cartridgeIconRenderSettings_.customPalette.numColors = sizeof(paletteRed) / sizeof(paletteRed[0]);
+            cartridgeIconRenderSettings_.customPalette.colorsRGBA16 = paletteRed;
+            break;
+        case Gen1GameType::YELLOW:
+            cartridgeIconRenderSettings_.customPalette.numColors = sizeof(paletteYellow) / sizeof(paletteYellow[0]);
+            cartridgeIconRenderSettings_.customPalette.colorsRGBA16 = paletteYellow;
+            break;
+        default:
+            break;
+        }
+    }
+    else if(gen2Type_ != Gen2GameType::INVALID)
+    {
+        switch(gen2Type_)
+        {
+        case Gen2GameType::GOLD:
+            cartridgeIconRenderSettings_.customPalette.numColors = sizeof(paletteGold) / sizeof(paletteGold[0]);
+            cartridgeIconRenderSettings_.customPalette.colorsRGBA16 = paletteGold;
+            break;
+        case Gen2GameType::SILVER:
+            cartridgeIconRenderSettings_.customPalette.numColors = sizeof(paletteSilver) / sizeof(paletteSilver[0]);
+            cartridgeIconRenderSettings_.customPalette.colorsRGBA16 = paletteSilver;
+            break;
+        case Gen2GameType::CRYSTAL:
+            cartridgeIconRenderSettings_.customPalette.numColors = sizeof(paletteCrystal) / sizeof(paletteCrystal[0]);
+            cartridgeIconRenderSettings_.customPalette.colorsRGBA16 = paletteCrystal;
+            break;
+        default:
+            break;
+        }
+    }
 }

@@ -8,6 +8,8 @@
 #include "gen2/Gen2GameReader.h"
 #include "menu/MenuEntries.h"
 
+static const Rectangle tpakDetectWidgetBounds = {60, 74, 200, 76};
+
 static void dialogFinishedCallback(void* context)
 {
     InitTransferPakScene* scene = (InitTransferPakScene*)context;
@@ -141,13 +143,14 @@ void InitTransferPakScene::setupTPakDetectWidget()
     const TransferPakDetectionWidgetStyle style = {
         .textSettings = {
             .fontId = arialId_,
-            .fontStyleId = fontStyleWhiteId_
+            .fontStyleId = fontStyleWhiteId_,
+            .halign = ALIGN_CENTER
         }
     };
 
     tpakDetectWidget_.setStyle(style);
     tpakDetectWidget_.setStateChangedCallback(tpakWidgetStateChangedCallback, this);
-    tpakDetectWidget_.setBounds(Rectangle{60, 90, 200, 60});
+    tpakDetectWidget_.setBounds(tpakDetectWidgetBounds);
 }
 
 void InitTransferPakScene::setupDialog(DialogWidgetStyle& style)
