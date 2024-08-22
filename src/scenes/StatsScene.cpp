@@ -180,7 +180,7 @@ void StatsScene::init()
 
     strncpy(nameBuffer_, pokeName, sizeof(nameBuffer_) - 1);
     snprintf(levelAndNumberBuffer_, sizeof(levelAndNumberBuffer_), "L %hu No. %hu\nHP:  %u/%u", level, pokeNumber, hp, hp);
-    snprintf(otInfoString_, sizeof(otInfoString_), "TID: %u\nOT: %s", trainerID, trainerName);
+    snprintf(otInfoString_, sizeof(otInfoString_), "TID: %u\nOT: %s", trainerID, context_->trainerName);
     snprintf(movesString, sizeof(movesString), "%s\n%s\n%s\n%s", move1Str, move2Str, move3Str, move4Str);
 
     if(context_->showReceivedPokemonDialog)

@@ -130,6 +130,7 @@ void DistributionPokemonListScene::injectPokemon(const void* data)
     // The reason is the same as previous setRAMEnabled(false) statement above
     deps_.tpakManager.setRAMEnabled(false);
 
+    strncpy(statsContext->trainerName, trainerName, 12);
     deps_.sceneManager.switchScene(SceneType::STATS, deleteStatsSceneContext, statsContext);
 
     // operation done. Now the dialog can be advanced and we can show confirmation that the user got the pokémon

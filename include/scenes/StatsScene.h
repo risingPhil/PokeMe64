@@ -16,6 +16,7 @@ typedef struct StatsSceneContext
         Gen1TrainerPokemon poke_g1;
         Gen2TrainerPokemon poke_g2;
     };
+    char trainerName[15];
     bool showReceivedPokemonDialog;
     bool isEgg;
 } StatsSceneContext;
