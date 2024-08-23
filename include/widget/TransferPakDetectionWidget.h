@@ -130,17 +130,22 @@ private:
      */
     bool detectGameType();
 
+    void updateCartridgeIcon();
+
     TransferPakDetectionWidgetStyle style_;
     AnimationManager& animManager_;
     TransferPakManager& tpakManager_;
     Rectangle bounds_;
-    Rectangle textBounds_;
     TransferPakWidgetState currentState_;
     joypad_inputs_t previousInputState_;
     Gen1GameType gen1Type_;
     Gen2GameType gen2Type_;
     void (*stateChangedCallback_)(void*, TransferPakWidgetState);
     void* stateChangedCallbackContext_;
+    sprite_t* cartridgeIconSprite_;
+    sprite_t* cartridgeLabelSprite_;
+    SpriteRenderSettings cartridgeIconRenderSettings_;
+    SpriteRenderSettings cartridgeLabelRenderSettings_;
     bool focused_;
     bool visible_;
 };

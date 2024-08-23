@@ -58,6 +58,16 @@ typedef struct SpriteRenderSettings
      * @brief Rotation angle in radians
      */
     float rotationAngle;
+    struct {
+        /**
+         * WARNING: needs to be a multiple of 8
+         */
+        uint8_t numColors;
+        /**
+         * @brief If set, this RGBA16 array will replace the original color palette for the specified sprite
+         */
+        const uint16_t* colorsRGBA16;
+    } customPalette;
 } SpriteRenderSettings;
 
 typedef struct SurfaceRenderSettings

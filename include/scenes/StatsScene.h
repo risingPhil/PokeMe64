@@ -54,7 +54,7 @@ private:
     TextRenderSettings smallTextSettings_;
     TextRenderSettings statsSettings_;
     Rectangle spriteBounds_;
-    char nameBuffer_[15];
+    char nameBuffer_[25];
     char levelAndNumberBuffer_[40];
     char pokeStatsString_[150];
     char otInfoString_[40];

@@ -142,6 +142,8 @@ void MenuScene::onDialogDone()
     dialogWidget_.setVisible(false);
     menuList_.setVisible(true);
     cursorWidget_.setVisible(true);
+    // make sure the relevant scroll arrows are made visible again
+    menuList_.notifyScrollWindowListeners();
     setFocusChain(&listFocusChainSegment_);
 }
 
@@ -267,6 +269,8 @@ void MenuScene::showDialog(DialogData* diagData)
 {
     SceneWithDialogWidget::showDialog(diagData);
     menuList_.setVisible(false);
+    scrollArrowUp_.setVisible(false);
+    scrollArrowDown_.setVisible(false);
     cursorWidget_.setVisible(false);
     setFocusChain(&dialogFocusChainSegment_);
 }
