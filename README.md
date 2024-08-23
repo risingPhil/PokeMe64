@@ -4,9 +4,9 @@ This project lets you acquire past Distribution Event Pokémon in Gen1/Gen2 Pok�
 
 The rom is based on [libpokemegb](https://github.com/risingPhil/libpokemegb) and [libdragon](https://github.com/DragonMinded/libdragon).
 
-![Screenshot 1](docs/images/screen1.png)![Screenshot 2](docs/images/screen2.png)![Screenshot 3](docs/images/screen3.png)
+![Screenshot 1](docs/images/screen1.png)![Screenshot 2](docs/images/screen2.png)![Screenshot 3](docs/images/screen3.png)![Screenshot 4](docs/images/screen4.png)![Screenshot 5](docs/images/screen5.png)![Screenshot 6](docs/images/screen6.png)![Screenshot 7](docs/images/screen7.png)
 
-Right now the UI is extremely barebones. I aim to improve this in future versions.
+Right now the UI is still barebones. I aim to improve this in future versions.
 
 I'm happy to accept pull requests if the community wants to do them.
 
@@ -51,7 +51,6 @@ But having it done with a Nintendo 64 feels more "real"/"official" and is easier
 # Future potential improvements (ideas/roadmap)
 
 ## UI ideas
-- Make the initial transfer pack detect screen show the gameboy cartridge image of the game that was detected and some kind of icon when there's an error.
 - In the pokémon list, show the mini menu sprite that you would also see in the party menu in the gameboy games
 - add some background images and potentially sprites here and there.
 - add some acquisition sound effects from the gameboy games
