@@ -52,6 +52,9 @@ static void goToDistributionPokemonListMenu(void* context, DistributionPokemonLi
 {
     auto sceneContext = new DistributionPokemonListSceneContext;
     sceneContext->listType = type;
+    sceneContext->bButtonMeansUserWantsToSwitchCartridge = false;
+    sceneContext->numMenuEntries = 0;
+    sceneContext->menuEntries = nullptr;
 
     MenuScene* scene = static_cast<MenuScene*>(context);
     SceneManager& sceneManager = scene->getDependencies().sceneManager;

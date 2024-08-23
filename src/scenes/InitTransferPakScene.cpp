@@ -8,7 +8,7 @@
 #include "gen2/Gen2GameReader.h"
 #include "menu/MenuEntries.h"
 
-static const Rectangle tpakDetectWidgetBounds = {60, 74, 200, 76};
+static const Rectangle tpakDetectWidgetBounds = {60, 44, 200, 116};
 
 static void dialogFinishedCallback(void* context)
 {
@@ -30,6 +30,7 @@ InitTransferPakScene::InitTransferPakScene(SceneDependencies& deps, void*)
         .current = &tpakDetectWidget_
     })
     , diagData_({0})
+    , pokeMe64TextSettings_()
     , playerName_()
     , gameTypeString_(nullptr)
 {
@@ -49,6 +50,12 @@ void InitTransferPakScene::init()
 
     setupTPakDetectWidget();
     setFocusChain(&tpakDetectWidgetSegment_);
+
+    pokeMe64TextSettings_ = TextRenderSettings{
+        .fontId = arialId_,
+        .fontStyleId = fontStyleWhiteId_,
+        .halign = ALIGN_CENTER
+    };
 }
 
 void InitTransferPakScene::destroy()
@@ -61,7 +68,7 @@ void InitTransferPakScene::destroy()
 
 void InitTransferPakScene::render(RDPQGraphics& gfx, const Rectangle& sceneBounds)
 {
-    //gfx.fillRectangle(Rectangle{.x = 0, .y = 0, .width = 100, .height = 100}, RGBA16(31, 0, 0, 1));
+    gfx.drawText(Rectangle{0, 10, 320, 16}, "PokeMe64 by risingPhil. Version 0.1", pokeMe64TextSettings_);
     tpakDetectWidget_.render(gfx, sceneBounds);
 
     SceneWithDialogWidget::render(gfx, sceneBounds);
@@ -135,6 +142,22 @@ void InitTransferPakScene::onTransferPakWidgetStateChanged(TransferPakWidgetStat
         dialogWidget_.appendDialogData(&diagData_);
         dialogWidget_.setVisible(true);
         setFocusChain(&dialogFocusChainSegment_);
+    }
+    else
+    {
+        switch(newState)
+        {
+        case TransferPakWidgetState::GB_HEADER_VALIDATION_FAILED:
+        case TransferPakWidgetState::NO_GAME_FOUND:
+        case TransferPakWidgetState::NO_TRANSFER_PAK_FOUND:
+            setDialogDataText(diagData_, "We could not find a suitable game cartridge! Please turn the console off and try again!");
+            diagData_.userAdvanceBlocked = true;
+            dialogWidget_.appendDialogData(&diagData_);
+            dialogWidget_.setVisible(true);
+            break;
+        default:
+            break;
+        }
     }
 }
 

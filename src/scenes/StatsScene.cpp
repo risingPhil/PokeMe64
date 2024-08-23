@@ -114,6 +114,7 @@ void StatsScene::init()
     const char* move4Str;
     const char* pokeName;
     const char* trainerName;
+    const char* shinyText;
     bool shiny;
 
     menu9SliceSprite_ = sprite_load("rom://menu-bg-9slice.sprite");
@@ -178,7 +179,8 @@ void StatsScene::init()
 
     loadPokemonSprite(pokeIndex, shiny);
 
-    strncpy(nameBuffer_, pokeName, sizeof(nameBuffer_) - 1);
+    shinyText = (shiny) ? "Shiny " : "";
+    snprintf(nameBuffer_, sizeof(nameBuffer_) - 1, "%s%s", shinyText, pokeName);
     snprintf(levelAndNumberBuffer_, sizeof(levelAndNumberBuffer_), "L %hu No. %hu\nHP:  %u/%u", level, pokeNumber, hp, hp);
     snprintf(otInfoString_, sizeof(otInfoString_), "TID: %u\nOT: %s", trainerID, context_->trainerName);
     snprintf(movesString, sizeof(movesString), "%s\n%s\n%s\n%s", move1Str, move2Str, move3Str, move4Str);
@@ -187,11 +189,11 @@ void StatsScene::init()
     {
         if(context_->isEgg)
         {
-            setDialogDataText(diag_, "%s received a %s EGG!Take good care of it!", trainerName, pokeName);
+            setDialogDataText(diag_, "%s received a %s%s EGG!Take good care of it!", trainerName, shinyText, pokeName);
         }
         else
         {
-            setDialogDataText(diag_, "%s received %s!\nTake good care of it!", trainerName, pokeName);
+            setDialogDataText(diag_, "%s received a %s%s!\nTake good care of it!", trainerName, shinyText, pokeName);
         }
         showDialog(&diag_);
     }

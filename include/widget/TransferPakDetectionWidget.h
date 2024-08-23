@@ -130,7 +130,7 @@ private:
      */
     bool detectGameType();
 
-    void selectCartridgeIconPalette();
+    void updateCartridgeIcon();
 
     TransferPakDetectionWidgetStyle style_;
     AnimationManager& animManager_;
@@ -143,7 +143,9 @@ private:
     void (*stateChangedCallback_)(void*, TransferPakWidgetState);
     void* stateChangedCallbackContext_;
     sprite_t* cartridgeIconSprite_;
+    sprite_t* cartridgeLabelSprite_;
     SpriteRenderSettings cartridgeIconRenderSettings_;
+    SpriteRenderSettings cartridgeLabelRenderSettings_;
     bool focused_;
     bool visible_;
 };

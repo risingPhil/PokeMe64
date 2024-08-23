@@ -17,7 +17,8 @@ constexpr uint16_t colorToRGBA16(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     return (((uint16_t)r >> 3) << 11) | (((uint16_t)g >> 3) << 6) | (((uint16_t)b >> 3) << 1) | (a >> 7);
 }
 
-static const Rectangle textBounds = {0, 60, 200, 20};
+static const Rectangle textBounds = {0, 100, 200, 20};
+static const Rectangle cartridgeLabelBounds = {9, 26, 70, 62};
 
 static const uint16_t paletteBlue[] = {0, colorToRGBA16(0x20, 0x30, 0x81, 0xFF), colorToRGBA16(0x15, 0x3B, 0xB0, 0xFF), 0, 0, 0, 0, 0};
 static const uint16_t paletteRed[] = {0, colorToRGBA16(0xA7, 0x1F, 0x1B, 0xFF), colorToRGBA16(0xAA, 0x2A, 0x2A, 0xFF), 0, 0, 0, 0, 0};
@@ -52,19 +53,26 @@ TransferPakDetectionWidget::TransferPakDetectionWidget(AnimationManager& animMan
     , stateChangedCallback_(nullptr)
     , stateChangedCallbackContext_(nullptr)
     , cartridgeIconSprite_(nullptr)
-    , cartridgeIconRenderSettings_({
-        
-    })
+    , cartridgeLabelSprite_(nullptr)
+    , cartridgeIconRenderSettings_()
+    , cartridgeLabelRenderSettings_()
     , focused_(false)
     , visible_(true)
 {
-    cartridgeIconSprite_ = sprite_load("rom://cartridge_icon.sprite");
+    cartridgeIconSprite_ = sprite_load("rom://cartridge-icon.sprite");
+    cartridgeLabelSprite_ = sprite_load("rom://cartridge-label-unknown.sprite");
 }
 
 TransferPakDetectionWidget::~TransferPakDetectionWidget()
 {
     sprite_free(cartridgeIconSprite_);
     cartridgeIconSprite_ = nullptr;
+
+    if(cartridgeLabelSprite_)
+    {
+        sprite_free(cartridgeLabelSprite_);
+        cartridgeLabelSprite_ = nullptr;
+    }
 }
 
 bool TransferPakDetectionWidget::isFocused() const
@@ -125,8 +133,14 @@ bool TransferPakDetectionWidget::handleUserInput(const joypad_inputs_t& userInpu
 void TransferPakDetectionWidget::render(RDPQGraphics& gfx, const Rectangle& parentBounds)
 {
     //gfx.fillRectangle(bounds_, RGBA32(0xFF, 0, 0, 0xFF));
-    const Rectangle absoluteIconBounds = {bounds_.x + ((bounds_.width - 53) / 2), bounds_.y, 53, 60};
+    const Rectangle absoluteIconBounds = {bounds_.x + ((bounds_.width - 88) / 2), bounds_.y, 88, 100};
     gfx.drawSprite(absoluteIconBounds, cartridgeIconSprite_, cartridgeIconRenderSettings_);
+
+    if(cartridgeLabelSprite_)
+    {
+        const Rectangle absoluteLabelBounds = addOffset(cartridgeLabelBounds, absoluteIconBounds);
+        gfx.drawSprite(absoluteLabelBounds, cartridgeLabelSprite_, cartridgeLabelRenderSettings_);
+    }
 
     switch(currentState_)
     {
@@ -188,7 +202,7 @@ void TransferPakDetectionWidget::switchState(TransferPakWidgetState previousStat
         switchState(state, newState);
         return;
     case TransferPakWidgetState::GAME_FOUND:
-        selectCartridgeIconPalette();
+        updateCartridgeIcon();
 //      doRandomShit(tpakManager_);
         break;
     default:
@@ -205,7 +219,7 @@ void TransferPakDetectionWidget::switchState(TransferPakWidgetState previousStat
 void TransferPakDetectionWidget::renderUnknownState(RDPQGraphics& gfx, const Rectangle& parentBounds)
 {
     const Rectangle absoluteTextBounds = addOffset(textBounds, bounds_);
-    gfx.drawText(absoluteTextBounds, "Press A...", style_.textSettings);
+    gfx.drawText(absoluteTextBounds, "Press A to start", style_.textSettings);
 }
 
 void TransferPakDetectionWidget::renderErrorState(RDPQGraphics& gfx, const Rectangle& parentBounds)
@@ -274,8 +288,9 @@ bool TransferPakDetectionWidget::detectGameType()
     return (gen1Type_ != Gen1GameType::INVALID || gen2Type_ != Gen2GameType::INVALID);
 }
 
-void TransferPakDetectionWidget::selectCartridgeIconPalette()
+void TransferPakDetectionWidget::updateCartridgeIcon()
 {
+    const char* labelSpritePath = nullptr;
     if(gen1Type_ != Gen1GameType::INVALID)
     {
         switch(gen1Type_)
@@ -283,14 +298,17 @@ void TransferPakDetectionWidget::selectCartridgeIconPalette()
         case Gen1GameType::BLUE:
             cartridgeIconRenderSettings_.customPalette.numColors = sizeof(paletteBlue) / sizeof(paletteBlue[0]);
             cartridgeIconRenderSettings_.customPalette.colorsRGBA16 = paletteBlue;
+            labelSpritePath = "rom://cartridge-label-blue.sprite";
             break;
         case Gen1GameType::RED:
             cartridgeIconRenderSettings_.customPalette.numColors = sizeof(paletteRed) / sizeof(paletteRed[0]);
             cartridgeIconRenderSettings_.customPalette.colorsRGBA16 = paletteRed;
+            labelSpritePath = "rom://cartridge-label-red.sprite";
             break;
         case Gen1GameType::YELLOW:
             cartridgeIconRenderSettings_.customPalette.numColors = sizeof(paletteYellow) / sizeof(paletteYellow[0]);
             cartridgeIconRenderSettings_.customPalette.colorsRGBA16 = paletteYellow;
+            labelSpritePath = "rom://cartridge-label-yellow.sprite";
             break;
         default:
             break;
@@ -303,17 +321,29 @@ void TransferPakDetectionWidget::selectCartridgeIconPalette()
         case Gen2GameType::GOLD:
             cartridgeIconRenderSettings_.customPalette.numColors = sizeof(paletteGold) / sizeof(paletteGold[0]);
             cartridgeIconRenderSettings_.customPalette.colorsRGBA16 = paletteGold;
+            labelSpritePath = "rom://cartridge-label-gold.sprite";
             break;
         case Gen2GameType::SILVER:
             cartridgeIconRenderSettings_.customPalette.numColors = sizeof(paletteSilver) / sizeof(paletteSilver[0]);
             cartridgeIconRenderSettings_.customPalette.colorsRGBA16 = paletteSilver;
+            labelSpritePath = "rom://cartridge-label-silver.sprite";
             break;
         case Gen2GameType::CRYSTAL:
             cartridgeIconRenderSettings_.customPalette.numColors = sizeof(paletteCrystal) / sizeof(paletteCrystal[0]);
             cartridgeIconRenderSettings_.customPalette.colorsRGBA16 = paletteCrystal;
+            labelSpritePath = "rom://cartridge-label-crystal.sprite";
             break;
         default:
             break;
         }
+    }
+
+    if(labelSpritePath)
+    {
+        if(cartridgeLabelSprite_)
+        {
+            sprite_free(cartridgeLabelSprite_);
+        }
+        cartridgeLabelSprite_ = sprite_load(labelSpritePath);
     }
 }
