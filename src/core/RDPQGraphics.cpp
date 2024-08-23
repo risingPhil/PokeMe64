@@ -253,13 +253,13 @@ RDPQGraphics::~RDPQGraphics()
 void RDPQGraphics::init()
 {
     rdpq_init();
-    rdpq_debug_start();
+//  rdpq_debug_start();
     initialized_ = true;
 }
 
 void RDPQGraphics::destroy()
 {
-    rdpq_debug_stop();
+//  rdpq_debug_stop();
     rdpq_close();
     initialized_ = false;
 }

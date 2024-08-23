@@ -148,7 +148,7 @@ void StatsScene::init()
             pokeName = gen1GameReader_.getPokemonName(pokeIndex);
             trainerName = gen1GameReader_.getTrainerName();
             shiny = false;
-            snprintf(pokeStatsString_, sizeof(pokeStatsString_), "ATK:            %u\nDEF:            %u\nSPEC:      %u\nSPEED:        %u", atk, def, specAtk, speed);
+            snprintf(pokeStatsString_, sizeof(pokeStatsString_), "ATK:            %u\nDEF:            %u\nSPEC:          %u\nSPEED:        %u", atk, def, specAtk, speed);
             break;
         case 2:
             gen2_recalculatePokeStats(gen2GameReader_, context_->poke_g2);
