@@ -1,6 +1,47 @@
 #include "core/RDPQGraphics.h"
 #include "core/Sprite.h"
 
+/**
+ * @brief Custom version of sprite_upload_palette() from rdpq_sprite.c
+ * This variant allows you to override the sprites' palette with the SpriteRenderSettings instead of using the one
+ * embedded in the sprite itself
+ */
+static void custom_sprite_upload_palette(sprite_t *sprite, const SpriteRenderSettings& renderSettings)
+{
+    // Check if the sprite has a palette
+    tex_format_t fmt = sprite_get_format(sprite);
+    rdpq_tlut_t tlut_mode = rdpq_tlut_from_format(fmt);
+
+    // Configure the TLUT render mode
+    rdpq_mode_tlut(tlut_mode);
+
+    if (tlut_mode != TLUT_NONE) {
+        // Load the palette (if any). We account for sprites being CI4
+        // but without embedded palette: mksprite doesn't create sprites like
+        // this today, but it could in the future (eg: sharing a palette across
+        // multiple sprites).
+        if(renderSettings.customPalette.numColors)
+        {
+            rdpq_tex_upload_tlut(const_cast<uint16_t*>(renderSettings.customPalette.colorsRGBA16), 0, renderSettings.customPalette.numColors);
+        }
+        else
+        {
+            uint16_t *pal = sprite_get_palette(sprite);
+            if (pal) rdpq_tex_upload_tlut(pal, 0, fmt == FMT_CI4 ? 16 : 256);
+        }
+    }
+}
+
+/**
+ * @brief Custom version of rdpq_sprite_blit which allows you to call custom_sprite_upload_palette separately
+ */
+static void custom_rdpq_sprite_blit(sprite_t* sprite, float x0, float y0, const rdpq_blitparms_t *parms)
+{
+    // Get the sprite surface
+    surface_t surf = sprite_get_pixels(sprite);
+    rdpq_tex_blit(&surf, x0, y0, parms);
+}
+
 static void render_sprite_normal(const Rectangle &dstRect, sprite_t *sprite, const SpriteRenderSettings &renderSettings)
 {
     if (!isZeroSizeRectangle(renderSettings.srcRect))
@@ -15,7 +56,8 @@ static void render_sprite_normal(const Rectangle &dstRect, sprite_t *sprite, con
             .theta = renderSettings.rotationAngle
         };
 
-        rdpq_sprite_blit(sprite, dstRect.x, dstRect.y, &blitParams);
+        custom_sprite_upload_palette(sprite, renderSettings);
+        custom_rdpq_sprite_blit(sprite, dstRect.x, dstRect.y, &blitParams);
     }
     else
     {
@@ -25,7 +67,8 @@ static void render_sprite_normal(const Rectangle &dstRect, sprite_t *sprite, con
             .theta = renderSettings.rotationAngle
         };
 
-        rdpq_sprite_blit(sprite, dstRect.x, dstRect.y, &blitParams);
+        custom_sprite_upload_palette(sprite, renderSettings);
+        custom_rdpq_sprite_blit(sprite, dstRect.x, dstRect.y, &blitParams);
     }
 }
 
@@ -44,7 +87,7 @@ static void render_sprite_ninegrid(const Rectangle &dstRect, sprite_t *sprite, c
         .width = renderSettings.srcRect.x,
         .height = renderSettings.srcRect.y
     };
-    render_sprite_normal(curDest, sprite, {.renderMode = SpriteRenderMode::NORMAL, .srcRect = curSrc});
+    render_sprite_normal(curDest, sprite, {.renderMode = SpriteRenderMode::NORMAL, .srcRect = curSrc, .customPalette = renderSettings.customPalette});
 
     // top edge
     curDest = {
@@ -59,7 +102,7 @@ static void render_sprite_ninegrid(const Rectangle &dstRect, sprite_t *sprite, c
         .width = sprite->width - renderSettings.srcRect.width - renderSettings.srcRect.x,
         .height = renderSettings.srcRect.y
     };
-    render_sprite_normal(curDest, sprite, {.renderMode = SpriteRenderMode::NORMAL, .srcRect = curSrc});
+    render_sprite_normal(curDest, sprite, {.renderMode = SpriteRenderMode::NORMAL, .srcRect = curSrc, .customPalette = renderSettings.customPalette});
 
     // right top corner
     curDest = {
@@ -210,13 +253,13 @@ RDPQGraphics::~RDPQGraphics()
 void RDPQGraphics::init()
 {
     rdpq_init();
-    rdpq_debug_start();
+//  rdpq_debug_start();
     initialized_ = true;
 }
 
 void RDPQGraphics::destroy()
 {
-    rdpq_debug_stop();
+//  rdpq_debug_stop();
     rdpq_close();
     initialized_ = false;
 }

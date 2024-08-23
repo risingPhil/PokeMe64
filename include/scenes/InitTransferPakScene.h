@@ -37,6 +37,7 @@ private:
     TransferPakDetectionWidget tpakDetectWidget_;
     WidgetFocusChainSegment tpakDetectWidgetSegment_;
     DialogData diagData_;
+    TextRenderSettings pokeMe64TextSettings_;
     char playerName_[PLAYER_NAME_SIZE];
     const char* gameTypeString_;
 };

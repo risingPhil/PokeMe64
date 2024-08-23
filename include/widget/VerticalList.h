@@ -11,13 +11,14 @@ class RDPQGraphics;
 class IWidget;
 class VerticalList;
 class AnimationManager;
+struct FocusChangeStatus;
+class IFocusListener;
+class IScrollWindowListener;
 
 typedef std::vector<IWidget*> IWidgetList;
 typedef std::vector<Rectangle> WidgetBoundsList;
-
-struct FocusChangeStatus;
-class IFocusListener;
 typedef std::vector<IFocusListener*> FocusListenerList;
+typedef std::vector<IScrollWindowListener*> ScrollWindowListenerList;
 
 /**
  * @brief This Animation implementation is used internal in VerticalList
@@ -138,6 +139,7 @@ public:
     bool focusPrevious();
 
     void addWidget(IWidget* widget);
+    void removeWidget(IWidget* widget);
     void clearWidgets();
 
     VerticalListStyle& getStyle();
@@ -160,6 +162,10 @@ public:
 
     void registerFocusListener(IFocusListener* listener);
     void unregisterFocusListener(IFocusListener* listener);
+
+    void registerScrollWindowListener(IScrollWindowListener* listener);
+    void unregisterScrollWindowListener(IScrollWindowListener* listener);
+    void notifyScrollWindowListeners();
 protected:
 private:
     void rebuildLayout();
@@ -176,6 +182,7 @@ private:
     IWidgetList widgetList_;
     WidgetBoundsList widgetBoundsList_;
     FocusListenerList focusListeners_;
+    ScrollWindowListenerList scrollWindowListeners_;
     VerticalListStyle listStyle_;
     Rectangle bounds_;
     uint32_t windowMinY_;

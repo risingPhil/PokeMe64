@@ -44,23 +44,23 @@ bool AbstractUIScene::handleUserInput(joypad_port_t port, const joypad_inputs_t&
     {
         // the widget did not handle the userInput. If we're dealing with a navigation key, we may want to switch focus
         WidgetFocusChainSegment* nextChainEntry;
-        const UINavigationKey navKey = determineUINavigationKey(inputs, NavigationInputSourceType::BOTH);
+        const UINavigationDirection navDirection = determineUINavigationDirection(inputs, NavigationInputSourceType::BOTH);
 
-        switch(navKey)
+        switch(navDirection)
         {
-            case UINavigationKey::UP:
+            case UINavigationDirection::UP:
                 nextChainEntry = focusChain_->onUp;
                 break;
-            case UINavigationKey::DOWN:
+            case UINavigationDirection::DOWN:
                 nextChainEntry = focusChain_->onDown;
                 break;
-            case UINavigationKey::LEFT:
+            case UINavigationDirection::LEFT:
                 nextChainEntry = focusChain_->onLeft;
                 break;
-            case UINavigationKey::RIGHT:
+            case UINavigationDirection::RIGHT:
                 nextChainEntry = focusChain_->onRight;
                 break;
-            case UINavigationKey::NONE:
+            case UINavigationDirection::MAX:
             default:
                 nextChainEntry = nullptr;
                 break;

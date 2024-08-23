@@ -2,7 +2,7 @@
 
 static uint8_t ANALOG_STICK_THRESHOLD = 30;
 
-const UINavigationKey determineUINavigationKey(joypad_inputs_t inputs, NavigationInputSourceType sourceType)
+const UINavigationDirection determineUINavigationDirection(joypad_inputs_t inputs, NavigationInputSourceType sourceType)
 {
     if(sourceType == NavigationInputSourceType::ANALOG_STICK || sourceType == NavigationInputSourceType::BOTH)
     {
@@ -13,14 +13,14 @@ const UINavigationKey determineUINavigationKey(joypad_inputs_t inputs, Navigatio
         {
             if(absXVal >= ANALOG_STICK_THRESHOLD)
             {
-                return (inputs.stick_x < 0) ? UINavigationKey::LEFT : UINavigationKey::RIGHT;
+                return (inputs.stick_x < 0) ? UINavigationDirection::LEFT : UINavigationDirection::RIGHT;
             }
         }
         else
         {
             if(absYVal >= ANALOG_STICK_THRESHOLD)
             {
-                return (inputs.stick_y < 0) ? UINavigationKey::DOWN : UINavigationKey::UP;
+                return (inputs.stick_y < 0) ? UINavigationDirection::DOWN : UINavigationDirection::UP;
             }
         }
     }
@@ -29,20 +29,20 @@ const UINavigationKey determineUINavigationKey(joypad_inputs_t inputs, Navigatio
     {
         if(inputs.btn.d_down)
         {
-            return UINavigationKey::DOWN;
+            return UINavigationDirection::DOWN;
         }
         if(inputs.btn.d_up)
         {
-            return UINavigationKey::UP;
+            return UINavigationDirection::UP;
         }
         if(inputs.btn.d_left)
         {
-            return UINavigationKey::LEFT;
+            return UINavigationDirection::LEFT;
         }
         if(inputs.btn.d_right)
         {
-            return UINavigationKey::RIGHT;
+            return UINavigationDirection::RIGHT;
         }
     }
-    return UINavigationKey::NONE;
+    return UINavigationDirection::MAX;
 }
