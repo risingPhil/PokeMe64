@@ -7,7 +7,7 @@
 #include <cstdio>
 #include <cmath>
 
-static const Rectangle menuListBounds = {100, 30, 150, 0};
+static const Rectangle menuListBounds = {100, 30, 160, 0};
 static const Rectangle imgScrollArrowUpBounds = {.x = 170, .y = 24, .width = 11, .height = 6};
 static const Rectangle imgScrollArrowDownBounds = {.x = 170, .y = 180, .width = 11, .height = 6};
 
@@ -205,7 +205,7 @@ void MenuScene::setupMenu()
     menuList_.registerScrollWindowListener(this);
 
     const MenuItemStyle itemStyle = {
-        .size = {150, 16},
+        .size = {160, 16},
         .titleNotFocused = {
             .fontId = arialId_,
             .fontStyleId = fontStyleWhiteId_
