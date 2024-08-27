@@ -73,6 +73,9 @@ Maybe at some point I might introduce a professor character in PokeMe64. I origi
 
 Anyway, how many of these ideas actually get implemented kinda depends on how quickly I get burned out of the project. We'll see how far we get.
 
+## Credits
+You can find the Credits and special thanks here: [Credits](CREDITS.md)
+
 # Help wanted
 Hi! I would very much like some people to join the project and add some sprites/graphics design to this rom. I'm not asking you to edit the code for those things. But I don't exactly have the skillset to 
 effectively design images or create music.
