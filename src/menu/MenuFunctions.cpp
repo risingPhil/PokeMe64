@@ -116,6 +116,14 @@ void goToTestScene(void* context, const void* param)
     sceneManager.switchScene(SceneType::TEST);
 }
 
+void goToPokeTransporterGBRef(void* context, const void* param)
+{
+    MenuScene* scene = static_cast<MenuScene*>(context);
+    SceneManager& sceneManager = scene->getDependencies().sceneManager;
+
+    sceneManager.switchScene(SceneType::POKETRANSPORTER_GB_REF);
+}
+
 void goToAboutScene(void* context, const void* param)
 {
     MenuScene* scene = static_cast<MenuScene*>(context);

@@ -19,6 +19,7 @@ enum class SceneType
     DISTRIBUTION_POKEMON_LIST,
     STATS,
     TEST,
+    POKETRANSPORTER_GB_REF,
     ABOUT
 };
 
