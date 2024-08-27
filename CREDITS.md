@@ -12,7 +12,9 @@ Furthermore I like to develop the developers of the [libdragon](https://github.c
 
 Thanks to the [PkHex](https://github.com/kwsch/PKHeX) project as well, because its code was useful to me to get the event flag offsets for G/S/C games and figure out the GS ball event flags. I may also use their codebase as a reference in the future in order to try to support the gen 1/2 games in other languages.
 
+I'd also like to extend my thanks to "[The Gears of Progress](https://github.com/GearsProgress)", [LJ Birdman](https://x.com/LJSTAR_), [LuigiTKO](https://x.com/LuigiTKO), [GuiAbel](https://x.com/guiabel/) and [SourApple](https://github.com/SoupPotato) of the [Poke Transporter GB](https://github.com/GearsProgress/Poke_Transporter_GB) project for allowing me to use their logo and even create the Fennel picture asset for this project. It looks amazing, you guys! Much better than anything I could've created!
+
 And of course I'd like to extend my thanks to everyone else in the pokémunity who wrote documentation or code for these old pokémon games. 
 
 I've listed the specific resources I used for reading the rom/save game data in the CREDITS.md file of the libpokemegb project.
- 
+
