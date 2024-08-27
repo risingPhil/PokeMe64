@@ -17,6 +17,10 @@ MenuItemData gen1MenuEntries[] = {
         .itemParam = &MOVE_FLY
     },
     {
+        .title = "Gen 3 Transfer Info",
+        .onConfirmAction = goToPokeTransporterGBRef
+    },
+    {
         .title = "About",
         .onConfirmAction = goToAboutScene
     }
@@ -36,6 +40,10 @@ MenuItemData gen2MenuEntries[] = {
     {
         .title = "Unlock Decoration",
         .onConfirmAction = goToGen2DecorationMenu
+    },
+    {
+        .title = "Gen 3 Transfer Info",
+        .onConfirmAction = goToPokeTransporterGBRef
     },
     {
         .title = "About",
@@ -61,6 +69,10 @@ MenuItemData gen2CrystalMenuEntries[] = {
     {
         .title = "Unlock Decoration",
         .onConfirmAction = goToGen2DecorationMenu
+    },
+    {
+        .title = "Gen 3 Transfer Info",
+        .onConfirmAction = goToPokeTransporterGBRef
     },
     {
         .title = "About",

@@ -31,6 +31,7 @@ private:
     sprite_t* logoPKHEX_;
     sprite_t* logoGBDevIO_;
     sprite_t* logoNESDevWiki_;
+    sprite_t* logoPokeTransporterGB_;
     ScrollWidget scrollWidget_;
     TextWidget headerText_;
     ImageWidget imgDragonWidget_;
@@ -44,6 +45,7 @@ private:
     ImageWidget imgGBDevIO_;
     TextWidget gbDevIOText_;
     ImageWidget imgNESDevWiki_;
+    ImageWidget imgPokeTransporterGB_;
     TextWidget otherCreditsText_;
     WidgetFocusChainSegment scrollFocusSegment_;
     bool bButtonPressed_;

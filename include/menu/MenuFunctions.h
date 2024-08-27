@@ -17,6 +17,7 @@ void activateFrameLog(void* context, const void* param);
 void advanceDialog(void* context, const void* param);
 
 void goToTestScene(void* context, const void* param);
+void goToPokeTransporterGBRef(void* context, const void* param);
 void goToAboutScene(void* context, const void* param);
 
 void goToGen1DistributionPokemonMenu(void* context, const void* param);

@@ -21,7 +21,8 @@ static const Rectangle pretPokeCrystalTextBounds = {153, 248, 175, 16};
 static const Rectangle imgGBDevIoBounds = {28, 280, 34, 55};
 static const Rectangle gbDevIOTextBounds = {68, 300, 75, 16};
 static const Rectangle imgNESDevWikiBounds = {163, 280, 96, 60};
-static const Rectangle otherCreditsTextBounds = {5, 350, 310, 80};
+static const Rectangle imgPokeTransporterGBBounds = {96, 350, 128, 39};
+static const Rectangle otherCreditsTextBounds = {5, 400, 310, 80};
 
 static const char* otherCreditsString = R"delim(github.com/magical/pokemon-sprites-rby
 glitchcity.wiki
@@ -34,7 +35,7 @@ static const char* headerTextString = R"delim(PokeMe64 Version 0.1
 by risingPhil
 
 SPECIAL THANKS TO:
-(For docs, tools and/or inspiration)
+(For docs, tools, assets and/or inspiration)
 )delim";
 
 AboutScene::AboutScene(SceneDependencies& deps, void*)
@@ -48,6 +49,7 @@ AboutScene::AboutScene(SceneDependencies& deps, void*)
     , logoPKHEX_(nullptr)
     , logoGBDevIO_(nullptr)
     , logoNESDevWiki_(nullptr)
+    , logoPokeTransporterGB_(nullptr)
     , scrollWidget_(deps.animationManager)
     , headerText_()
     , imgDragonWidget_()
@@ -61,6 +63,7 @@ AboutScene::AboutScene(SceneDependencies& deps, void*)
     , imgGBDevIO_()
     , gbDevIOText_()
     , imgNESDevWiki_()
+    , imgPokeTransporterGB_()
     , otherCreditsText_()
     , scrollFocusSegment_(WidgetFocusChainSegment{
         .current = &scrollWidget_
@@ -90,6 +93,7 @@ void AboutScene::init()
     logoPKHEX_ = sprite_load("rom://logo-pkhex.sprite");
     logoGBDevIO_ = sprite_load("rom://logo-gbdevio.sprite");
     logoNESDevWiki_ = sprite_load("rom://logo-nesdevwiki.sprite");
+    logoPokeTransporterGB_ = sprite_load("rom://logo-poketransporter-gb.sprite");
     scrollWidget_.setBounds(scrollWidgetBounds);
     scrollWidget_.setStyle(scrollWidgetStyle);
 
@@ -220,6 +224,17 @@ void AboutScene::init()
     imgNESDevWiki_.setStyle(imgNESDevWikiStyle);
     scrollWidget_.addWidget(&imgNESDevWiki_);
 
+    const ImageWidgetStyle imgPokeTransporterGBStyle = {
+        .image = {
+            .sprite = logoPokeTransporterGB_,
+            .spriteBounds = Rectangle{0, 0, imgPokeTransporterGBBounds.width, imgPokeTransporterGBBounds.height}
+        }
+    };
+
+    imgPokeTransporterGB_.setBounds(imgPokeTransporterGBBounds);
+    imgPokeTransporterGB_.setStyle(imgPokeTransporterGBStyle);
+    scrollWidget_.addWidget(&imgPokeTransporterGB_);
+
     otherCreditsText_.setBounds(otherCreditsTextBounds);
     otherCreditsText_.setStyle(commonCenterAlignedTextStyle);
     otherCreditsText_.setData(otherCreditsString);
@@ -244,6 +259,8 @@ void AboutScene::destroy()
     logoGBDevIO_ = nullptr;
     sprite_free(logoNESDevWiki_);
     logoNESDevWiki_ = nullptr;
+    sprite_free(logoPokeTransporterGB_);
+    logoPokeTransporterGB_ = nullptr;
 }
 
 bool AboutScene::handleUserInput(joypad_port_t port, const joypad_inputs_t& inputs)
