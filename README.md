@@ -57,7 +57,6 @@ But having it done with a Nintendo 64 feels more "real"/"official" and is easier
 - add a skippable "trade" 3D animation sequence when you receive a distribution pokémon. The idea is to have a pokéball go into a green mario pipe on either a Nintendo 64 3D model or Nintendo 64 3D logo model. Then follow the pipe with the camera and have the pokéball drop onto a huge 3D representation of the gameboy cartridge before opening the pokéball which then triggers the stats screen.
 - Have a 3D intro animation that shows a pokeball opening, a Nintendo 64 logo appearing, slightly jumping and playing the "NINTENDO sixtyfoouuuuuuuuur" meme sound
 - Add a menu item to let you buy missing version exclusive pokémon from other versions of the generation with in-game currency. (such as Mankey for Blue or Vulpix for Red). The original games are getting expensive, so this would be a good help for people who can only afford/are willing to buy/play a single game for the generation.
-- Add a menu item that informs you about the existence of [Poke Transporter GB](https://github.com/GearsProgress/Poke_Transporter_GB) for transferring to Gen3
 - Add some background music (Creative commons remakes/remixes of the original music (Maybe a looped chunk of [Ramstar - Route 24](https://www.youtube.com/watch?v=ih53Nb34vbM)?)
 - Have a "music" widget that shows up to name the song(s) that I end up using when it/they start(s) playing. (similar to how [Need For Speed - Most Wanted (original)](https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWk37230YvbMHaMchN8dzQiRrO66VofThpcbvUTFMoplDbkQKBVUFcIabbNCnzZ0KpuxcAQmrXQjBlqv_bvi6v6xpjmPxs3tJ-ZI_GhOn3xe5DW7XpMbtnCKFcbBQ-l_zzbrIIV4smBpth/s1600/_mwmusic.jpg) used to show this)
 
@@ -70,7 +69,7 @@ But having it done with a Nintendo 64 feels more "real"/"official" and is easier
 
 I'm likely going to postpone the 3D stuff (intro and "trade" sequence) until I have implemented a lot of the other ideas here.
 
-Originally I had the idea of showing a professor character in the rom. But then I found out on YouTube that GearsProgress recently released the "Poke transporter GB" which did the exact same thing. So I'm not sure about that idea anymore. Then again, maybe it could be an option to have some lore that these professors would know eachother. Right now this remains unimplemented though.
+Maybe at some point I might introduce a professor character in PokeMe64. I originally had this idea when starting the project, but when I discovered the existence of the Poke Transporter GB project by GearsProgress, I kinda let that go.
 
 Anyway, how many of these ideas actually get implemented kinda depends on how quickly I get burned out of the project. We'll see how far we get.
 
