@@ -73,7 +73,7 @@ Maybe at some point I might introduce a professor character in PokeMe64. I origi
 
 Anyway, how many of these ideas actually get implemented kinda depends on how quickly I get burned out of the project. We'll see how far we get.
 
-## Credits
+# Credits
 You can find the Credits and special thanks section here: [Credits](CREDITS.md)
 
 # Help wanted
