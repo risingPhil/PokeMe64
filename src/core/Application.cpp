@@ -1,5 +1,6 @@
 #include "core/Application.h"
 #include "scenes/IScene.h"
+#include "core/DragonUtils.h"
 
 static Application* appInstance = nullptr;
 static void resetInterruptHandler()
@@ -40,6 +41,7 @@ void Application::init()
 {
     // Based on example code https://github.com/DragonMinded/libdragon/wiki/OpenGL-on-N64
     debug_init_isviewer();
+    mountSDCard();
     //console_set_debug(true);
 
     joypad_init();

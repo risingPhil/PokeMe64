@@ -414,3 +414,29 @@ void gen2SetEventFlag(void* context, const void* param)
     tpakManager.setRAMEnabled(false);
     scene->showDialog(messageData);
 }
+
+void writeFileToSD(void* context, const void* param)
+{
+    MenuScene* scene = static_cast<MenuScene*>(context);
+
+    DialogData* msg = new DialogData{
+        .shouldDeleteWhenDone = true
+    };
+
+    if(sdcard_mounted)
+    {
+        const char* test = "Hello Phil 2!";
+
+        size_t ret = writeBufferToFile("sd:/helloworld.txt", reinterpret_cast<const uint8_t*>(test), strlen(test));
+        if(!ret)
+        {
+            setDialogDataText(*msg, "ERROR: Could not write to file sd:/helloworld.txt!");
+        }
+        else
+        {
+            setDialogDataText(*msg, "SUCCESS: Check the SD! sd:/helloworld.txt should exist!");
+        }
+    }
+
+    scene->showDialog(msg);
+}

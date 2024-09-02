@@ -30,5 +30,8 @@ void gen1TeachPikachu(void* context, const void* param);
 void gen2ReceiveGSBall(void* context, const void* param);
 void gen2SetEventFlag(void* context, const void* param);
 
+//Temporary function.
+// TODO: should be removed!
+void writeFileToSD(void* context, const void* param);
 
 #endif

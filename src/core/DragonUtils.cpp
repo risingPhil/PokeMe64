@@ -1,5 +1,7 @@
 #include "core/DragonUtils.h"
 
+bool sdcard_mounted = false;
+
 static uint8_t ANALOG_STICK_THRESHOLD = 30;
 
 const UINavigationDirection determineUINavigationDirection(joypad_inputs_t inputs, NavigationInputSourceType sourceType)
@@ -45,4 +47,30 @@ const UINavigationDirection determineUINavigationDirection(joypad_inputs_t input
         }
     }
     return UINavigationDirection::MAX;
+}
+
+bool mountSDCard()
+{
+    sdcard_mounted = debug_init_sdfs("sd:/", -1);
+    return sdcard_mounted;
+}
+
+size_t writeBufferToFile(const char* path, const uint8_t* buffer, size_t bufferSize)
+{
+    size_t ret;
+    if(!sdcard_mounted)
+    {
+        return 0;
+    }
+
+    FILE* f = fopen(path, "w");
+    if(!f)
+    {
+        return 0;
+    }
+
+    ret = fwrite(buffer, sizeof(char), bufferSize, f);
+
+    fclose(f);
+    return ret;
 }

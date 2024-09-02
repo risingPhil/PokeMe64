@@ -21,6 +21,10 @@ MenuItemData gen1MenuEntries[] = {
         .onConfirmAction = goToPokeTransporterGBRef
     },
     {
+        .title = "Test SD Write",
+        .onConfirmAction = writeFileToSD
+    },
+    {
         .title = "About",
         .onConfirmAction = goToAboutScene
     }
@@ -44,6 +48,10 @@ MenuItemData gen2MenuEntries[] = {
     {
         .title = "Gen 3 Transfer Info",
         .onConfirmAction = goToPokeTransporterGBRef
+    },
+    {
+        .title = "Test SD Write",
+        .onConfirmAction = writeFileToSD
     },
     {
         .title = "About",
@@ -73,6 +81,10 @@ MenuItemData gen2CrystalMenuEntries[] = {
     {
         .title = "Gen 3 Transfer Info",
         .onConfirmAction = goToPokeTransporterGBRef
+    },
+    {
+        .title = "Test SD Write",
+        .onConfirmAction = writeFileToSD
     },
     {
         .title = "About",

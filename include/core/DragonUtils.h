@@ -20,10 +20,29 @@ enum class NavigationInputSourceType
     BOTH
 };
 
+extern bool sdcard_mounted;
+
 /**
  * This function determines whether the joypad_inputs_t has analog or dpad positions/presses that could be considered for UI navigation.
  * If so, it will return the most prominent direction.
  */
 const UINavigationDirection determineUINavigationDirection(joypad_inputs_t inputs, NavigationInputSourceType sourceType);
+
+/**
+ * @brief mounts the SD card (if possible)
+ * 
+ */
+bool mountSDCard();
+
+/**
+ * @brief Writes the specified buffer to a file at the specified path.
+ * This should be a path starting with sd:/
+ * 
+ * @param path path starting with sd:/
+ * @param buffer buffer to write
+ * @param bufferSize size of the buffer
+ * @return size_t number of bytes written
+ */
+size_t writeBufferToFile(const char* path, const uint8_t* buffer, size_t bufferSize);
 
 #endif
