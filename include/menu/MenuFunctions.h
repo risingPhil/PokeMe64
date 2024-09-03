@@ -30,8 +30,9 @@ void gen1TeachPikachu(void* context, const void* param);
 void gen2ReceiveGSBall(void* context, const void* param);
 void gen2SetEventFlag(void* context, const void* param);
 
-//Temporary function.
-// TODO: should be removed!
-void writeFileToSD(void* context, const void* param);
+/**
+ * This function backs up the the cartridge SRAM contents to a save file on the SD card
+ */
+void backupCartridgeSRAMToSDCard(void* context, const void* param);
 
 #endif

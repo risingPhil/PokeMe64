@@ -21,8 +21,8 @@ MenuItemData gen1MenuEntries[] = {
         .onConfirmAction = goToPokeTransporterGBRef
     },
     {
-        .title = "Test SD Write",
-        .onConfirmAction = writeFileToSD
+        .title = "Backup Save",
+        .onConfirmAction = backupCartridgeSRAMToSDCard
     },
     {
         .title = "About",
@@ -50,8 +50,8 @@ MenuItemData gen2MenuEntries[] = {
         .onConfirmAction = goToPokeTransporterGBRef
     },
     {
-        .title = "Test SD Write",
-        .onConfirmAction = writeFileToSD
+        .title = "Backup Save",
+        .onConfirmAction = backupCartridgeSRAMToSDCard
     },
     {
         .title = "About",
@@ -83,8 +83,8 @@ MenuItemData gen2CrystalMenuEntries[] = {
         .onConfirmAction = goToPokeTransporterGBRef
     },
     {
-        .title = "Test SD Write",
-        .onConfirmAction = writeFileToSD
+        .title = "Backup Save",
+        .onConfirmAction = backupCartridgeSRAMToSDCard
     },
     {
         .title = "About",

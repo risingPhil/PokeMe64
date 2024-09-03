@@ -9,6 +9,9 @@
 #include "transferpak/TransferPakManager.h"
 #include "transferpak/TransferPakRomReader.h"
 #include "transferpak/TransferPakSaveManager.h"
+#include "transferpak/TransferPakDataCopier.h"
+
+#include <cstdio>
 
 #define POKEMON_CRYSTAL_ITEM_ID_GS_BALL 0x73
 
@@ -415,28 +418,55 @@ void gen2SetEventFlag(void* context, const void* param)
     scene->showDialog(messageData);
 }
 
-void writeFileToSD(void* context, const void* param)
+void backupCartridgeSRAMToSDCard(void* context, const void* param)
 {
+    const char* outputPath = "sd:/gb_out.sav";
     MenuScene* scene = static_cast<MenuScene*>(context);
+    TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
+    TransferPakSaveManager saveManager(tpakManager);
 
     DialogData* msg = new DialogData{
         .shouldDeleteWhenDone = true
     };
 
-    if(sdcard_mounted)
+    // check if the n64 flashcart is supported
+    if(!doesN64FlashCartSupportSDCardAccess())
     {
-        const char* test = "Hello Phil 2!";
-
-        size_t ret = writeBufferToFile("sd:/helloworld.txt", reinterpret_cast<const uint8_t*>(test), strlen(test));
-        if(!ret)
-        {
-            setDialogDataText(*msg, "ERROR: Could not write to file sd:/helloworld.txt!");
-        }
-        else
-        {
-            setDialogDataText(*msg, "SUCCESS: Check the SD! sd:/helloworld.txt should exist!");
-        }
+        setDialogDataText(*msg, "Sorry! This is only supported on 64Drive, Everdrive64, ED64Plus and SummerCart64!");
+        scene->showDialog(msg);
+        return;
     }
+
+    // check if the sd card is mounted
+    if(!sdcard_mounted)
+    {
+        setDialogDataText(*msg, "ERROR: SD card is not mounted!");
+        scene->showDialog(msg);
+        return;
+    }
+
+    FILE* outputFile = fopen(outputPath, "w");
+    if(!outputFile)
+    {
+        setDialogDataText(*msg, "ERROR: Could not write to file %s!", outputPath);
+        scene->showDialog(msg);
+        return;
+    }
+
+    gameboy_cartridge_header gbHeader;
+    tpakManager.readCartridgeHeader(gbHeader);
+    const uint32_t numBytesToCopy = convertSRAMSizeIntoNumBytes(gbHeader.ram_size_code);
+
+    TransferPakSaveManagerCopySource copySource(saveManager);
+    TransferPakDataCopier copier(copySource, outputFile);
+    tpakManager.setRAMEnabled(true);
+
+    copier.copyChunk(numBytesToCopy);
+
+    tpakManager.setRAMEnabled(false);
+    fclose(outputFile);
+
+    setDialogDataText(*msg, "The cartridge save was written to %s!", outputPath);
 
     scene->showDialog(msg);
 }

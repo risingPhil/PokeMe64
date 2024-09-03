@@ -2,6 +2,7 @@
 #include "transferpak/TransferPakManager.h"
 #include "transferpak/TransferPakRomReader.h"
 #include "transferpak/TransferPakSaveManager.h"
+#include "tpak.h"
 
 /**
  * @brief This function allows you to specify a 32 bit RGBA color by specifying separate color components
@@ -268,11 +269,25 @@ bool TransferPakDetectionWidget::selectTransferPak()
 
 bool TransferPakDetectionWidget::validateGameboyHeader()
 {
+    gameboy_cartridge_header cartridgeHeader;
     if(!tpakManager_.setPower(true))
     {
         return false;
     }
-    return tpakManager_.validateGbHeader();
+
+
+    if(!tpakManager_.readCartridgeHeader(cartridgeHeader))
+    {
+        return false;
+    }
+
+    if(!tpak_check_header(&cartridgeHeader))
+    {
+        debugf("[TransferPakDetectionWidget]: ERROR: tpak_check_header returned false!\r\n");
+        return false;
+    }
+
+    return true;
 }
 
 bool TransferPakDetectionWidget::detectGameType()

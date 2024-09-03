@@ -1,4 +1,5 @@
 #include "core/DragonUtils.h"
+#include "libcart/cart.h"
 
 bool sdcard_mounted = false;
 
@@ -73,4 +74,28 @@ size_t writeBufferToFile(const char* path, const uint8_t* buffer, size_t bufferS
 
     fclose(f);
     return ret;
+}
+
+uint32_t convertSRAMSizeIntoNumBytes(gb_cart_ram_size_t ramSize)
+{
+    switch(ramSize)
+    {
+        case GB_RAM_2KB:
+            return 2 * 1024;
+        case GB_RAM_8KB:
+            return 8 * 1024;
+        case GB_RAM_32KB:
+            return 32 * 1024;
+        case GB_RAM_64KB:
+            return 64 * 1024;
+        case GB_RAM_128KB:
+            return 128 * 1024;
+        default:
+            return 0;
+    }
+}
+
+bool doesN64FlashCartSupportSDCardAccess()
+{
+    return (cart_type > CART_NULL && cart_type < CART_MAX);
 }

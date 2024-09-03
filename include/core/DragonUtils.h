@@ -45,4 +45,15 @@ bool mountSDCard();
  */
 size_t writeBufferToFile(const char* path, const uint8_t* buffer, size_t bufferSize);
 
+/**
+ * Converts the gb_cart_ram_size_t enum into the actual number of bytes
+ */
+uint32_t convertSRAMSizeIntoNumBytes(gb_cart_ram_size_t ramSize);
+
+/**
+ * This function indicates whether the N64 flashcart we're running from supports
+ * access to its SD card
+ */
+bool doesN64FlashCartSupportSDCardAccess();
+
 #endif
