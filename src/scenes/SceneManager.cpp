@@ -5,6 +5,7 @@
 #include "scenes/AboutScene.h"
 #include "scenes/InitTransferPakScene.h"
 #include "scenes/DistributionPokemonListScene.h"
+#include "scenes/SceneWithProgressBar.h"
 
 #include <libdragon.h>
 
@@ -139,6 +140,9 @@ void SceneManager::loadScene()
             break;
         case SceneType::POKETRANSPORTER_GB_REF:
             scene_ = new PokeTransporterGBRefScene(sceneDeps_, newSceneContext_);
+            break;
+        case SceneType::COPY_DATA:
+            scene_ = new SceneWithProgressBar(sceneDeps_);
             break;
         case SceneType::ABOUT:
             scene_ = new AboutScene(sceneDeps_, newSceneContext_);

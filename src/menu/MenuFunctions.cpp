@@ -135,6 +135,14 @@ void goToAboutScene(void* context, const void* param)
     sceneManager.switchScene(SceneType::ABOUT);
 }
 
+void goToProgressScene(void* context, const void* param)
+{
+    MenuScene* scene = static_cast<MenuScene*>(context);
+    SceneManager& sceneManager = scene->getDependencies().sceneManager;
+
+    sceneManager.switchScene(SceneType::COPY_DATA);
+}
+
 void goToGen1DistributionPokemonMenu(void* context, const void*)
 {
     goToDistributionPokemonListMenu(context, DistributionPokemonListType::GEN1);

@@ -20,6 +20,7 @@ enum class SceneType
     STATS,
     TEST,
     POKETRANSPORTER_GB_REF,
+    COPY_DATA,
     ABOUT
 };
 
