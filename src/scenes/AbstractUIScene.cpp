@@ -95,3 +95,8 @@ void AbstractUIScene::setFocusChain(WidgetFocusChainSegment* focusChain)
         focusChain_->current->setFocused(true);
     }
 }
+
+SceneDependencies& AbstractUIScene::getDependencies()
+{
+    return deps_;
+}

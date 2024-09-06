@@ -14,11 +14,11 @@ ProgressBarWidget::~ProgressBarWidget()
 {
 }
 
-void ProgressBarWidget::setProgress(uint8_t progress)
+void ProgressBarWidget::setProgress(double progress)
 {
     progress_ = progress;
 
-    snprintf(textBuffer_, sizeof(textBuffer_), "%hu%%", progress);
+    snprintf(textBuffer_, sizeof(textBuffer_), "%hu%%", static_cast<uint8_t>(progress * 100.0));
 }
 
 void ProgressBarWidget::setStyle(const ProgressBarWidgetStyle& style)
@@ -93,7 +93,7 @@ void ProgressBarWidget::render(RDPQGraphics& gfx, const Rectangle& parentBounds)
         const Rectangle progressRectangle = {
             .x = foregroundRectangle.x,
             .y = foregroundRectangle.y,
-            .width = static_cast<int>(foregroundRectangle.width * (static_cast<float>(progress_) / 100.f)),
+            .width = static_cast<int>(foregroundRectangle.width * progress_),
             .height = foregroundRectangle.height
         };
 

@@ -76,6 +76,39 @@ size_t writeBufferToFile(const char* path, const uint8_t* buffer, size_t bufferS
     return ret;
 }
 
+uint32_t convertROMSizeIntoNumBytes(gb_cart_rom_size_t romSize)
+{
+    switch(romSize)
+    {
+        case GB_ROM_32KB:
+            return 32 * 1024;
+        case GB_ROM_64KB:
+            return 64 * 1024;
+        case GB_ROM_128KB:
+            return 128 * 1024;
+        case GB_ROM_256KB:
+            return 256 * 1024;
+        case GB_ROM_512KB:
+            return 512 * 1024;
+        case GB_ROM_1MB:
+            return 1024 * 1024;
+        case GB_ROM_2MB:
+            return 2048 * 1024;
+        case GB_ROM_4MB:
+            return 4096 * 1024;
+        case GB_ROM_8MB:
+            return 8192 * 1024;
+        case GB_ROM_1152KB:
+            return 1152 * 1024;
+        case GB_ROM_1280KB:
+            return 1280 * 1024;
+        case GB_ROM_1536KB:
+            return 1536 * 1024;
+        default:
+            return 0;
+    }
+}
+
 uint32_t convertSRAMSizeIntoNumBytes(gb_cart_ram_size_t ramSize)
 {
     switch(ramSize)

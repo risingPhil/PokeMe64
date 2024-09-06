@@ -6,6 +6,10 @@ ITransferPakDataCopySource::~ITransferPakDataCopySource()
 {
 }
 
+ITransferPakDataCopyDestination::~ITransferPakDataCopyDestination()
+{
+}
+
 TransferPakRomReaderCopySource::TransferPakRomReaderCopySource(TransferPakRomReader& romReader)
     : romReader_(romReader)
     , bytesRead_(0)
@@ -14,6 +18,12 @@ TransferPakRomReaderCopySource::TransferPakRomReaderCopySource(TransferPakRomRea
 
 TransferPakRomReaderCopySource::~TransferPakRomReaderCopySource()
 {
+}
+
+
+bool TransferPakRomReaderCopySource::readyForTransfer() const
+{
+    return true;
 }
 
 uint16_t TransferPakRomReaderCopySource::getCurrentBankIndex() const
@@ -31,7 +41,7 @@ uint32_t TransferPakRomReaderCopySource::read(uint8_t* buffer, uint32_t bytesToR
     if(romReader_.read(buffer, bytesToRead))
     {
         bytesRead_ += bytesToRead;
-        return bytesRead_;
+        return bytesToRead;
     }
     return 0;
 }
@@ -44,6 +54,11 @@ TransferPakSaveManagerCopySource::TransferPakSaveManagerCopySource(TransferPakSa
 
 TransferPakSaveManagerCopySource::~TransferPakSaveManagerCopySource()
 {
+}
+
+bool TransferPakSaveManagerCopySource::readyForTransfer() const
+{
+    return true;
 }
 
 uint16_t TransferPakSaveManagerCopySource::getCurrentBankIndex() const
@@ -61,14 +76,133 @@ uint32_t TransferPakSaveManagerCopySource::read(uint8_t* buffer, uint32_t bytesT
     if(saveManager_.read(buffer, bytesToRead))
     {
         bytesRead_ += bytesToRead;
-        return bytesRead_;
+        return bytesToRead;
     }
     return 0;
 }
 
-TransferPakDataCopier::TransferPakDataCopier(ITransferPakDataCopySource& source, FILE* outputFile)
+TransferPakFileCopySource::TransferPakFileCopySource(const char* filePath)
+    : inputFile_(nullptr)
+    , bytesRead_(0)
+{
+    inputFile_ = fopen(filePath, "r");
+}
+
+TransferPakFileCopySource::~TransferPakFileCopySource()
+{
+    if(inputFile_)
+    {
+        fclose(inputFile_);
+        inputFile_ = nullptr;
+    }
+}
+
+bool TransferPakFileCopySource::readyForTransfer() const
+{
+    return (inputFile_ != nullptr);
+}
+
+uint16_t TransferPakFileCopySource::getCurrentBankIndex() const
+{
+    return 1;
+}
+
+uint32_t TransferPakFileCopySource::getNumberOfBytesRead() const
+{
+    return bytesRead_;
+}
+
+uint32_t TransferPakFileCopySource::read(uint8_t* buffer, uint32_t bytesToRead)
+{
+    uint32_t ret = static_cast<uint32_t>(fread(buffer, sizeof(char), bytesToRead, inputFile_));
+    bytesRead_ += ret;
+    return ret;
+}
+
+TransferPakSaveManagerDestination::TransferPakSaveManagerDestination(TransferPakSaveManager& saveManager)
+    : saveManager_(saveManager)
+    , bytesWritten_(0)
+{
+}
+
+TransferPakSaveManagerDestination::~TransferPakSaveManagerDestination()
+{
+    close();
+}
+
+bool TransferPakSaveManagerDestination::readyForTransfer() const
+{
+    return true;
+}
+
+uint16_t TransferPakSaveManagerDestination::getCurrentBankIndex() const
+{
+    return saveManager_.getCurrentBankIndex();
+}
+
+uint32_t TransferPakSaveManagerDestination::getNumberOfBytesWritten() const
+{
+    return bytesWritten_;
+}
+
+uint32_t TransferPakSaveManagerDestination::write(uint8_t* buffer, uint32_t bytesToWrite)
+{
+    saveManager_.write(buffer, bytesToWrite);
+    bytesWritten_ += bytesToWrite;
+    return bytesToWrite;
+}
+
+void TransferPakSaveManagerDestination::close()
+{
+    // dummy
+}
+
+TransferPakFileCopyDestination::TransferPakFileCopyDestination(const char* pathOnSDCard)
+    : outputFile_(nullptr)
+    , bytesWritten_(0)
+{
+    outputFile_ = fopen(pathOnSDCard, "w");
+}
+
+TransferPakFileCopyDestination::~TransferPakFileCopyDestination()
+{
+    close();
+}
+
+bool TransferPakFileCopyDestination::readyForTransfer() const
+{
+    return (outputFile_ != nullptr);
+}
+
+uint16_t TransferPakFileCopyDestination::getCurrentBankIndex() const
+{
+    return 1;
+}
+
+uint32_t TransferPakFileCopyDestination::getNumberOfBytesWritten() const
+{
+    return bytesWritten_;
+}
+
+uint32_t TransferPakFileCopyDestination::write(uint8_t* buffer, uint32_t bytesToWrite)
+{
+    const uint32_t ret = static_cast<uint32_t>(fwrite(buffer, sizeof(char), bytesToWrite, outputFile_));
+    bytesWritten_ += ret;
+    return ret;
+}
+
+void TransferPakFileCopyDestination::close()
+{
+    if(outputFile_)
+    {
+        fclose(outputFile_);
+        outputFile_ = nullptr;
+    }
+}
+
+TransferPakDataCopier::TransferPakDataCopier(ITransferPakDataCopySource& source, ITransferPakDataCopyDestination& destination)
     : source_(source)
-    , outputFile_(outputFile)
+    , destination_(destination)
 {
 }
 
@@ -103,9 +237,8 @@ size_t TransferPakDataCopier::copyChunk(uint32_t numBytesToCopy)
             break;
         }
 
-        // now write the bytes to file
-        fwrite(buffer, sizeof(char), bytesToRead, outputFile_);
-        bytesRemaining -= bytesToRead;
+        // now write the bytes to the destination
+        bytesRemaining -= destination_.write(buffer, bytesToRead);
     }
     return numBytesToCopy - bytesRemaining;
 }

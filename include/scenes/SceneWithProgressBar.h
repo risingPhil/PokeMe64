@@ -15,21 +15,14 @@ public:
     virtual ~SceneWithProgressBar();
 
     void init() override;
-    void destroy() override;
 
-    bool handleUserInput(joypad_port_t port, const joypad_inputs_t& inputs) override;
     void render(RDPQGraphics& gfx, const Rectangle& sceneBounds) override;
 
-    void onDialogDone();
+    void setProgress(double progress);
 protected:
-    void setupFonts() override;
-    void setupDialog(DialogWidgetStyle& style) override;
+    virtual void setupProgressBar(ProgressBarWidgetStyle& style);
 private:
     ProgressBarWidget progressWidget_;
-    sprite_t* dialogWidgetSprite_;
-    sprite_t* progressBackgroundSprite_;
-    uint8_t progress_;
-    uint8_t arialSmallId_;
 };
 
 #endif

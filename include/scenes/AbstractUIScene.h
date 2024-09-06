@@ -75,6 +75,8 @@ public:
      * So don't forget to set one!
      */
     void setFocusChain(WidgetFocusChainSegment* focusChain);
+
+    SceneDependencies& getDependencies();
 protected:
     SceneDependencies& deps_;
 private:

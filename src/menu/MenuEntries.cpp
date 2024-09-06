@@ -3,6 +3,10 @@
 
 MenuItemData gen1MenuEntries[] = {
     {
+        .title = "Backup/Restore",
+        .onConfirmAction = goToBackupRestoreMenu
+    },
+    {
         .title = "Event Pokémon",
         .onConfirmAction = goToGen1DistributionPokemonMenu
     },
@@ -21,22 +25,18 @@ MenuItemData gen1MenuEntries[] = {
         .onConfirmAction = goToPokeTransporterGBRef
     },
     {
-        .title = "Backup Save",
-        .onConfirmAction = backupCartridgeSRAMToSDCard
-    },
-    {
         .title = "About",
         .onConfirmAction = goToAboutScene
-    },
-    {
-        .title = "Progress scene",
-        .onConfirmAction = goToProgressScene
     }
 };
 
 const uint32_t gen1MenuEntriesSize = sizeof(gen1MenuEntries);
 
 MenuItemData gen2MenuEntries[] = {
+    {
+        .title = "Backup/Restore",
+        .onConfirmAction = goToBackupRestoreMenu
+    },
     {
         .title = "Event Pokémon",
         .onConfirmAction = goToGen2DistributionPokemonMenu
@@ -54,22 +54,18 @@ MenuItemData gen2MenuEntries[] = {
         .onConfirmAction = goToPokeTransporterGBRef
     },
     {
-        .title = "Backup Save",
-        .onConfirmAction = backupCartridgeSRAMToSDCard
-    },
-    {
         .title = "About",
         .onConfirmAction = goToAboutScene
-    },
-    {
-        .title = "Progress scene",
-        .onConfirmAction = goToProgressScene
     }
 };
 
 const uint32_t gen2MenuEntriesSize = sizeof(gen2MenuEntries);
 
 MenuItemData gen2CrystalMenuEntries[] = {
+    {
+        .title = "Backup/Restore",
+        .onConfirmAction = goToBackupRestoreMenu
+    },
     {
         .title = "Event Pokémon",
         .onConfirmAction = goToGen2DistributionPokemonMenu
@@ -91,16 +87,8 @@ MenuItemData gen2CrystalMenuEntries[] = {
         .onConfirmAction = goToPokeTransporterGBRef
     },
     {
-        .title = "Backup Save",
-        .onConfirmAction = backupCartridgeSRAMToSDCard
-    },
-    {
         .title = "About",
         .onConfirmAction = goToAboutScene
-    },
-    {
-        .title = "Progress scene",
-        .onConfirmAction = goToProgressScene
     }
 };
 
@@ -125,3 +113,23 @@ MenuItemData gen2DecorationMenuEntries[] = {
 };
 
 const uint32_t gen2DecorationMenuEntriesSize = sizeof(gen2DecorationMenuEntries);
+
+MenuItemData backupRestoreMenuEntries[] = {
+    {
+        .title = "Backup Save",
+        .onConfirmAction = goToDataCopyScene,
+        .itemParam = &DATACOPY_BACKUP_SAVE
+    },
+    {
+        .title = "Backup ROM",
+        .onConfirmAction = goToDataCopyScene,
+        .itemParam = &DATACOPY_BACKUP_ROM
+    },
+    {
+        .title = "Restore Save",
+        .onConfirmAction = goToDataCopyScene,
+        .itemParam = &DATACOPY_RESTORE_SAVE
+    }
+};
+
+const uint32_t backupRestoreMenuEntriesSize = sizeof(backupRestoreMenuEntries);

@@ -9,14 +9,15 @@
 #include "transferpak/TransferPakManager.h"
 #include "transferpak/TransferPakRomReader.h"
 #include "transferpak/TransferPakSaveManager.h"
-#include "transferpak/TransferPakDataCopier.h"
-
-#include <cstdio>
 
 #define POKEMON_CRYSTAL_ITEM_ID_GS_BALL 0x73
 
 const Move MOVE_SURF = Move::SURF;
 const Move MOVE_FLY = Move::FLY;
+
+const DataCopyOperation DATACOPY_BACKUP_SAVE = DataCopyOperation::BACKUP_SAVE;
+const DataCopyOperation DATACOPY_BACKUP_ROM = DataCopyOperation::BACKUP_ROM;
+const DataCopyOperation DATACOPY_RESTORE_SAVE = DataCopyOperation::RESTORE_SAVE;
 
 // based on https://github.com/kwsch/PKHeX/blob/master/PKHeX.Core/Resources/text/script/gen2/flags_c_en.txt
 const uint16_t GEN2_EVENTFLAG_DECORATION_PIKACHU_BED = 679;
@@ -135,12 +136,17 @@ void goToAboutScene(void* context, const void* param)
     sceneManager.switchScene(SceneType::ABOUT);
 }
 
-void goToProgressScene(void* context, const void* param)
+void goToDataCopyScene(void* context, const void* param)
 {
     MenuScene* scene = static_cast<MenuScene*>(context);
+    const DataCopyOperation operation = (*((const DataCopyOperation*)param));
     SceneManager& sceneManager = scene->getDependencies().sceneManager;
 
-    sceneManager.switchScene(SceneType::COPY_DATA);
+    auto sceneContext = new DataCopySceneContext{
+        .operation = operation
+    };
+
+    sceneManager.switchScene(SceneType::COPY_DATA, deleteDataCopySceneContext, sceneContext);
 }
 
 void goToGen1DistributionPokemonMenu(void* context, const void*)
@@ -167,6 +173,17 @@ void goToGen2DecorationMenu(void* context, const void* param)
     };
 
     scene->getDependencies().sceneManager.switchScene(SceneType::MENU, deleteMenuSceneContext, newSceneContext);
+}
+
+void goToBackupRestoreMenu(void* context, const void* param)
+{
+    MenuScene* scene = static_cast<MenuScene*>(context);
+    auto newSceneContext = new MenuSceneContext{
+        .menuEntries = backupRestoreMenuEntries,
+        .numMenuEntries = backupRestoreMenuEntriesSize / sizeof(backupRestoreMenuEntries[0])
+    };
+
+    scene->getDependencies().sceneManager.switchScene(SceneType::MENU, deleteMenuSceneContext, newSceneContext); 
 }
 
 void gen1PrepareToTeachPikachu(void* context, const void* param)
@@ -424,57 +441,4 @@ void gen2SetEventFlag(void* context, const void* param)
 
     tpakManager.setRAMEnabled(false);
     scene->showDialog(messageData);
-}
-
-void backupCartridgeSRAMToSDCard(void* context, const void* param)
-{
-    const char* outputPath = "sd:/gb_out.sav";
-    MenuScene* scene = static_cast<MenuScene*>(context);
-    TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
-    TransferPakSaveManager saveManager(tpakManager);
-
-    DialogData* msg = new DialogData{
-        .shouldDeleteWhenDone = true
-    };
-
-    // check if the n64 flashcart is supported
-    if(!doesN64FlashCartSupportSDCardAccess())
-    {
-        setDialogDataText(*msg, "Sorry! This is only supported on 64Drive, Everdrive64, ED64Plus and SummerCart64!");
-        scene->showDialog(msg);
-        return;
-    }
-
-    // check if the sd card is mounted
-    if(!sdcard_mounted)
-    {
-        setDialogDataText(*msg, "ERROR: SD card is not mounted!");
-        scene->showDialog(msg);
-        return;
-    }
-
-    FILE* outputFile = fopen(outputPath, "w");
-    if(!outputFile)
-    {
-        setDialogDataText(*msg, "ERROR: Could not write to file %s!", outputPath);
-        scene->showDialog(msg);
-        return;
-    }
-
-    gameboy_cartridge_header gbHeader;
-    tpakManager.readCartridgeHeader(gbHeader);
-    const uint32_t numBytesToCopy = convertSRAMSizeIntoNumBytes(gbHeader.ram_size_code);
-
-    TransferPakSaveManagerCopySource copySource(saveManager);
-    TransferPakDataCopier copier(copySource, outputFile);
-    tpakManager.setRAMEnabled(true);
-
-    copier.copyChunk(numBytesToCopy);
-
-    tpakManager.setRAMEnabled(false);
-    fclose(outputFile);
-
-    setDialogDataText(*msg, "The cartridge save was written to %s!", outputPath);
-
-    scene->showDialog(msg);
 }

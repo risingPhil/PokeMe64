@@ -32,9 +32,9 @@ public:
     virtual ~ProgressBarWidget();
 
     /**
-     * Sets the current progress. Should be a value in the [0 - 100] interval
+     * Sets the current progress. Should be a value in the [0.0 - 1.0] interval
      */
-    void setProgress(uint8_t progress);
+    void setProgress(double progress);
 
     /**
      * Sets the ProgressBarWidget style
@@ -102,7 +102,7 @@ private:
     ProgressBarWidgetStyle style_;
     bool visible_;
     Rectangle bounds_;
-    uint8_t progress_;
+    double progress_;
     char textBuffer_[5];
 };
 
