@@ -14,6 +14,11 @@ MenuItemWidget::~MenuItemWidget()
 {
 }
 
+const MenuItemData& MenuItemWidget::getData() const
+{
+    return data_;
+}
+
 void MenuItemWidget::setData(const MenuItemData& data)
 {
     data_ = data;

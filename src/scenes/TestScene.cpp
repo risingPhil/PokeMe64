@@ -1,35 +1,29 @@
 #include "scenes/TestScene.h"
-#include "core/RDPQGraphics.h"
-#include "core/FontManager.h"
-#include "widget/ImageWidget.h"
-#include "widget/TextWidget.h"
+#include "scenes/SceneManager.h"
 
-#include <n64sys.h>
+static const Rectangle fileBrowserBounds = {20, 20, 280, 200};
 
-static const char* tvtypeToString(tv_type_t type)
+static void fileConfirmedCallback(void* context, const char* path)
 {
-    switch(type)
-    {
-        case TV_PAL:
-            return "PAL";
-        case TV_NTSC:
-            return "NTSC";
-        case TV_MPAL:
-            return "MPAL";
-        default:
-            return "INVALID";
-    }
+    auto scene = (TestScene*)context;
+    scene->onFileConfirmed(path);
 }
 
+static void dialogFinishedCallback(void* context)
+{
+    auto scene = (TestScene*)context;
+    scene->onDialogDone();
+}
+
+
 TestScene::TestScene(SceneDependencies& deps, void*)
-    : AbstractUIScene(deps)
-    , scrollWidget_(deps.animationManager)
-    , scrollWidgetFocusSegment_({
-        .current = &scrollWidget_
-    })
-    , widgets_()
-    , pokeballSprite_(nullptr)
-    , oakSprite_(nullptr)
+    : SceneWithDialogWidget(deps)
+    , fileBrowser_(deps.animationManager)
+    , fileBrowserFocusSegment_{
+        .current = &fileBrowser_
+    }
+    , diag_({0})
+    , dialogWidgetBackgroundSprite_(nullptr)
 {
 }
 
@@ -39,128 +33,87 @@ TestScene::~TestScene()
 
 void TestScene::init()
 {
-    uint8_t widgetType;
-    const uint8_t fontId = deps_.fontManager.getFont("rom://Arial.font64");
-    pokeballSprite_ = sprite_load("rom:/pokeball.sprite");
-    oakSprite_ = sprite_load("rom://oak.sprite");
+    dialogWidgetBackgroundSprite_ = sprite_load("rom://menu-bg-9slice.sprite");
 
-    debugf("Hello Phil! Your tv type is: %s\r\n", tvtypeToString(get_tv_type()));
+    SceneWithDialogWidget::init();
 
-    const ScrollWidgetStyle scrollStyle = {
-        .scrollStep = 15,
-        .marginRight = 50,
-        .marginBottom = 50
-    };
-
-    scrollWidget_.setBounds(Rectangle{0, 0, 320, 240});
-    scrollWidget_.setStyle(scrollStyle);
-    scrollWidget_.setFocused(true);
-    setFocusChain(&scrollWidgetFocusSegment_);
-
-    const Dimensions textDimensions = {.width = 50, .height = 16};
-    const Dimensions oakDimensions = {.width = oakSprite_->width, .height = oakSprite_->height };
-    const Dimensions pokeballDimensions = {.width = pokeballSprite_->width, .height = pokeballSprite_->height};
-
-    TextWidgetStyle type1Style = {
-        .renderSettingsNotFocused = {
-            .fontId = fontId
-        }
-    };
-
-    ImageWidgetStyle type2Style = {
-        .image = {
-            .sprite = oakSprite_,
-            .spriteBounds = {0, 0, oakDimensions.width, oakDimensions.height}
-        }
-    };
-
-    ImageWidgetStyle type3Style = {
-        .image = {
-            .sprite = pokeballSprite_,
-            .spriteBounds = {0, 0, pokeballDimensions.width, pokeballDimensions.height}
-        }
-    };
-
-    int curXPos = 0;
-    int curYPos = 0;
-    int nextYPos = 0;
-    for(uint8_t i=0; i < 6; ++i)
-    {
-        for(uint8_t j=0; j < 6; ++j)
-        {
-            widgetType = (j % 3);
-            
-            switch(widgetType)
-            {
-                case 0:
-                {
-                    TextWidget* textWidget = new TextWidget();
-                    textWidget->setStyle(type1Style);
-                    textWidget->setBounds(Rectangle{curXPos, curYPos, textDimensions.width, textDimensions.height});
-                    textWidget->setData("Hello!");
-                    scrollWidget_.addWidget(textWidget);
-                    widgets_.push_back(textWidget);
-                    curXPos += textDimensions.width;
-                    if(curYPos + textDimensions.height > nextYPos)
-                    {
-                        nextYPos = curYPos + textDimensions.height;
-                    }
-                    break;
-                }
-                case 1:
-                {
-                    ImageWidget* imageWidget = new ImageWidget();
-                    imageWidget->setStyle(type2Style);
-                    imageWidget->setBounds(Rectangle{curXPos, curYPos, oakDimensions.width, oakDimensions.height});
-                    scrollWidget_.addWidget(imageWidget);
-                    widgets_.push_back(imageWidget);
-                    curXPos += oakDimensions.width;
-                    if(curYPos + oakDimensions.height > nextYPos)
-                    {
-                        nextYPos = curYPos + oakDimensions.height;
-                    }
-                    break;
-                }
-                case 2:
-                {
-                    ImageWidget* imageWidget = new ImageWidget();
-                    imageWidget->setStyle(type3Style);
-                    imageWidget->setBounds(Rectangle{curXPos, curYPos, pokeballDimensions.width, pokeballDimensions.height});
-                    scrollWidget_.addWidget(imageWidget);
-                    widgets_.push_back(imageWidget);
-                    curXPos += pokeballDimensions.width;
-                    if(curYPos + pokeballDimensions.height > nextYPos)
-                    {
-                        nextYPos = curYPos + pokeballDimensions.height;
-                    }
-                    break;
-                }
-            default:
-                break;
+    const FileBrowserWidgetStyle browserStyle = {
+        .background = {
+            .sprite = dialogWidgetBackgroundSprite_,
+            .renderSettings = {
+                .renderMode = SpriteRenderMode::NINESLICE,
+                .srcRect = {6, 6, 6, 6}
             }
+        },
+        .margin = {
+            .top = 5
+        },
+        .itemStyle = {
+            .size = {280, 16},
+            .titleNotFocused = {
+                .fontId = arialId_,
+                .fontStyleId = fontStyleWhiteId_
+            },
+            .titleFocused = {
+                .fontId = arialId_,
+                .fontStyleId = fontStyleYellowId_
+            },
+            .leftMargin = 10,
+            .topMargin = 1
         }
-        curYPos = nextYPos;
-        curXPos = 0;
-    }
+    };
+
+    setFocusChain(&fileBrowserFocusSegment_);
+    fileBrowser_.setBounds(fileBrowserBounds);
+    fileBrowser_.setStyle(browserStyle);
+    fileBrowser_.setItemConfirmedCallback(fileConfirmedCallback, this);
+    fileBrowser_.setFileExtensionToFilter(".bmp");
+    fileBrowser_.setPath("sd:/");
 }
 
 void TestScene::destroy()
 {
-    scrollWidget_.clearWidgets();
-    for(IWidget* widget : widgets_)
-    {
-        delete widget;
-    }
-    widgets_.clear();
-
-    sprite_free(oakSprite_);
-    oakSprite_ = nullptr;
-
-    sprite_free(pokeballSprite_);
-    pokeballSprite_ = nullptr;
+    SceneWithDialogWidget::destroy();
+    
+    sprite_free(dialogWidgetBackgroundSprite_);
+    dialogWidgetBackgroundSprite_ = nullptr;
 }
 
 void TestScene::render(RDPQGraphics& gfx, const Rectangle& sceneBounds)
 {
-    scrollWidget_.render(gfx, sceneBounds);
+    fileBrowser_.render(gfx, sceneBounds);
+    SceneWithDialogWidget::render(gfx, sceneBounds);
+}
+
+void TestScene::onDialogDone()
+{
+    deps_.sceneManager.goBackToPreviousScene();
+}
+
+void TestScene::onFileConfirmed(const char* path)
+{
+    setDialogDataText(diag_, "File confirmed: %s", path);
+    showDialog(&diag_);
+}
+
+void TestScene::showDialog(DialogData* diagData)
+{
+    SceneWithDialogWidget::showDialog(diagData);
+    fileBrowser_.setVisible(false);
+    setFocusChain(&dialogFocusChainSegment_);
+}
+
+
+void TestScene::setupDialog(DialogWidgetStyle& style)
+{
+    style.background.sprite = dialogWidgetBackgroundSprite_;
+    style.background.spriteSettings = {
+        .renderMode = SpriteRenderMode::NINESLICE,
+        .srcRect = { 6, 6, 6, 6 }
+    };
+
+    SceneWithDialogWidget::setupDialog(style);
+
+    dialogWidget_.setOnDialogFinishedCallback(dialogFinishedCallback, this);
+    dialogWidget_.setVisible(false);
 }

@@ -140,7 +140,7 @@ bool VerticalList::focusNext()
     
     changeStatus.curFocus = widgetList_[focusedWidgetIndex_];
     changeStatus.focusBounds = calculateListWidgetBounds(widgetBoundsList_[focusedWidgetIndex_], windowMinY_, bounds_.x + listStyle_.margin.left, bounds_.y + listStyle_.margin.top);
-    widgetList_[focusedWidgetIndex_]->setFocused(true);
+    widgetList_[focusedWidgetIndex_]->setFocused(focused_);
 
     const int32_t scrollAmountY = scrollWindowToFocusedWidget();
     changeStatus.focusBounds.y -= scrollAmountY;
@@ -168,7 +168,7 @@ bool VerticalList::focusPrevious()
 
     changeStatus.curFocus = widgetList_[focusedWidgetIndex_];
     changeStatus.focusBounds = calculateListWidgetBounds(widgetBoundsList_[focusedWidgetIndex_], windowMinY_, bounds_.x + listStyle_.margin.left, bounds_.y + listStyle_.margin.top);
-    widgetList_[focusedWidgetIndex_]->setFocused(true);
+    widgetList_[focusedWidgetIndex_]->setFocused(focused_);
     
     const int32_t scrollAmountY = scrollWindowToFocusedWidget();
     changeStatus.focusBounds.y -= scrollAmountY;

@@ -36,8 +36,6 @@ protected:
     void setupDialog(DialogWidgetStyle& style) override;
     void setupProgressBar(ProgressBarWidgetStyle& style) override;
 private:
-    void setupDialogMessage();
-
     TransferPakRomReader romReader_;
     TransferPakSaveManager saveManager_;
     DataCopySceneContext* sceneContext_;
