@@ -79,20 +79,7 @@ Dimensions FileBrowserWidget::getSize() const
 void FileBrowserWidget::setStyle(const FileBrowserWidgetStyle& style)
 {
     style_ = style;
-
-    const VerticalListStyle listStyle = {
-        .background = {
-            .sprite = style.background.sprite,
-            .spriteSettings = style.background.renderSettings
-        },
-        .margin = {
-            .left = style.margin.left,
-            .right = style.margin.right,
-            .top = style.margin.top,
-            .bottom = style.margin.bottom
-        },
-    };
-    listWidget_.setStyle(listStyle);
+    listWidget_.setStyle(style.listStyle);
 }
 
 bool FileBrowserWidget::handleUserInput(const joypad_inputs_t& userInput)

@@ -3,6 +3,11 @@
 #include "scenes/SceneManager.h"
 #include "menu/MenuFunctions.h"
 
+#include <system.h>
+
+//missing function declaration in libdragons' system.h, but the definition exists in system.c
+int mkdir( const char * path, mode_t mode );
+
 /**
  * Copying from or to the transfer pak is a blocking operation.
  * So while we're doing that, we can't render anything.
@@ -49,6 +54,9 @@ DataCopyScene::~DataCopyScene()
 
 void DataCopyScene::init()
 {
+    char savOutputPath[4096];
+    char romOutputPath[4096];
+    char gameTitle[12];
     dialogWidgetSprite_ = sprite_load("rom://menu-bg-9slice.sprite");
     progressBackgroundSprite_ = sprite_load("rom://bg-nineslice-transparant-border.sprite");
 
@@ -70,11 +78,18 @@ void DataCopyScene::init()
         return;
     }
 
-    const char* savOutputPath = "sd:/gb_out.sav";
-    const char* romOutputPath = "sd:/rom.gb";
+    mkdir("sd:/PokeMe64", 0777);
 
     gameboy_cartridge_header gbHeader;
     deps_.tpakManager.readCartridgeHeader(gbHeader);
+
+    // the title field of the gameboy header is likely truncated.
+    // create a copy and make sure to append a null character so we won't crash when trying to use it as a string
+    memcpy(gameTitle, gbHeader.new_title.title, 11);
+    gameTitle[11] = '\0';
+
+    snprintf(savOutputPath, sizeof(savOutputPath) - 1, "sd:/PokeMe64/%s.sav", gameTitle);
+    snprintf(romOutputPath, sizeof(savOutputPath) - 1, "sd:/PokeMe64/%s.gbc", gameTitle);
 
     auto msg2 = new DialogData{
         .shouldDeleteWhenDone = true
@@ -95,7 +110,7 @@ void DataCopyScene::init()
             setDialogDataText(*msg2, "The cartridge rom was backed up to %s!", romOutputPath);
             break;
         case DataCopyOperation::RESTORE_SAVE:
-            copySource_ = new TransferPakFileCopySource(savOutputPath);
+            copySource_ = new TransferPakFileCopySource(sceneContext_->saveToRestorePath.get());
             copyDestination_ = new TransferPakSaveManagerDestination(saveManager_);
             totalBytesToCopy_ = convertSRAMSizeIntoNumBytes(gbHeader.ram_size_code);
             setDialogDataText(*msg2, "The save file was restored to the cartridge!", romOutputPath);
@@ -106,7 +121,7 @@ void DataCopyScene::init()
     {
         if(sceneContext_->operation == DataCopyOperation::RESTORE_SAVE)
         {
-            setDialogDataText(diag_, "ERROR: Could not read from file %s!", savOutputPath);
+            setDialogDataText(diag_, "ERROR: Could not read from file %s!", sceneContext_->saveToRestorePath.get());
         }
         else
         {

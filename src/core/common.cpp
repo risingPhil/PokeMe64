@@ -1,5 +1,32 @@
 #include "core/common.h"
 
+#include <cstdlib>
+
+ManagedString::ManagedString(char* rawString)
+    : rawString_(rawString)
+{
+}
+
+ManagedString::~ManagedString()
+{
+    free(rawString_);
+    rawString_ = nullptr;
+}
+
+const char* ManagedString::get() const
+{
+    return rawString_;
+}
+
+void ManagedString::operator = (char* rawString)
+{
+    if(rawString_)
+    {
+        free(rawString_);
+    }
+    rawString_ = rawString;
+}
+
 bool isZeroSizeRectangle(const Rectangle &rect)
 {
     return (!rect.width || !rect.height);

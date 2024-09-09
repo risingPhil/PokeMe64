@@ -38,15 +38,17 @@ void TestScene::init()
     SceneWithDialogWidget::init();
 
     const FileBrowserWidgetStyle browserStyle = {
-        .background = {
-            .sprite = dialogWidgetBackgroundSprite_,
-            .renderSettings = {
-                .renderMode = SpriteRenderMode::NINESLICE,
-                .srcRect = {6, 6, 6, 6}
+        .listStyle = {
+            .background = {
+                .sprite = dialogWidgetBackgroundSprite_,
+                .spriteSettings = {
+                    .renderMode = SpriteRenderMode::NINESLICE,
+                    .srcRect = {6, 6, 6, 6}
+                }
+            },
+            .margin = {
+                .top = 5
             }
-        },
-        .margin = {
-            .top = 5
         },
         .itemStyle = {
             .size = {280, 16},

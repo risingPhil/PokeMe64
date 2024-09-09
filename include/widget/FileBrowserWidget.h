@@ -11,28 +11,7 @@
 
 typedef struct FileBrowserWidgetStyle
 {
-    struct {
-        sprite_t* sprite;
-        SpriteRenderSettings renderSettings;
-    } background;
-    struct {
-        /**
-         * @brief left margin -> the widgets will start rendering after this x spacing offset from the left edge of the list
-         */
-        int left;
-        /**
-         * @brief right margin -> the widgets will stop rendering x pixels from the right of this list
-         */
-        int right;
-        /**
-         * @brief top margin -> the widgets will start rendering after this y spacing offset from the top edge of the list
-         */
-        int top;
-        /**
-         * @brief bottom margin -> the widgets will stop rendering y pixels from the bottom edge of this list.
-         */
-        int bottom;
-    } margin;
+    VerticalListStyle listStyle;
     MenuItemStyle itemStyle;
 } FileBrowserWidgetStyle;
 

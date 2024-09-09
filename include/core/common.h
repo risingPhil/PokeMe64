@@ -31,6 +31,26 @@ typedef struct Rectangle
 } Rectangle;
 
 /**
+ * @brief This class wraps a raw char pointer.
+ * This is to allow for automatic memory management without all of the bloat
+ * of std::string. This is useful to pass it as part of a SceneContext and have
+ * the string automatically released when the context gets deleted.
+ */
+class ManagedString
+{
+public:
+    ManagedString(char* rawString);
+    ~ManagedString();
+
+    const char* get() const;
+
+    void operator = (char* rawString);
+protected:
+private:
+    char* rawString_;
+};
+
+/**
  * Whether or not the rectangle has a size of 0.
  */
 bool isZeroSizeRectangle(const Rectangle& rect);

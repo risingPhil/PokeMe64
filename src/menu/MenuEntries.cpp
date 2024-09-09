@@ -27,10 +27,6 @@ MenuItemData gen1MenuEntries[] = {
     {
         .title = "About",
         .onConfirmAction = goToAboutScene
-    },
-    {
-        .title = "Test",
-        .onConfirmAction = goToTestScene
     }
 };
 
@@ -60,10 +56,6 @@ MenuItemData gen2MenuEntries[] = {
     {
         .title = "About",
         .onConfirmAction = goToAboutScene
-    },
-    {
-        .title = "Test",
-        .onConfirmAction = goToTestScene
     }
 };
 
@@ -97,10 +89,6 @@ MenuItemData gen2CrystalMenuEntries[] = {
     {
         .title = "About",
         .onConfirmAction = goToAboutScene
-    },
-    {
-        .title = "Test",
-        .onConfirmAction = goToTestScene
     }
 };
 

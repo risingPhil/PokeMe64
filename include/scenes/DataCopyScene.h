@@ -17,6 +17,7 @@ enum class DataCopyOperation
 typedef struct DataCopySceneContext
 {
     DataCopyOperation operation;
+    ManagedString saveToRestorePath;
 } DataCopySceneContext;
 
 class DataCopyScene : public SceneWithProgressBar

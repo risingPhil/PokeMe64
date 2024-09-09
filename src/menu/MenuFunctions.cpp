@@ -4,6 +4,7 @@
 #include "scenes/DistributionPokemonListScene.h"
 #include "scenes/StatsScene.h"
 #include "scenes/MenuScene.h"
+#include "scenes/SelectFileScene.h"
 #include "scenes/SceneManager.h"
 #include "gen2/Gen2GameReader.h"
 #include "transferpak/TransferPakManager.h"
@@ -142,11 +143,27 @@ void goToDataCopyScene(void* context, const void* param)
     const DataCopyOperation operation = (*((const DataCopyOperation*)param));
     SceneManager& sceneManager = scene->getDependencies().sceneManager;
 
-    auto sceneContext = new DataCopySceneContext{
-        .operation = operation
+    auto dataCopyContext = new DataCopySceneContext{
+        .operation = operation,
+        .saveToRestorePath = nullptr
     };
 
-    sceneManager.switchScene(SceneType::COPY_DATA, deleteDataCopySceneContext, sceneContext);
+    if(operation == DataCopyOperation::RESTORE_SAVE)
+    {
+        auto fileSelectContext = new SelectFileSceneContext{
+            .nextScene = {
+                .type = SceneType::COPY_DATA,
+                .context = dataCopyContext,
+                .deleteContextFunc = deleteDataCopySceneContext
+            },
+            .fileExtensionFilter = ".sav"
+        };
+        sceneManager.switchScene(SceneType::SELECT_FILE, deleteSelectFileSceneContext, fileSelectContext);
+    }
+    else
+    {
+        sceneManager.switchScene(SceneType::COPY_DATA, deleteDataCopySceneContext, dataCopyContext);
+    }
 }
 
 void goToGen1DistributionPokemonMenu(void* context, const void*)
