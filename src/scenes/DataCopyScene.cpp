@@ -2,6 +2,8 @@
 #include "core/DragonUtils.h"
 #include "scenes/SceneManager.h"
 #include "menu/MenuFunctions.h"
+#include "gen1/Gen1Common.h"
+#include "gen2/Gen2Common.h"
 
 #include <system.h>
 
@@ -30,6 +32,88 @@ static void dialogFinishedCallback(void* context)
 {
     DataCopyScene* scene = (DataCopyScene*)context;
     scene->onDialogDone();
+}
+
+/**
+ * @brief The reason this function exists is because I first tried to use the cartridge header title + trainerName (max 11 chars) + unique number as the game save filename
+ * but it turned out being a bit too close to fill the entire second line of the DialogWidget because the path became too long.
+ * The solution is to just create a shorter game title (just "Blue" or "Red" or "Crystal"). That frees up some room in the DialogWidget
+ * for the trainername and save number
+ */
+static void generateRomTitle(char* outputPath, const gameboy_cartridge_header& gbHeader, uint8_t generation, uint8_t specificGenVersion)
+{
+    if(generation == 1)
+    {
+        switch(static_cast<Gen1GameType>(specificGenVersion))
+        {
+            case Gen1GameType::BLUE:
+                strcpy(outputPath, "Blue");
+                break;
+            case Gen1GameType::RED:
+                strcpy(outputPath, "Red");
+                break;
+            case Gen1GameType::YELLOW:
+                strcpy(outputPath, "Yellow");
+                break;
+            default:
+                strcpy(outputPath, "Unknown");
+                break;
+        }
+    }
+    else if(generation == 2)
+    {
+        switch(static_cast<Gen2GameType>(specificGenVersion))
+        {
+            case Gen2GameType::GOLD:
+                strcpy(outputPath, "Gold");
+                break;
+            case Gen2GameType::SILVER:
+                strcpy(outputPath, "Silver");
+                break;
+            case Gen2GameType::CRYSTAL:
+                strcpy(outputPath, "Crystal");
+                break;
+            default:
+                strcpy(outputPath, "Unknown");
+                break;
+        }   
+    }
+    else
+    {
+        // the title field of the gameboy header is likely truncated.
+        // create a copy and make sure to append a null character so we won't crash when trying to use it as a string
+        memcpy(outputPath, gbHeader.new_title.title, 11);
+        outputPath[11] = '\0';
+    }
+}
+
+static void generateSaveFileName(char* savOutputPath, size_t bufferSize, const char* gameTitle, const char* playerName)
+{
+    struct stat statStruct;
+    unsigned uniqueNumber = 0;
+    const size_t playerNameSize = strlen(playerName);
+
+    if(playerNameSize)
+    {
+        snprintf(savOutputPath, bufferSize - 1, "sd:/PokeMe64/%s_%s.sav", gameTitle, playerName);
+    }
+    else
+    {
+        snprintf(savOutputPath, bufferSize - 1, "sd:/PokeMe64/%s.sav", gameTitle);
+    }
+
+    while(stat(savOutputPath, &statStruct) == 0)
+    {
+        if(playerNameSize)
+        {
+            snprintf(savOutputPath, bufferSize - 1, "sd:/PokeMe64/%s_%s_%u.sav", gameTitle, playerName, uniqueNumber);
+        }
+        else
+        {
+            snprintf(savOutputPath, bufferSize - 1, "sd:/PokeMe64/%s_%u.sav", gameTitle, uniqueNumber);
+        }
+        ++uniqueNumber;
+    }
 }
 
 DataCopyScene::DataCopyScene(SceneDependencies& deps, void* context)
@@ -83,13 +167,7 @@ void DataCopyScene::init()
     gameboy_cartridge_header gbHeader;
     deps_.tpakManager.readCartridgeHeader(gbHeader);
 
-    // the title field of the gameboy header is likely truncated.
-    // create a copy and make sure to append a null character so we won't crash when trying to use it as a string
-    memcpy(gameTitle, gbHeader.new_title.title, 11);
-    gameTitle[11] = '\0';
-
-    snprintf(savOutputPath, sizeof(savOutputPath) - 1, "sd:/PokeMe64/%s.sav", gameTitle);
-    snprintf(romOutputPath, sizeof(savOutputPath) - 1, "sd:/PokeMe64/%s.gbc", gameTitle);
+    generateRomTitle(gameTitle, gbHeader, deps_.generation, deps_.specificGenVersion);
 
     auto msg2 = new DialogData{
         .shouldDeleteWhenDone = true
@@ -98,12 +176,14 @@ void DataCopyScene::init()
     switch(sceneContext_->operation)
     {
         case DataCopyOperation::BACKUP_SAVE:
+            generateSaveFileName(savOutputPath, sizeof(savOutputPath), gameTitle, deps_.playerName);
             copySource_ = new TransferPakSaveManagerCopySource(saveManager_);
             copyDestination_ = new TransferPakFileCopyDestination(savOutputPath);
             totalBytesToCopy_ = convertSRAMSizeIntoNumBytes(gbHeader.ram_size_code);
-            setDialogDataText(*msg2, "The cartridge save was backed up to %s!", savOutputPath);
+            setDialogDataText(*msg2, "The save was backed up to %s!", savOutputPath);
             break;
         case DataCopyOperation::BACKUP_ROM:
+            snprintf(romOutputPath, sizeof(savOutputPath) - 1, "sd:/PokeMe64/%s.gbc", gameTitle);
             copySource_ = new TransferPakRomReaderCopySource(romReader_);
             copyDestination_ = new TransferPakFileCopyDestination(romOutputPath);
             totalBytesToCopy_ = convertROMSizeIntoNumBytes(gbHeader.rom_size_code);
@@ -113,7 +193,7 @@ void DataCopyScene::init()
             copySource_ = new TransferPakFileCopySource(sceneContext_->saveToRestorePath.get());
             copyDestination_ = new TransferPakSaveManagerDestination(saveManager_);
             totalBytesToCopy_ = convertSRAMSizeIntoNumBytes(gbHeader.ram_size_code);
-            setDialogDataText(*msg2, "The save file was restored to the cartridge!", romOutputPath);
+            setDialogDataText(*msg2, "The save was restored to the cartridge!", romOutputPath);
             break;
     }
 

@@ -414,8 +414,6 @@ void gen2ReceiveGSBall(void* context, const void* param)
     };
 
     tpakManager.setRAMEnabled(true);
-
-    const char* trainerName = gameReader.getTrainerName();
   
     // the unlockGsBallEvent() function does all the work. It's even repeatable!
     gameReader.unlockGsBallEvent();
@@ -423,7 +421,7 @@ void gen2ReceiveGSBall(void* context, const void* param)
     tpakManager.finishWrites();
     tpakManager.setRAMEnabled(false);
     
-    setDialogDataText(*messageData, "GS Ball event unlocked! Please go to the Golden Rod Pokémon Center and try to leave!", trainerName);
+    setDialogDataText(*messageData, "GS Ball event unlocked! Please go to the Golden Rod Pokémon Center and try to leave!");
 
     scene->showDialog(messageData);
 }
@@ -442,7 +440,7 @@ void gen2SetEventFlag(void* context, const void* param)
 
     tpakManager.setRAMEnabled(true);
 
-    const char* trainerName = gameReader.getTrainerName();
+    const char* trainerName = scene->getDependencies().playerName;
     if(gameReader.getEventFlag(eventFlagIndex))
     {
         setDialogDataText(*messageData, "%s already has %s!", trainerName, convertGen2EventFlagToString(eventFlagIndex));

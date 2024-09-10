@@ -31,11 +31,8 @@ InitTransferPakScene::InitTransferPakScene(SceneDependencies& deps, void*)
     })
     , diagData_({0})
     , pokeMe64TextSettings_()
-    , playerName_()
     , gameTypeString_(nullptr)
 {
-    playerName_[0] = '\0';
-    playerName_[PLAYER_NAME_SIZE - 1] = '\0';
 }
 
 InitTransferPakScene::~InitTransferPakScene()
@@ -138,7 +135,7 @@ void InitTransferPakScene::onTransferPakWidgetStateChanged(TransferPakWidgetStat
          */
         deps_.tpakManager.setRAMEnabled(false); 
 
-        setDialogDataText(diagData_, "Hi %s! We've detected Pokémon %s in the N64 Transfer Pak. Let's go!", playerName_, gameTypeString_);
+        setDialogDataText(diagData_, "Hi %s! We've detected Pokémon %s in the N64 Transfer Pak. Let's go!", deps_.playerName, gameTypeString_);
         dialogWidget_.appendDialogData(&diagData_);
         dialogWidget_.setVisible(true);
         setFocusChain(&dialogFocusChainSegment_);
@@ -202,7 +199,7 @@ void InitTransferPakScene::loadGameMetadata()
     {
         Gen1GameReader gameReader(romReader, saveManager, gen1Type);
         const char* trainerName = gameReader.getTrainerName();
-        strncpy(playerName_, trainerName, PLAYER_NAME_SIZE - 1);
+        strncpy(deps_.playerName, trainerName, sizeof(deps_.playerName) - 1);
         deps_.generation = 1;
         deps_.specificGenVersion = static_cast<uint8_t>(gen1Type);
 
@@ -226,7 +223,7 @@ void InitTransferPakScene::loadGameMetadata()
     {
         Gen2GameReader gameReader(romReader, saveManager, gen2Type);
         const char* trainerName = gameReader.getTrainerName();
-        strncpy(playerName_, trainerName, PLAYER_NAME_SIZE - 1);
+        strncpy(deps_.playerName, trainerName, sizeof(deps_.playerName) - 1);
         deps_.generation = 2;
         deps_.specificGenVersion = static_cast<uint8_t>(gen2Type);
 
@@ -246,5 +243,4 @@ void InitTransferPakScene::loadGameMetadata()
                 break;
         }
     }
-    playerName_[PLAYER_NAME_SIZE - 1] = '\0';
 }

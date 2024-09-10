@@ -28,20 +28,6 @@ static const uint16_t paletteGold[] = {0, colorToRGBA16(0x8A, 0x86, 0x48, 0xFF),
 static const uint16_t paletteSilver[] = {0, colorToRGBA16(0x90, 0x8D, 0x85, 0xFF), colorToRGBA16(0xA2, 0x9E, 0x98, 0xFF), 0, 0, 0, 0, 0};
 static const uint16_t paletteCrystal[] = {0, colorToRGBA16(0x55, 0x7A, 0x77, 0xFF), colorToRGBA16(0x72, 0x9E, 0xA4, 0xFF), 0, 0, 0, 0, 0};
 
-#if 0
-#include "gen2/Gen2GameReader.h"
-static void doRandomShit(TransferPakManager& tpakManager)
-{
-    TransferPakRomReader romReader(tpakManager);
-    TransferPakSaveManager saveManager(tpakManager);
-    Gen2GameReader reader(romReader, saveManager, Gen2GameType::CRYSTAL);
-    tpakManager.setRAMEnabled(true);
-    debugf("first pokemon: %s\r\n", reader.getPokemonName(1));
-
-    debugf("Trainer name: %s\r\n", reader.getTrainerName());
-}
-#endif
-
 TransferPakDetectionWidget::TransferPakDetectionWidget(AnimationManager& animManager, TransferPakManager& pakManager)
     : style_({0})
     , animManager_(animManager)

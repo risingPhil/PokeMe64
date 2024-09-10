@@ -32,6 +32,7 @@ typedef struct SceneDependencies
     FontManager& fontManager;
     TransferPakManager& tpakManager;
     SceneManager& sceneManager;
+    char playerName[16];
     uint8_t generation;
     uint8_t specificGenVersion;
 } SceneDependencies;
