@@ -458,3 +458,38 @@ void gen2SetEventFlag(void* context, const void* param)
     tpakManager.setRAMEnabled(false);
     scene->showDialog(messageData);
 }
+
+void resetRTC(void* context, const void* param)
+{
+    // The game checks bit 7 on the sRTCStatusFlags field in SRAM
+    // this is set when the game detects wrong RTC register values.
+    // In order to let the game prompt to reconfigure the RTC clock, we just have to set this bit
+    // Based on sRTCStatusFlags, RecordRTCStatus, .set_bit_7 in
+    // https://github.com/pret/pokecrystal
+    // https://github.com/pret/pokegold
+    const uint8_t rtcStatusFieldValue = 0xC0;
+    MenuScene* scene = static_cast<MenuScene*>(context);
+
+    auto diag = new DialogData{
+        .shouldDeleteWhenDone = true
+    };
+
+    if(scene->getDependencies().generation != 2)
+    {
+        setDialogDataText(*diag, "Sorry! This is only supported for Gen 2 Pokémon games!");
+        scene->showDialog(diag);
+        return;
+    }
+
+    TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
+
+    tpakManager.setRAMEnabled(true);
+
+    tpakManager.switchGBSRAMBank(0);
+
+    tpakManager.writeSRAM(0xC60, &rtcStatusFieldValue, 1);
+    tpakManager.finishWrites();
+
+    setDialogDataText(*diag, "The games' clock was reset! Start the game to reconfigure it! Don't forget to save!");
+    scene->showDialog(diag);
+}

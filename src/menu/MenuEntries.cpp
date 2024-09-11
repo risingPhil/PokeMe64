@@ -131,6 +131,10 @@ MenuItemData backupRestoreMenuEntries[] = {
         .itemParam = &DATACOPY_RESTORE_SAVE
     },
     {
+        .title = "Reset Clock",
+        .onConfirmAction = resetRTC
+    },
+    {
         .title = "Wipe Save",
         .onConfirmAction = goToDataCopyScene,
         .itemParam = &DATACOPY_WIPE_SAVE

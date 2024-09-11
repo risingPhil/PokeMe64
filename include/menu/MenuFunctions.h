@@ -39,4 +39,10 @@ void gen1TeachPikachu(void* context, const void* param);
 void gen2ReceiveGSBall(void* context, const void* param);
 void gen2SetEventFlag(void* context, const void* param);
 
+/**
+ * This function will change an SRAM field to let gen 2 games prompt you
+ * to reconfigure the game clock
+ */
+void resetRTC(void* context, const void* param);
+
 #endif
