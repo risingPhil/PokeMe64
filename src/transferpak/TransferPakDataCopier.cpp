@@ -2,6 +2,8 @@
 #include "transferpak/TransferPakRomReader.h"
 #include "transferpak/TransferPakSaveManager.h"
 
+#include <cstring>
+
 ITransferPakDataCopySource::~ITransferPakDataCopySource()
 {
 }
@@ -117,6 +119,36 @@ uint32_t TransferPakFileCopySource::read(uint8_t* buffer, uint32_t bytesToRead)
     uint32_t ret = static_cast<uint32_t>(fread(buffer, sizeof(char), bytesToRead, inputFile_));
     bytesRead_ += ret;
     return ret;
+}
+
+TransferPakNullCopySource::TransferPakNullCopySource()
+    : bytesRead_(0)
+{
+}
+
+TransferPakNullCopySource::~TransferPakNullCopySource()
+{
+}
+
+bool TransferPakNullCopySource::readyForTransfer() const
+{
+    return true;
+}
+
+uint16_t TransferPakNullCopySource::getCurrentBankIndex() const
+{
+    return 1;
+}
+
+uint32_t TransferPakNullCopySource::getNumberOfBytesRead() const
+{
+    return bytesRead_;
+}
+
+uint32_t TransferPakNullCopySource::read(uint8_t *buffer, uint32_t bytesToRead)
+{
+    memset(buffer, 0, bytesToRead);
+    return bytesToRead;
 }
 
 TransferPakSaveManagerDestination::TransferPakSaveManagerDestination(TransferPakSaveManager& saveManager)

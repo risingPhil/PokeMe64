@@ -19,6 +19,7 @@ const Move MOVE_FLY = Move::FLY;
 const DataCopyOperation DATACOPY_BACKUP_SAVE = DataCopyOperation::BACKUP_SAVE;
 const DataCopyOperation DATACOPY_BACKUP_ROM = DataCopyOperation::BACKUP_ROM;
 const DataCopyOperation DATACOPY_RESTORE_SAVE = DataCopyOperation::RESTORE_SAVE;
+const DataCopyOperation DATACOPY_WIPE_SAVE = DataCopyOperation::WIPE_SAVE;
 
 // based on https://github.com/kwsch/PKHeX/blob/master/PKHeX.Core/Resources/text/script/gen2/flags_c_en.txt
 const uint16_t GEN2_EVENTFLAG_DECORATION_PIKACHU_BED = 679;

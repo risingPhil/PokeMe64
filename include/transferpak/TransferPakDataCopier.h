@@ -89,6 +89,23 @@ private:
     uint32_t bytesRead_;
 };
 
+class TransferPakNullCopySource : public ITransferPakDataCopySource
+{
+public:
+    TransferPakNullCopySource();
+    virtual ~TransferPakNullCopySource();
+
+    bool readyForTransfer() const override;
+
+    uint16_t getCurrentBankIndex() const override;
+    uint32_t getNumberOfBytesRead() const override;
+
+    uint32_t read(uint8_t *buffer, uint32_t bytesToRead) override;
+protected:
+private:
+    uint32_t bytesRead_;
+};
+
 /**
  * @brief This interface is used to define a transfer pak data destination to copy to
  *

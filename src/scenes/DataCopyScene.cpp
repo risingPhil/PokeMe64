@@ -195,6 +195,12 @@ void DataCopyScene::init()
             totalBytesToCopy_ = convertSRAMSizeIntoNumBytes(gbHeader.ram_size_code);
             setDialogDataText(*msg2, "The save was restored to the cartridge!", romOutputPath);
             break;
+        case DataCopyOperation::WIPE_SAVE:
+            copySource_ = new TransferPakNullCopySource();
+            copyDestination_ = new TransferPakSaveManagerDestination(saveManager_);
+            totalBytesToCopy_ = convertSRAMSizeIntoNumBytes(gbHeader.ram_size_code);
+            setDialogDataText(*msg2, "The save file was wiped from the cartridge!");
+            break;
     }
 
     if(!copySource_->readyForTransfer())

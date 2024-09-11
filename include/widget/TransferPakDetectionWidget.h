@@ -16,10 +16,13 @@ enum class TransferPakWidgetState
     DETECTING_PAK,
     VALIDATING_GB_HEADER,
     DETECTING_GAME,
+    VALIDATING_GAME_SAVE,
     GB_HEADER_VALIDATION_FAILED,
     NO_TRANSFER_PAK_FOUND,
     NO_GAME_FOUND,
-    GAME_FOUND
+    GAME_FOUND,
+    VALID_SAVE_FOUND,
+    NO_SAVE_FOUND
 };
 
 typedef struct TransferPakDetectionWidgetStyle
@@ -108,6 +111,7 @@ private:
     void switchState(TransferPakWidgetState previousState, TransferPakWidgetState newState);
 
     void renderUnknownState(RDPQGraphics& gfx, const Rectangle& parentBounds);
+    void renderValidatingSaveState(RDPQGraphics& gfx, const Rectangle& parentBounds);
     void renderErrorState(RDPQGraphics& gfx, const Rectangle& parentBounds);
 
     /**
@@ -131,6 +135,8 @@ private:
     bool detectGameType();
 
     void updateCartridgeIcon();
+
+    bool validateGameSave();
 
     TransferPakDetectionWidgetStyle style_;
     AnimationManager& animManager_;

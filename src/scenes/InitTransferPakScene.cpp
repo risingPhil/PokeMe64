@@ -73,37 +73,49 @@ void InitTransferPakScene::render(RDPQGraphics& gfx, const Rectangle& sceneBound
 
 void InitTransferPakScene::onDialogDone()
 {
-    MenuSceneContext* menuContext;
-    Gen1GameType gen1Type;
-    Gen2GameType gen2Type;
+    MenuSceneContext* menuContext = nullptr;
 
-    tpakDetectWidget_.retrieveGameType(gen1Type, gen2Type);
-
-    if(gen1Type != Gen1GameType::INVALID)
+    if(tpakDetectWidget_.getState() == TransferPakWidgetState::NO_SAVE_FOUND)
     {
-        menuContext = new MenuSceneContext({
-            .menuEntries = gen1MenuEntries,
-            .numMenuEntries = static_cast<uint32_t>(gen1MenuEntriesSize / sizeof(gen1MenuEntries[0])),
+        menuContext = new MenuSceneContext{
+            .menuEntries = backupRestoreMenuEntries,
+            .numMenuEntries = static_cast<uint32_t>(backupRestoreMenuEntriesSize / sizeof(backupRestoreMenuEntries[0])),
             .bButtonMeansUserWantsToSwitchCartridge = true
-        });
+        };
     }
-    else if(gen2Type != Gen2GameType::INVALID)
+    else if(tpakDetectWidget_.getState() == TransferPakWidgetState::VALID_SAVE_FOUND)
     {
-        if(gen2Type == Gen2GameType::CRYSTAL)
+        Gen1GameType gen1Type;
+        Gen2GameType gen2Type;
+
+        tpakDetectWidget_.retrieveGameType(gen1Type, gen2Type);
+
+        if(gen1Type != Gen1GameType::INVALID)
         {
             menuContext = new MenuSceneContext({
-                .menuEntries = gen2CrystalMenuEntries,
-                .numMenuEntries = static_cast<uint32_t>(gen2CrystalMenuEntriesSize / sizeof(gen2CrystalMenuEntries[0])),
+                .menuEntries = gen1MenuEntries,
+                .numMenuEntries = static_cast<uint32_t>(gen1MenuEntriesSize / sizeof(gen1MenuEntries[0])),
                 .bButtonMeansUserWantsToSwitchCartridge = true
             });
         }
-        else
+        else if(gen2Type != Gen2GameType::INVALID)
         {
-            menuContext = new MenuSceneContext({
-                .menuEntries = gen2MenuEntries,
-                .numMenuEntries = static_cast<uint32_t>(gen2MenuEntriesSize / sizeof(gen2MenuEntries[0])),
-                .bButtonMeansUserWantsToSwitchCartridge = true
-            });
+            if(gen2Type == Gen2GameType::CRYSTAL)
+            {
+                menuContext = new MenuSceneContext({
+                    .menuEntries = gen2CrystalMenuEntries,
+                    .numMenuEntries = static_cast<uint32_t>(gen2CrystalMenuEntriesSize / sizeof(gen2CrystalMenuEntries[0])),
+                    .bButtonMeansUserWantsToSwitchCartridge = true
+                });
+            }
+            else
+            {
+                menuContext = new MenuSceneContext({
+                    .menuEntries = gen2MenuEntries,
+                    .numMenuEntries = static_cast<uint32_t>(gen2MenuEntriesSize / sizeof(gen2MenuEntries[0])),
+                    .bButtonMeansUserWantsToSwitchCartridge = true
+                });
+            }
         }
     }
     else
@@ -118,11 +130,12 @@ void InitTransferPakScene::onDialogDone()
 void InitTransferPakScene::onTransferPakWidgetStateChanged(TransferPakWidgetState newState)
 {
     debugf("onTransferPakWidgetStateChanged(%d)\r\n", static_cast<int>(newState));
-    if(newState == TransferPakWidgetState::GAME_FOUND)
+    if(newState == TransferPakWidgetState::VALID_SAVE_FOUND)
     {
         debugf("[InitTransferPakScene]: Game found!\r\n");
+        loadGameType();
         deps_.tpakManager.setRAMEnabled(true);
-        loadGameMetadata();
+        loadSaveMetadata();
         /* Quote:
          * "It is recommended to disable external RAM after accessing it, in order to protect its contents from corruption
          *  during power down of the Game Boy or removal of the cartridge. Once the cartridge has completely lost power from
@@ -136,6 +149,16 @@ void InitTransferPakScene::onTransferPakWidgetStateChanged(TransferPakWidgetStat
         deps_.tpakManager.setRAMEnabled(false); 
 
         setDialogDataText(diagData_, "Hi %s! We've detected Pokémon %s in the N64 Transfer Pak. Let's go!", deps_.playerName, gameTypeString_);
+        dialogWidget_.appendDialogData(&diagData_);
+        dialogWidget_.setVisible(true);
+        setFocusChain(&dialogFocusChainSegment_);
+    }
+    else if(newState == TransferPakWidgetState::NO_SAVE_FOUND)
+    {
+        debugf("[InitTransferPakScene]: Game found, but no save found!\r\n");
+        loadGameType();
+
+        setDialogDataText(diagData_, "We can't find a save in your Pokemon %s cartridge. You'll only be able to backup/restore!", gameTypeString_);
         dialogWidget_.appendDialogData(&diagData_);
         dialogWidget_.setVisible(true);
         setFocusChain(&dialogFocusChainSegment_);
@@ -187,19 +210,14 @@ void InitTransferPakScene::setupDialog(DialogWidgetStyle& style)
     dialogWidget_.setVisible(false);
 }
 
-void InitTransferPakScene::loadGameMetadata()
+void InitTransferPakScene::loadGameType()
 {
-    TransferPakRomReader romReader(deps_.tpakManager);
-    TransferPakSaveManager saveManager(deps_.tpakManager);
     Gen1GameType gen1Type;
     Gen2GameType gen2Type;
     tpakDetectWidget_.retrieveGameType(gen1Type, gen2Type);
 
     if(gen1Type != Gen1GameType::INVALID)
     {
-        Gen1GameReader gameReader(romReader, saveManager, gen1Type);
-        const char* trainerName = gameReader.getTrainerName();
-        strncpy(deps_.playerName, trainerName, sizeof(deps_.playerName) - 1);
         deps_.generation = 1;
         deps_.specificGenVersion = static_cast<uint8_t>(gen1Type);
 
@@ -221,9 +239,6 @@ void InitTransferPakScene::loadGameMetadata()
     }
     else if(gen2Type != Gen2GameType::INVALID)
     {
-        Gen2GameReader gameReader(romReader, saveManager, gen2Type);
-        const char* trainerName = gameReader.getTrainerName();
-        strncpy(deps_.playerName, trainerName, sizeof(deps_.playerName) - 1);
         deps_.generation = 2;
         deps_.specificGenVersion = static_cast<uint8_t>(gen2Type);
 
@@ -242,5 +257,28 @@ void InitTransferPakScene::loadGameMetadata()
                 gameTypeString_ = "";
                 break;
         }
+    }
+}
+
+void InitTransferPakScene::loadSaveMetadata()
+{
+    TransferPakRomReader romReader(deps_.tpakManager);
+    TransferPakSaveManager saveManager(deps_.tpakManager);
+    Gen1GameType gen1Type;
+    Gen2GameType gen2Type;
+
+    tpakDetectWidget_.retrieveGameType(gen1Type, gen2Type);
+
+    if(gen1Type != Gen1GameType::INVALID)
+    {
+        Gen1GameReader gameReader(romReader, saveManager, gen1Type);
+        const char* trainerName = gameReader.getTrainerName();
+        strncpy(deps_.playerName, trainerName, sizeof(deps_.playerName) - 1);
+    }
+    else if(gen2Type != Gen2GameType::INVALID)
+    {
+        Gen2GameReader gameReader(romReader, saveManager, gen2Type);
+        const char* trainerName = gameReader.getTrainerName();
+        strncpy(deps_.playerName, trainerName, sizeof(deps_.playerName) - 1);
     }
 }

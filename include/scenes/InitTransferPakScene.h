@@ -28,7 +28,8 @@ private:
     void setupTPakDetectWidget();
     void setupDialog(DialogWidgetStyle& style) override;
 
-    void loadGameMetadata();
+    void loadGameType();
+    void loadSaveMetadata();
     const char* getGameTypeString();
 
     sprite_t* menu9SliceSprite_;

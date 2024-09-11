@@ -2,6 +2,8 @@
 #include "transferpak/TransferPakManager.h"
 #include "transferpak/TransferPakRomReader.h"
 #include "transferpak/TransferPakSaveManager.h"
+#include "gen1/Gen1GameReader.h"
+#include "gen2/Gen2GameReader.h"
 #include "tpak.h"
 
 /**
@@ -99,22 +101,33 @@ Dimensions TransferPakDetectionWidget::getSize() const
 
 bool TransferPakDetectionWidget::handleUserInput(const joypad_inputs_t& userInput)
 {
-    bool ret = false;
+    bool handled = false;
     if(previousInputState_.btn.a && !userInput.btn.a)
     {
         switch(currentState_)
         {
         case TransferPakWidgetState::UNKNOWN:
             switchState(currentState_, TransferPakWidgetState::DETECTING_PAK);
-            ret = true;
+            handled = true;
             break;
         default:
             break;
         }
     }
+    else if(currentState_ == TransferPakWidgetState::VALIDATING_GAME_SAVE)
+    {
+        // We don't want to do this in the switchState flow in order to have the widget actually render something before starting this step
+        // (because validating the game save CRC might take a few seconds)
+        tpakManager_.setRAMEnabled(true);
+        const bool ret = validateGameSave();
+        tpakManager_.setRAMEnabled(false);
+        const TransferPakWidgetState newState = (ret) ? TransferPakWidgetState::VALID_SAVE_FOUND : TransferPakWidgetState::NO_SAVE_FOUND;
+
+        switchState(currentState_, newState);
+    }
 
     previousInputState_ = userInput;
-    return ret;
+    return handled;
 }
 
 void TransferPakDetectionWidget::render(RDPQGraphics& gfx, const Rectangle& parentBounds)
@@ -190,7 +203,8 @@ void TransferPakDetectionWidget::switchState(TransferPakWidgetState previousStat
         return;
     case TransferPakWidgetState::GAME_FOUND:
         updateCartridgeIcon();
-//      doRandomShit(tpakManager_);
+        newState = TransferPakWidgetState::VALIDATING_GAME_SAVE;
+        switchState(state, newState);
         break;
     default:
         break;
@@ -207,6 +221,12 @@ void TransferPakDetectionWidget::renderUnknownState(RDPQGraphics& gfx, const Rec
 {
     const Rectangle absoluteTextBounds = addOffset(textBounds, bounds_);
     gfx.drawText(absoluteTextBounds, "Press A to start", style_.textSettings);
+}
+
+void TransferPakDetectionWidget::renderValidatingSaveState(RDPQGraphics& gfx, const Rectangle& parentBounds)
+{
+    const Rectangle absoluteTextBounds = addOffset(textBounds, bounds_);
+    gfx.drawText(absoluteTextBounds, "Checking save...", style_.textSettings);
 }
 
 void TransferPakDetectionWidget::renderErrorState(RDPQGraphics& gfx, const Rectangle& parentBounds)
@@ -347,4 +367,23 @@ void TransferPakDetectionWidget::updateCartridgeIcon()
         }
         cartridgeLabelSprite_ = sprite_load(labelSpritePath);
     }
+}
+
+bool TransferPakDetectionWidget::validateGameSave()
+{
+    TransferPakRomReader romReader(tpakManager_);
+    TransferPakSaveManager saveManager(tpakManager_);
+    if(gen1Type_ != Gen1GameType::INVALID)
+    {
+        Gen1GameReader gen1Reader(romReader, saveManager, gen1Type_);
+
+        return gen1Reader.isMainChecksumValid();
+    }
+    else if(gen2Type_ != Gen2GameType::INVALID)
+    {
+        Gen2GameReader gen2Reader(romReader, saveManager, gen2Type_);
+
+        return gen2Reader.isMainChecksumValid();
+    }
+    return false;
 }

@@ -11,7 +11,8 @@ enum class DataCopyOperation
 {
     BACKUP_SAVE,
     BACKUP_ROM,
-    RESTORE_SAVE
+    RESTORE_SAVE,
+    WIPE_SAVE
 };
 
 typedef struct DataCopySceneContext

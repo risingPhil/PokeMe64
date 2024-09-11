@@ -14,6 +14,7 @@ extern const Move MOVE_FLY;
 extern const DataCopyOperation DATACOPY_BACKUP_SAVE;
 extern const DataCopyOperation DATACOPY_BACKUP_ROM;
 extern const DataCopyOperation DATACOPY_RESTORE_SAVE;
+extern const DataCopyOperation DATACOPY_WIPE_SAVE;
 
 extern const uint16_t GEN2_EVENTFLAG_DECORATION_PIKACHU_BED;
 extern const uint16_t GEN2_EVENTFLAG_DECORATION_UNOWN_DOLL;
