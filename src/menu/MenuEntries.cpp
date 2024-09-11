@@ -54,6 +54,10 @@ MenuItemData gen2MenuEntries[] = {
         .onConfirmAction = goToPokeTransporterGBRef
     },
     {
+        .title = "Reset Game Clock",
+        .onConfirmAction = resetRTC
+    },
+    {
         .title = "About",
         .onConfirmAction = goToAboutScene
     }
@@ -85,6 +89,10 @@ MenuItemData gen2CrystalMenuEntries[] = {
     {
         .title = "Gen 3 Transfer Info",
         .onConfirmAction = goToPokeTransporterGBRef
+    },
+    {
+        .title = "Reset Game Clock",
+        .onConfirmAction = resetRTC
     },
     {
         .title = "About",
@@ -129,10 +137,6 @@ MenuItemData backupRestoreMenuEntries[] = {
         .title = "Restore Save",
         .onConfirmAction = goToDataCopyScene,
         .itemParam = &DATACOPY_RESTORE_SAVE
-    },
-    {
-        .title = "Reset Clock",
-        .onConfirmAction = resetRTC
     },
     {
         .title = "Wipe Save",
