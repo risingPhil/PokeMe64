@@ -95,6 +95,7 @@ public:
     MenuItemWidget();
     virtual ~MenuItemWidget();
 
+    const MenuItemData& getData() const;
     void setData(const MenuItemData& data);
     void setStyle(const MenuItemStyle& style);
 

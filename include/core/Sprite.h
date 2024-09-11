@@ -2,6 +2,7 @@
 #define _SPRITE_H
 
 #include "core/common.h"
+#include <cstdint>
 
 typedef struct sprite_s sprite_t;
 

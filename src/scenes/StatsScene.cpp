@@ -119,6 +119,7 @@ void StatsScene::init()
 
     menu9SliceSprite_ = sprite_load("rom://menu-bg-9slice.sprite");
     fontArialSmallId_ = deps_.fontManager.getFont("rom://Arial-small.font64");
+    trainerName = deps_.playerName;
 
     SceneWithDialogWidget::init();
 
@@ -146,7 +147,6 @@ void StatsScene::init()
             move3Str = getMoveString(static_cast<Move>(context_->poke_g1.index_move3));
             move4Str = getMoveString(static_cast<Move>(context_->poke_g1.index_move4));
             pokeName = gen1GameReader_.getPokemonName(pokeIndex);
-            trainerName = gen1GameReader_.getTrainerName();
             shiny = false;
             snprintf(pokeStatsString_, sizeof(pokeStatsString_), "ATK:            %u\nDEF:            %u\nSPEC:          %u\nSPEED:        %u", atk, def, specAtk, speed);
             break;
@@ -167,7 +167,6 @@ void StatsScene::init()
             move3Str = getMoveString(static_cast<Move>(context_->poke_g2.index_move3));
             move4Str = getMoveString(static_cast<Move>(context_->poke_g2.index_move4));
             pokeName = gen2GameReader_.getPokemonName(pokeIndex);
-            trainerName = gen2GameReader_.getTrainerName();
             shiny = gen2_isPokemonShiny(context_->poke_g2);
             snprintf(pokeStatsString_, sizeof(pokeStatsString_), "ATK:            %u\nDEF:            %u\nSPEC. ATK:  %u\nSPEC. DEF:  %u\nSPEED:        %u", atk, def, specAtk, specDef, speed);
             break;

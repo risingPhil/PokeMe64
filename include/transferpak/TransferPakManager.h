@@ -46,7 +46,7 @@ public:
     bool setPower(bool on);
     uint8_t getStatus();
 
-    bool validateGbHeader();
+    bool readCartridgeHeader(gameboy_cartridge_header& cartridgeHeader);
 
     /**
      * @brief This function switches the Gameboy ROM bank index

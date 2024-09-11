@@ -32,7 +32,7 @@ typedef struct ImageWidgetStyle
         SpriteRenderSettings spriteSettings;
         
         /**
-         * relative bounds of the icon sprite in relation to the MenuItem widget
+         * relative bounds of the icon sprite in relation to the ImageWidget widget
          */
         Rectangle spriteBounds;
     } image;

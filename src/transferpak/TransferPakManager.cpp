@@ -100,12 +100,10 @@ uint8_t TransferPakManager::getStatus()
     return tpak_get_status(static_cast<int>(port_));
 }
 
-bool TransferPakManager::validateGbHeader()
+bool TransferPakManager::readCartridgeHeader(gameboy_cartridge_header& cartridgeHeader)
 {
-    gameboy_cartridge_header header;
     uint8_t status = getStatus();
     int ret;
-    bool retBool;
 
     while(!(status | TPAK_STATUS_READY))
     {
@@ -119,20 +117,13 @@ bool TransferPakManager::validateGbHeader()
         return false;
     }
 
-    ret = tpak_get_cartridge_header(static_cast<int>(port_), &header);
+    ret = tpak_get_cartridge_header(static_cast<int>(port_), &cartridgeHeader);
     if(ret)
     {
         debugf("[TransferPakManager]: ERROR: tpak_get_cartridge_header got error %d\r\n", ret);
         return false;
     }
-    retBool = tpak_check_header(&header);
-
-    if(!retBool)
-    {
-        debugf("[TransferPakManager]: ERROR: tpak_check_header returned false!\r\n");
-    }
-
-    return retBool;
+    return true;
 }
 
 void TransferPakManager::switchGBROMBank(uint8_t bankIndex)

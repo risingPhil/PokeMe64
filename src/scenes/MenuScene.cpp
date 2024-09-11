@@ -165,11 +165,6 @@ void MenuScene::onScrollWindowChanged(const ScrollWindowUpdate& update)
     scrollArrowDown_.setVisible(canScrollTo(update, UINavigationDirection::DOWN));
 }
 
-SceneDependencies& MenuScene::getDependencies()
-{
-    return deps_;
-}
-
 void MenuScene::setupMenu()
 {
     const VerticalListStyle listStyle = {

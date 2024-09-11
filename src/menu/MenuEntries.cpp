@@ -3,6 +3,10 @@
 
 MenuItemData gen1MenuEntries[] = {
     {
+        .title = "Backup/Restore",
+        .onConfirmAction = goToBackupRestoreMenu
+    },
+    {
         .title = "Event Pokémon",
         .onConfirmAction = goToGen1DistributionPokemonMenu
     },
@@ -30,6 +34,10 @@ const uint32_t gen1MenuEntriesSize = sizeof(gen1MenuEntries);
 
 MenuItemData gen2MenuEntries[] = {
     {
+        .title = "Backup/Restore",
+        .onConfirmAction = goToBackupRestoreMenu
+    },
+    {
         .title = "Event Pokémon",
         .onConfirmAction = goToGen2DistributionPokemonMenu
     },
@@ -46,6 +54,10 @@ MenuItemData gen2MenuEntries[] = {
         .onConfirmAction = goToPokeTransporterGBRef
     },
     {
+        .title = "Reset Game Clock",
+        .onConfirmAction = resetRTC
+    },
+    {
         .title = "About",
         .onConfirmAction = goToAboutScene
     }
@@ -54,6 +66,10 @@ MenuItemData gen2MenuEntries[] = {
 const uint32_t gen2MenuEntriesSize = sizeof(gen2MenuEntries);
 
 MenuItemData gen2CrystalMenuEntries[] = {
+    {
+        .title = "Backup/Restore",
+        .onConfirmAction = goToBackupRestoreMenu
+    },
     {
         .title = "Event Pokémon",
         .onConfirmAction = goToGen2DistributionPokemonMenu
@@ -73,6 +89,10 @@ MenuItemData gen2CrystalMenuEntries[] = {
     {
         .title = "Gen 3 Transfer Info",
         .onConfirmAction = goToPokeTransporterGBRef
+    },
+    {
+        .title = "Reset Game Clock",
+        .onConfirmAction = resetRTC
     },
     {
         .title = "About",
@@ -101,3 +121,27 @@ MenuItemData gen2DecorationMenuEntries[] = {
 };
 
 const uint32_t gen2DecorationMenuEntriesSize = sizeof(gen2DecorationMenuEntries);
+
+MenuItemData backupRestoreMenuEntries[] = {
+    {
+        .title = "Backup Save",
+        .onConfirmAction = goToDataCopyScene,
+        .itemParam = &DATACOPY_BACKUP_SAVE
+    },
+    {
+        .title = "Backup ROM",
+        .onConfirmAction = goToDataCopyScene,
+        .itemParam = &DATACOPY_BACKUP_ROM
+    },
+    {
+        .title = "Restore Save",
+        .onConfirmAction = goToDataCopyScene,
+        .itemParam = &DATACOPY_RESTORE_SAVE
+    },
+    {
+        .title = "Wipe Save",
+        .onConfirmAction = askConfirmationWipeSave
+    }
+};
+
+const uint32_t backupRestoreMenuEntriesSize = sizeof(backupRestoreMenuEntries);

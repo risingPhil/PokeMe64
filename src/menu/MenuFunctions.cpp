@@ -4,6 +4,7 @@
 #include "scenes/DistributionPokemonListScene.h"
 #include "scenes/StatsScene.h"
 #include "scenes/MenuScene.h"
+#include "scenes/SelectFileScene.h"
 #include "scenes/SceneManager.h"
 #include "gen2/Gen2GameReader.h"
 #include "transferpak/TransferPakManager.h"
@@ -14,6 +15,11 @@
 
 const Move MOVE_SURF = Move::SURF;
 const Move MOVE_FLY = Move::FLY;
+
+const DataCopyOperation DATACOPY_BACKUP_SAVE = DataCopyOperation::BACKUP_SAVE;
+const DataCopyOperation DATACOPY_BACKUP_ROM = DataCopyOperation::BACKUP_ROM;
+const DataCopyOperation DATACOPY_RESTORE_SAVE = DataCopyOperation::RESTORE_SAVE;
+const DataCopyOperation DATACOPY_WIPE_SAVE = DataCopyOperation::WIPE_SAVE;
 
 // based on https://github.com/kwsch/PKHeX/blob/master/PKHeX.Core/Resources/text/script/gen2/flags_c_en.txt
 const uint16_t GEN2_EVENTFLAG_DECORATION_PIKACHU_BED = 679;
@@ -132,6 +138,36 @@ void goToAboutScene(void* context, const void* param)
     sceneManager.switchScene(SceneType::ABOUT);
 }
 
+void goToDataCopyScene(void* context, const void* param)
+{
+    MenuScene* scene = static_cast<MenuScene*>(context);
+    const DataCopyOperation operation = (*((const DataCopyOperation*)param));
+    SceneManager& sceneManager = scene->getDependencies().sceneManager;
+
+    auto dataCopyContext = new DataCopySceneContext{
+        .operation = operation,
+        .saveToRestorePath = nullptr
+    };
+
+    if(operation == DataCopyOperation::RESTORE_SAVE)
+    {
+        auto fileSelectContext = new SelectFileSceneContext{
+            .titleText = "Select Save file",
+            .nextScene = {
+                .type = SceneType::COPY_DATA,
+                .context = dataCopyContext,
+                .deleteContextFunc = deleteDataCopySceneContext
+            },
+            .fileExtensionFilter = ".sav"
+        };
+        sceneManager.switchScene(SceneType::SELECT_FILE, deleteSelectFileSceneContext, fileSelectContext);
+    }
+    else
+    {
+        sceneManager.switchScene(SceneType::COPY_DATA, deleteDataCopySceneContext, dataCopyContext);
+    }
+}
+
 void goToGen1DistributionPokemonMenu(void* context, const void*)
 {
     goToDistributionPokemonListMenu(context, DistributionPokemonListType::GEN1);
@@ -156,6 +192,17 @@ void goToGen2DecorationMenu(void* context, const void* param)
     };
 
     scene->getDependencies().sceneManager.switchScene(SceneType::MENU, deleteMenuSceneContext, newSceneContext);
+}
+
+void goToBackupRestoreMenu(void* context, const void* param)
+{
+    MenuScene* scene = static_cast<MenuScene*>(context);
+    auto newSceneContext = new MenuSceneContext{
+        .menuEntries = backupRestoreMenuEntries,
+        .numMenuEntries = backupRestoreMenuEntriesSize / sizeof(backupRestoreMenuEntries[0])
+    };
+
+    scene->getDependencies().sceneManager.switchScene(SceneType::MENU, deleteMenuSceneContext, newSceneContext); 
 }
 
 void gen1PrepareToTeachPikachu(void* context, const void* param)
@@ -369,8 +416,6 @@ void gen2ReceiveGSBall(void* context, const void* param)
     };
 
     tpakManager.setRAMEnabled(true);
-
-    const char* trainerName = gameReader.getTrainerName();
   
     // the unlockGsBallEvent() function does all the work. It's even repeatable!
     gameReader.unlockGsBallEvent();
@@ -378,7 +423,7 @@ void gen2ReceiveGSBall(void* context, const void* param)
     tpakManager.finishWrites();
     tpakManager.setRAMEnabled(false);
     
-    setDialogDataText(*messageData, "GS Ball event unlocked! Please go to the Golden Rod Pokémon Center and try to leave!", trainerName);
+    setDialogDataText(*messageData, "GS Ball event unlocked! Please go to the Golden Rod Pokémon Center and try to leave!");
 
     scene->showDialog(messageData);
 }
@@ -397,7 +442,7 @@ void gen2SetEventFlag(void* context, const void* param)
 
     tpakManager.setRAMEnabled(true);
 
-    const char* trainerName = gameReader.getTrainerName();
+    const char* trainerName = scene->getDependencies().playerName;
     if(gameReader.getEventFlag(eventFlagIndex))
     {
         setDialogDataText(*messageData, "%s already has %s!", trainerName, convertGen2EventFlagToString(eventFlagIndex));
@@ -413,4 +458,69 @@ void gen2SetEventFlag(void* context, const void* param)
 
     tpakManager.setRAMEnabled(false);
     scene->showDialog(messageData);
+}
+
+void askConfirmationWipeSave(void* context, const void* param)
+{
+    MenuScene* scene = static_cast<MenuScene*>(context);
+
+    DialogData* messageData = new DialogData{
+        .options = {
+            .items = new MenuItemData[2]{
+                {
+                    .title = "Yes",
+                    .onConfirmAction = goToDataCopyScene,
+                    .context = context,
+                    .itemParam = &DATACOPY_WIPE_SAVE
+                },
+                {
+                    .title = "No",
+                    .onConfirmAction = advanceDialog,
+                    .context = context
+                }
+            },
+            .number = 2,
+            .shouldDeleteWhenDone = true
+        },
+        .shouldDeleteWhenDone = true,
+    };
+
+    setDialogDataText(*messageData, "Are you sure you want to wipe the save file from the cartridge?");
+
+    scene->showDialog(messageData);
+}
+
+void resetRTC(void* context, const void* param)
+{
+    // The game checks bit 7 on the sRTCStatusFlags field in SRAM
+    // this is set when the game detects wrong RTC register values.
+    // In order to let the game prompt to reconfigure the RTC clock, we just have to set this bit
+    // Based on sRTCStatusFlags, RecordRTCStatus, .set_bit_7 in
+    // https://github.com/pret/pokecrystal
+    // https://github.com/pret/pokegold
+    const uint8_t rtcStatusFieldValue = 0xC0;
+    MenuScene* scene = static_cast<MenuScene*>(context);
+
+    auto diag = new DialogData{
+        .shouldDeleteWhenDone = true
+    };
+
+    if(scene->getDependencies().generation != 2)
+    {
+        setDialogDataText(*diag, "Sorry! This is only supported for Gen 2 Pokémon games!");
+        scene->showDialog(diag);
+        return;
+    }
+
+    TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
+
+    tpakManager.setRAMEnabled(true);
+
+    tpakManager.switchGBSRAMBank(0);
+
+    tpakManager.writeSRAM(0xC60, &rtcStatusFieldValue, 1);
+    tpakManager.finishWrites();
+
+    setDialogDataText(*diag, "The games' clock was reset! Start the game to reconfigure it! Don't forget to save!");
+    scene->showDialog(diag);
 }

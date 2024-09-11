@@ -40,8 +40,6 @@ public:
     void focusChanged(const FocusChangeStatus& status) override;
     void onScrollWindowChanged(const ScrollWindowUpdate& update) override;
 
-    SceneDependencies& getDependencies();
-
     void showDialog(DialogData* diagData) override;
 protected:
     virtual void setupMenu();

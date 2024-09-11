@@ -4,8 +4,6 @@
 #include "scenes/SceneWithDialogWidget.h"
 #include "widget/TransferPakDetectionWidget.h"
 
-#define PLAYER_NAME_SIZE 15
-
 class TransferPakManager;
 
 /**
@@ -30,7 +28,8 @@ private:
     void setupTPakDetectWidget();
     void setupDialog(DialogWidgetStyle& style) override;
 
-    void loadGameMetadata();
+    void loadGameType();
+    void loadSaveMetadata();
     const char* getGameTypeString();
 
     sprite_t* menu9SliceSprite_;
@@ -38,7 +37,6 @@ private:
     WidgetFocusChainSegment tpakDetectWidgetSegment_;
     DialogData diagData_;
     TextRenderSettings pokeMe64TextSettings_;
-    char playerName_[PLAYER_NAME_SIZE];
     const char* gameTypeString_;
 };
 

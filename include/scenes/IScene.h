@@ -20,6 +20,8 @@ enum class SceneType
     STATS,
     TEST,
     POKETRANSPORTER_GB_REF,
+    SELECT_FILE,
+    COPY_DATA,
     ABOUT
 };
 
@@ -30,6 +32,7 @@ typedef struct SceneDependencies
     FontManager& fontManager;
     TransferPakManager& tpakManager;
     SceneManager& sceneManager;
+    char playerName[16];
     uint8_t generation;
     uint8_t specificGenVersion;
 } SceneDependencies;

@@ -37,7 +37,11 @@ typedef struct DialogData
 
     // The next Dialog
     struct DialogData* next;
+    // this indicates whether DialogWidget should use delete to release the memory of this DialogData instance
+    // it should be set to false if it is statically allocated as a member of a class
     bool shouldDeleteWhenDone;
+    // This indicates that the user can't advance this dialog entry with A.
+    // it will be advanced from within the code instead.
     bool userAdvanceBlocked;
     //TODO: dialog sound
 } DialogData;

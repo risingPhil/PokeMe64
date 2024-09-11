@@ -17,6 +17,10 @@ I'm happy to accept pull requests if the community wants to do them.
 - Teach Pikachu Surf/Fly on Gen 1 cartridges
 - You don't have to use the transfer pak in controller 1. You can have it in a separate controller if you want. But the UI is still controlled with controller 1.
 - Unlock Mystery Gift decorations like the Pikachu Bed and Tentacool Doll that were left inaccessible in Gold/Silver/Crystal due to bugs in Pokemon Stadium 2 (suggested by /u/MermaidRaccoon on reddit)
+- Make it possible to backup your cartridge save file onto the flashcart PokeMe64 is running from.
+- Make it possible to restore a save file on the N64 flashcart to an actual Pokémon gameboy cartridge. You can even restore emulator saves!
+- Be able to wipe the save file from a game cartridge (mostly added as a feature in case you mess up and restore a save file from a completely different game)
+- Make it easy to reset/reconfigure the Generation II game clock
 
 # Limitations
 - Right now, this rom only supports the international (English) versions of the games.
@@ -34,7 +38,7 @@ To build it, set up a [build environment for libdragon](https://github.com/Drago
 # Usage
 WARNING: Do not insert or remove your gameboy cartridge, N64 transfer pak or controller while the Nintendo 64 is powered on. Doing so might corrupt your save file or just plainly won't work! (header validation check may fail)
 
-- Copy PokeMe64.z64 to your Nintendo 64 flash cartridge. (such as Everdrive64, Super 64, ED64Plus, ...)
+- Copy PokeMe64.z64 to your Nintendo 64 flash cartridge. (such as Everdrive64, Super 64, ED64Plus, SummerCart 64, ...)
 - Have your Nintendo 64 powered off. (IMPORTANT)
 - Connect your N64 transfer pak to your original (OEM) Nintendo controller. Third party controllers possibly don't work. You can verify this by testing with Pokémon Stadium 1 or 2 first.
 - Insert your pokémon gameboy cartridge into your N64 transfer Pak
@@ -61,9 +65,8 @@ But having it done with a Nintendo 64 feels more "real"/"official" and is easier
 - Have a "music" widget that shows up to name the song(s) that I end up using when it/they start(s) playing. (similar to how [Need For Speed - Most Wanted (original)](https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWk37230YvbMHaMchN8dzQiRrO66VofThpcbvUTFMoplDbkQKBVUFcIabbNCnzZ0KpuxcAQmrXQjBlqv_bvi6v6xpjmPxs3tJ-ZI_GhOn3xe5DW7XpMbtnCKFcbBQ-l_zzbrIIV4smBpth/s1600/_mwmusic.jpg) used to show this)
 
 ## Feature ideas
-- Support reproduction cartridges (in libpokemegb)
+- Support reproduction cartridges
 - Support other language versions (in libpokemegb)
-- Make it possible to backup your cartridge save file onto the flashcart PokeMe64 is running from.
 - Make it possible to display your cartridge save file as a QR code and contribute to the 3DS' [PKSM](https://github.com/FlagBrew/PKSM) project to migrate the save file easily from gameboy cartridge to 3DS.
 - Make it possible to swap gameboy cartridge after using the reset button on the N64. (suggested by /u/bluemooncinco on reddit)
 
