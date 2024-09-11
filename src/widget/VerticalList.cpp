@@ -246,6 +246,7 @@ void VerticalList::clearWidgets()
     widgetList_.clear();
     widgetBoundsList_.clear();
     focusedWidgetIndex_ = 0;
+    windowMinY_ = 0;
     notifyScrollWindowListeners();
 }
 

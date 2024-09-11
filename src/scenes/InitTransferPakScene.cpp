@@ -65,7 +65,7 @@ void InitTransferPakScene::destroy()
 
 void InitTransferPakScene::render(RDPQGraphics& gfx, const Rectangle& sceneBounds)
 {
-    gfx.drawText(Rectangle{0, 10, 320, 16}, "PokeMe64 by risingPhil. Version 0.1", pokeMe64TextSettings_);
+    gfx.drawText(Rectangle{0, 10, 320, 16}, "PokeMe64 by risingPhil. Version 0.2", pokeMe64TextSettings_);
     tpakDetectWidget_.render(gfx, sceneBounds);
 
     SceneWithDialogWidget::render(gfx, sceneBounds);

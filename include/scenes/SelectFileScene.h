@@ -3,14 +3,11 @@
 
 #include "scenes/SceneWithDialogWidget.h"
 #include "widget/FileBrowserWidget.h"
+#include "widget/ImageWidget.h"
 
 typedef struct SelectFileSceneContext
 {
-    struct {
-        const char* text;
-        TextRenderSettings renderSettings;
-        Rectangle bounds;
-    } title;
+    const char* titleText;
     struct {
         SceneType type;
         void* context;
@@ -37,6 +34,7 @@ public:
     void init() override;
     void destroy() override;
 
+    bool handleUserInput(joypad_port_t port, const joypad_inputs_t& inputs) override;
     void render(RDPQGraphics& gfx, const Rectangle& sceneBounds) override;
 
     void onDialogDone();
@@ -52,6 +50,9 @@ private:
     DialogData diag_;
     SelectFileSceneContext* context_;
     sprite_t* dialogWidgetBackgroundSprite_;
+    sprite_t* uiArrowUpSprite_;
+    sprite_t* uiArrowDownSprite_;
+    bool bButtonPressed_;
 };
 
 void deleteSelectFileSceneContext(void* context);

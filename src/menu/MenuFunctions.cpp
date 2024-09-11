@@ -152,6 +152,7 @@ void goToDataCopyScene(void* context, const void* param)
     if(operation == DataCopyOperation::RESTORE_SAVE)
     {
         auto fileSelectContext = new SelectFileSceneContext{
+            .titleText = "Select Save file",
             .nextScene = {
                 .type = SceneType::COPY_DATA,
                 .context = dataCopyContext,

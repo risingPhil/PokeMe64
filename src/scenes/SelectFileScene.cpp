@@ -2,7 +2,8 @@
 #include "scenes/SceneManager.h"
 #include "scenes/DataCopyScene.h"
 
-static const Rectangle fileBrowserBounds = {20, 20, 280, 200};
+static const Rectangle titleBounds = {20, 10, 280, 16};
+static const Rectangle fileBrowserBounds = {20, 30, 280, 180};
 
 static void fileConfirmedCallback(void* context, const char* path)
 {
@@ -26,6 +27,9 @@ SelectFileScene::SelectFileScene(SceneDependencies& deps, void* context)
     , diag_({0})
     , context_((SelectFileSceneContext*)context)
     , dialogWidgetBackgroundSprite_(nullptr)
+    , uiArrowUpSprite_(nullptr)
+    , uiArrowDownSprite_(nullptr)
+    , bButtonPressed_(false)
 {
 }
 
@@ -45,6 +49,8 @@ void SelectFileScene::init()
     }
 
     dialogWidgetBackgroundSprite_ = sprite_load("rom://menu-bg-9slice.sprite");
+    uiArrowUpSprite_ = sprite_load("rom://ui-arrow-up.sprite");
+    uiArrowDownSprite_ = sprite_load("rom://ui-arrow-down.sprite");
 
     SceneWithDialogWidget::init();
 
@@ -58,7 +64,8 @@ void SelectFileScene::init()
                 }
             },
             .margin = {
-                .top = 5
+                .top = 5,
+                .bottom = 5
             }
         },
         .itemStyle = {
@@ -73,6 +80,18 @@ void SelectFileScene::init()
             },
             .leftMargin = 10,
             .topMargin = 1
+        },
+        .scrollArrowUpStyle = {
+            .image = {
+                .sprite = uiArrowUpSprite_,
+                .spriteBounds = Rectangle{0, 0, uiArrowUpSprite_->width, uiArrowUpSprite_->height}
+            }
+        },
+        .scrollArrowDownStyle = {
+            .image = {
+                .sprite = uiArrowDownSprite_,
+                .spriteBounds = Rectangle{0, 0, uiArrowDownSprite_->width, uiArrowDownSprite_->height}
+            }
         }
     };
 
@@ -93,6 +112,50 @@ void SelectFileScene::destroy()
         sprite_free(dialogWidgetBackgroundSprite_);
         dialogWidgetBackgroundSprite_ = nullptr;
     }
+
+    if(uiArrowUpSprite_)
+    {
+        sprite_free(uiArrowUpSprite_);
+        uiArrowUpSprite_ = nullptr;
+    }
+
+    if(uiArrowDownSprite_)
+    {
+        sprite_free(uiArrowDownSprite_);
+        uiArrowDownSprite_ = nullptr;
+    }
+}
+
+bool SelectFileScene::handleUserInput(joypad_port_t port, const joypad_inputs_t& inputs)
+{
+    bool goBackToPreviousSceneOnUnhandledBPress = false;
+    // keep track of the b button
+    // if the FileBrowserWidget doesn't handle the release
+    // then we need to go back to the previous scene
+    if(!bButtonPressed_ && inputs.btn.b)
+    {
+        bButtonPressed_ = true;
+    }
+    else if(bButtonPressed_ && !inputs.btn.b)
+    {
+        bButtonPressed_ = false;
+        goBackToPreviousSceneOnUnhandledBPress = true;
+    }
+
+    bool ret = SceneWithDialogWidget::handleUserInput(port, inputs);
+    if(ret)
+    {
+        return ret;
+    }
+
+    if(goBackToPreviousSceneOnUnhandledBPress)
+    {
+        deps_.sceneManager.goBackToPreviousScene();
+        return true;
+    }
+
+    return false;
+    // not handled by normal means
 }
 
 void SelectFileScene::render(RDPQGraphics& gfx, const Rectangle& sceneBounds)
@@ -100,10 +163,15 @@ void SelectFileScene::render(RDPQGraphics& gfx, const Rectangle& sceneBounds)
     fileBrowser_.render(gfx, sceneBounds);
     SceneWithDialogWidget::render(gfx, sceneBounds);
 
-    if(context_->title.text && !isZeroSizeRectangle(context_->title.bounds))
+    if(context_->titleText && !isZeroSizeRectangle(titleBounds))
     {
-        const Rectangle absoluteTextBounds = addOffset(context_->title.bounds, sceneBounds);
-        gfx.drawText(absoluteTextBounds, context_->title.text, context_->title.renderSettings);
+        const TextRenderSettings renderSettings = {
+            .fontId = arialId_,
+            .fontStyleId = fontStyleWhiteId_,
+            .halign = ALIGN_CENTER
+        };
+        const Rectangle absoluteTextBounds = addOffset(titleBounds, sceneBounds);
+        gfx.drawText(absoluteTextBounds, context_->titleText, renderSettings);
     }
 }
 

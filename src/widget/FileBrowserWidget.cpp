@@ -17,6 +17,8 @@ FileBrowserWidget::FileBrowserWidget(AnimationManager& animManager)
     : duplicatedDirEntNameList_()
     , itemWidgetList_()
     , listWidget_(animManager)
+    , scrollArrowUp_()
+    , scrollArrowDown_()
     , style_({0})
     , status_({
         .itemList = itemWidgetList_,
@@ -32,10 +34,12 @@ FileBrowserWidget::FileBrowserWidget(AnimationManager& animManager)
     , bButtonPressed_(false)
 {
     pathBuffer_[0] = '\0';
+    listWidget_.registerScrollWindowListener(this);
 }
 
 FileBrowserWidget::~FileBrowserWidget()
 {
+    listWidget_.unregisterScrollWindowListener(this);
     clearList();
 }
 
@@ -69,6 +73,9 @@ void FileBrowserWidget::setBounds(const Rectangle& bounds)
 {
     bounds_ = bounds;
     listWidget_.setBounds(Rectangle{0, 0, bounds.width, bounds.height});
+
+    scrollArrowUp_.setBounds(Rectangle{bounds.width / 2, -6, style_.scrollArrowUpStyle.image.spriteBounds.width, style_.scrollArrowUpStyle.image.spriteBounds.height});
+    scrollArrowDown_.setBounds(Rectangle{bounds.width / 2, bounds.height, style_.scrollArrowDownStyle.image.spriteBounds.width, style_.scrollArrowDownStyle.image.spriteBounds.height});
 }
 
 Dimensions FileBrowserWidget::getSize() const
@@ -78,8 +85,18 @@ Dimensions FileBrowserWidget::getSize() const
 
 void FileBrowserWidget::setStyle(const FileBrowserWidgetStyle& style)
 {
+    const Rectangle bounds = getBounds();
+
     style_ = style;
     listWidget_.setStyle(style.listStyle);
+
+    scrollArrowUp_.setStyle(style.scrollArrowUpStyle);
+    scrollArrowUp_.setBounds(Rectangle{bounds.width / 2, -6, style.scrollArrowUpStyle.image.spriteBounds.width, style.scrollArrowUpStyle.image.spriteBounds.height});
+
+    // note: even though autogrow is turned on for the vertical list, it doesn't matter for the down arrow.
+    // because when the list is still growing, no scrolling is needed anyway, so the arrow would be invisible anyway.
+    scrollArrowDown_.setStyle(style.scrollArrowDownStyle);
+    scrollArrowDown_.setBounds(Rectangle{bounds.width / 2, bounds.height, style.scrollArrowDownStyle.image.spriteBounds.width, style.scrollArrowDownStyle.image.spriteBounds.height});
 }
 
 bool FileBrowserWidget::handleUserInput(const joypad_inputs_t& userInput)
@@ -113,6 +130,8 @@ void FileBrowserWidget::render(RDPQGraphics& gfx, const Rectangle& parentBounds)
     const Rectangle absoluteBounds = addOffset(bounds_, parentBounds);
 
     listWidget_.render(gfx, absoluteBounds);
+    scrollArrowUp_.render(gfx, absoluteBounds);
+    scrollArrowDown_.render(gfx, absoluteBounds);
 }
 
 const FileBrowserWidgetStatus& FileBrowserWidget::getStatus() const
@@ -181,6 +200,12 @@ void FileBrowserWidget::setFileExtensionToFilter(const char* fileExtensionFilter
     // reload items
     clearList();
     loadDirectoryItems();
+}
+
+void FileBrowserWidget::onScrollWindowChanged(const ScrollWindowUpdate& update)
+{
+    scrollArrowUp_.setVisible(canScrollTo(update, UINavigationDirection::UP));
+    scrollArrowDown_.setVisible(canScrollTo(update, UINavigationDirection::DOWN));
 }
 
 void FileBrowserWidget::clearList()

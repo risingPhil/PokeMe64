@@ -6,6 +6,8 @@
 #include "widget/IWidget.h"
 #include "widget/VerticalList.h"
 #include "widget/MenuItemWidget.h"
+#include "widget/ImageWidget.h"
+#include "widget/IScrollWindowListener.h"
 
 #include <vector>
 
@@ -13,6 +15,8 @@ typedef struct FileBrowserWidgetStyle
 {
     VerticalListStyle listStyle;
     MenuItemStyle itemStyle;
+    ImageWidgetStyle scrollArrowUpStyle;
+    ImageWidgetStyle scrollArrowDownStyle;
 } FileBrowserWidgetStyle;
 
 typedef struct FileBrowserWidgetStatus
@@ -26,7 +30,7 @@ typedef struct FileBrowserWidgetStatus
  * select a file
  * 
  */
-class FileBrowserWidget : public IWidget
+class FileBrowserWidget : public IWidget, public IScrollWindowListener
 {
 public:
     FileBrowserWidget(AnimationManager& animManager);
@@ -122,6 +126,8 @@ public:
      * whereas non-matching files WON'T be shown
      */
     void setFileExtensionToFilter(const char* fileExtensionFilter);
+
+    void onScrollWindowChanged(const ScrollWindowUpdate& update) override;
 protected:
 private:
     void clearList();
@@ -133,6 +139,8 @@ private:
     // so we need to keep track of them.
     std::vector<MenuItemWidget*> itemWidgetList_;
     VerticalList listWidget_;
+    ImageWidget scrollArrowUp_;
+    ImageWidget scrollArrowDown_;
     FileBrowserWidgetStyle style_;
     FileBrowserWidgetStatus status_;
     Rectangle bounds_;
