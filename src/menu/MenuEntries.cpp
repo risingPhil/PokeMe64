@@ -140,8 +140,7 @@ MenuItemData backupRestoreMenuEntries[] = {
     },
     {
         .title = "Wipe Save",
-        .onConfirmAction = goToDataCopyScene,
-        .itemParam = &DATACOPY_WIPE_SAVE
+        .onConfirmAction = askConfirmationWipeSave
     }
 };
 

@@ -243,7 +243,13 @@ void DataCopyScene::init()
         return;
     }
 
-    setDialogDataText(diag_, "Copying. Please Wait...");
+    if(sceneContext_->operation == DataCopyOperation::WIPE_SAVE)
+    {
+        setDialogDataText(diag_, "Wiping. Please Wait...");
+    }
+    {
+        setDialogDataText(diag_, "Copying. Please Wait...");
+    }
     diag_.userAdvanceBlocked = true;
     diag_.next = msg2;
     showDialog(&diag_);

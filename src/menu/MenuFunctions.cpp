@@ -460,6 +460,36 @@ void gen2SetEventFlag(void* context, const void* param)
     scene->showDialog(messageData);
 }
 
+void askConfirmationWipeSave(void* context, const void* param)
+{
+    MenuScene* scene = static_cast<MenuScene*>(context);
+
+    DialogData* messageData = new DialogData{
+        .options = {
+            .items = new MenuItemData[2]{
+                {
+                    .title = "Yes",
+                    .onConfirmAction = goToDataCopyScene,
+                    .context = context,
+                    .itemParam = &DATACOPY_WIPE_SAVE
+                },
+                {
+                    .title = "No",
+                    .onConfirmAction = advanceDialog,
+                    .context = context
+                }
+            },
+            .number = 2,
+            .shouldDeleteWhenDone = true
+        },
+        .shouldDeleteWhenDone = true,
+    };
+
+    setDialogDataText(*messageData, "Are you sure you want to wipe the save file from the cartridge?");
+
+    scene->showDialog(messageData);
+}
+
 void resetRTC(void* context, const void* param)
 {
     // The game checks bit 7 on the sRTCStatusFlags field in SRAM
