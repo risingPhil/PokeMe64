@@ -285,7 +285,8 @@ void StatsScene::loadPokemonSprite(uint8_t pokeIndex, bool shiny)
             return;
     }
 
-    outputBuffer = renderer.draw(spriteBuffer, outputFormat, colorPalette, spriteWidthInTiles, spriteHeightInTiles, true);
+    renderer.draw(spriteBuffer, outputFormat, colorPalette, spriteWidthInTiles, spriteHeightInTiles);
+    outputBuffer = renderer.removeWhiteBackground(spriteWidthInTiles, spriteHeightInTiles);
     
     spriteWidthInPixels = spriteWidthInTiles * 8;
     spriteHeightInPixels = spriteHeightInTiles * 8;
