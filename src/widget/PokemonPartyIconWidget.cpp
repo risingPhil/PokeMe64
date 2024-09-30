@@ -112,7 +112,7 @@ surface_t PokemonPartyIconFactory::getIcon(uint8_t generation, uint8_t specificG
     return result;
 }
 
-PokemonPartyIconWidget::PokemonPartyIconWidget(PokemonPartyIconFactory& iconFactory)
+PokemonPartyIconWidget::PokemonPartyIconWidget()
     : style_({0})
     , data_({0})
     , iconFrame1_({0})
@@ -120,7 +120,6 @@ PokemonPartyIconWidget::PokemonPartyIconWidget(PokemonPartyIconFactory& iconFact
     , bounds_({0})
     , frameSwitchTimeoutInTicks_(0)
     , nextFrameSwitchTime_(0)
-    , iconFactory_(iconFactory)
     , focused_(false)
     , visible_(true)
     , showFirstIconFrame_(true)
@@ -134,13 +133,22 @@ PokemonPartyIconWidget::~PokemonPartyIconWidget()
 void PokemonPartyIconWidget::setStyle(const PokemonPartyIconWidgetStyle& style)
 {
     style_ = style;
+
+    reset();
 }
 
 void PokemonPartyIconWidget::setData(const PokemonPartyIconWidgetData& data)
 {
     data_ = data;
-    iconFrame1_ = iconFactory_.getIcon(data_.generation, data_.specificGenVersion, data_.iconType, true);
-    iconFrame2_ = iconFactory_.getIcon(data_.generation, data_.specificGenVersion, data_.iconType, false);
+
+    if(!data.iconFactory)
+    {
+        debugf("ERROR: No PokemonPartyIconFactory instance was provided!\n");
+        return;
+    }
+
+    iconFrame1_ = data.iconFactory->getIcon(data_.generation, data_.specificGenVersion, data_.iconType, true);
+    iconFrame2_ = data.iconFactory->getIcon(data_.generation, data_.specificGenVersion, data_.iconType, false);
 
     reset();
 }
@@ -193,7 +201,7 @@ void PokemonPartyIconWidget::render(RDPQGraphics& gfx, const Rectangle& parentBo
 {
     const SurfaceRenderSettings renderSettings = { 0 };
     const Rectangle absoluteBounds = addOffset(bounds_, parentBounds);
-    const Rectangle spriteBounds = addOffset(absoluteBounds, style_.icon.bounds);
+    const Rectangle spriteBounds = addOffset(style_.icon.bounds, absoluteBounds);
 
     const uint64_t currentTicks = get_ticks();
     if(currentTicks >= nextFrameSwitchTime_)
@@ -209,7 +217,10 @@ void PokemonPartyIconWidget::render(RDPQGraphics& gfx, const Rectangle& parentBo
 
     if(showFirstIconFrame_)
     {
-        gfx.drawSurface(spriteBounds, &iconFrame1_, renderSettings);
+        if(iconFrame1_.buffer)
+        {
+            gfx.drawSurface(spriteBounds, &iconFrame1_, renderSettings);
+        }
     }
     else
     {
@@ -217,7 +228,7 @@ void PokemonPartyIconWidget::render(RDPQGraphics& gfx, const Rectangle& parentBo
         {
             gfx.drawSurface(spriteBounds, &iconFrame2_, renderSettings);
         }
-        else
+        else if(iconFrame1_.buffer)
         {
             const Rectangle modifiedSpriteBounds = { .x = spriteBounds.x, .y = spriteBounds.y + style_.icon.yOffsetWhenTheresNoFrame2, .width = spriteBounds.width, .height = spriteBounds.height };
             gfx.drawSurface(modifiedSpriteBounds, &iconFrame1_, renderSettings);
@@ -227,9 +238,16 @@ void PokemonPartyIconWidget::render(RDPQGraphics& gfx, const Rectangle& parentBo
 
 void PokemonPartyIconWidget::reset()
 {
-    const uint8_t fps = (focused_) ? data_.fpsWhenFocused : data_.fpsWhenNotFocused;
-    frameSwitchTimeoutInTicks_ = calculateFrameSwitchTimeout(fps);
-    nextFrameSwitchTime_ = get_ticks() + frameSwitchTimeoutInTicks_;
+    const uint8_t fps = (focused_) ? style_.fpsWhenFocused : style_.fpsWhenNotFocused;
+    if(fps)
+    {
+        frameSwitchTimeoutInTicks_ = calculateFrameSwitchTimeout(fps);
+        nextFrameSwitchTime_ = get_ticks() + frameSwitchTimeoutInTicks_;
+    }
+    else
+    {
+        nextFrameSwitchTime_ = 0xFFFFFFFFFFFFFFFF;
+    }
 
     showFirstIconFrame_ = true;
 }

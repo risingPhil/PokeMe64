@@ -9,43 +9,6 @@
 class IRomReader;
 class ISaveManager;
 
-typedef struct PokemonPartyIconWidgetStyle
-{
-    struct {
-        /**
-         * (optional) background sprite
-         */
-        sprite_t* sprite;
-        /*
-        * RenderSettings that influence how the backgroundSprite is
-        * being rendered
-        */
-        SpriteRenderSettings spriteSettings;
-    } background;
-    struct {
-        Rectangle bounds;
-        uint8_t yOffsetWhenTheresNoFrame2;
-    } icon;
-} PokemonPartyIconWidgetStyle;
-
-typedef struct PokemonPartyIconWidgetData
-{
-    /**
-     * The generation of the pokemon game (gen 1/2)
-     */
-    uint8_t generation;
-    /**
-     * The specific variant of the game
-     */
-    uint8_t specificGenVersion;
-    /**
-     * The pokemon icon type we need to display
-     */
-    uint8_t iconType;
-    uint8_t fpsWhenFocused;
-    uint8_t fpsWhenNotFocused;
-} PokemonPartyIconWidgetData;
-
 /**
  * This factory class provides a function to obtain a surface_t instance for a given icon.
  * It acts as a form of cache to prevent decoding/allocating the same icon more than once if multiple
@@ -71,11 +34,49 @@ private:
     IRomReader& romReader_;
 };
 
+typedef struct PokemonPartyIconWidgetStyle
+{
+    struct {
+        /**
+         * (optional) background sprite
+         */
+        sprite_t* sprite;
+        /*
+        * RenderSettings that influence how the backgroundSprite is
+        * being rendered
+        */
+        SpriteRenderSettings spriteSettings;
+    } background;
+    struct {
+        Rectangle bounds;
+        int8_t yOffsetWhenTheresNoFrame2;
+    } icon;
+    uint8_t fpsWhenFocused;
+    uint8_t fpsWhenNotFocused;
+} PokemonPartyIconWidgetStyle;
+
+typedef struct PokemonPartyIconWidgetData
+{
+    PokemonPartyIconFactory* iconFactory;
+    /**
+     * The generation of the pokemon game (gen 1/2)
+     */
+    uint8_t generation;
+    /**
+     * The specific variant of the game
+     */
+    uint8_t specificGenVersion;
+    /**
+     * The pokemon icon type we need to display
+     */
+    uint8_t iconType;
+} PokemonPartyIconWidgetData;
+
 class PokemonPartyIconWidget : public IWidget
 {
 public:
-    PokemonPartyIconWidget(PokemonPartyIconFactory& iconFactory);
-    ~PokemonPartyIconWidget();
+    PokemonPartyIconWidget();
+    virtual ~PokemonPartyIconWidget();
 
     void setStyle(const PokemonPartyIconWidgetStyle& style);
     void setData(const PokemonPartyIconWidgetData& data);
@@ -147,7 +148,6 @@ private:
     Rectangle bounds_;
     uint32_t frameSwitchTimeoutInTicks_;
     uint64_t nextFrameSwitchTime_;
-    PokemonPartyIconFactory& iconFactory_;
     bool focused_;
     bool visible_;
     bool showFirstIconFrame_;

@@ -2,6 +2,7 @@
 #define _DISTRIBUTIONPOKEMONLISTSCENE_H
 
 #include "scenes/MenuScene.h"
+#include "widget/DistributionPokemonMenuItemWidget.h"
 #include "transferpak/TransferPakRomReader.h"
 #include "transferpak/TransferPakSaveManager.h"
 #include "gen1/Gen1GameReader.h"
@@ -74,7 +75,10 @@ private:
     TransferPakSaveManager saveManager_;
     Gen1GameReader gen1Reader_;
     Gen2GameReader gen2Reader_;
+    PokemonPartyIconFactory iconFactory_;
+    ListItemFiller<VerticalList, DistributionPokemonMenuItemData, DistributionPokemonMenuItem, DistributionPokemonMenuItemStyle> customListFiller_;
     DialogData diag_;
+    sprite_t* iconBackgroundSprite_;
     const void* pokeToInject_;
 };
 
