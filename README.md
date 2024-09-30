@@ -55,7 +55,6 @@ But having it done with a Nintendo 64 feels more "real"/"official" and is easier
 # Future potential improvements (ideas/roadmap)
 
 ## UI ideas
-- In the pokémon list, show the mini menu sprite that you would also see in the party menu in the gameboy games
 - add some background images and potentially sprites here and there.
 - add some acquisition sound effects from the gameboy games
 - add a skippable "trade" 3D animation sequence when you receive a distribution pokémon. The idea is to have a pokéball go into a green mario pipe on either a Nintendo 64 3D model or Nintendo 64 3D logo model. Then follow the pipe with the camera and have the pokéball drop onto a huge 3D representation of the gameboy cartridge before opening the pokéball which then triggers the stats screen.
