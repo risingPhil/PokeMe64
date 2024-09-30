@@ -157,13 +157,6 @@ void DistributionPokemonListScene::onDialogDone()
 void DistributionPokemonListScene::setupMenu()
 {
     const VerticalListStyle listStyle = {
-        .background = {
-            .sprite = menu9SliceSprite_,
-            .spriteSettings = {
-                .renderMode = SpriteRenderMode::NINESLICE,
-                .srcRect = { 6, 6, 6, 6 }
-            }
-        },
         .margin = {
             .top = 5,
             .bottom = 5
@@ -183,7 +176,14 @@ void DistributionPokemonListScene::setupMenu()
     cursorWidget_.setVisible(false);
 
     const DistributionPokemonMenuItemStyle itemStyle = {
-        .size = {280, 20},
+        .size = {280, 22},
+        .background = {
+            .sprite = menu9SliceSprite_,
+            .spriteSettings = {
+                .renderMode = SpriteRenderMode::NINESLICE,
+                .srcRect = { 6, 6, 6, 6 }
+            }
+        },
         .icon = {
             .style = {
                 .background = {
@@ -196,7 +196,7 @@ void DistributionPokemonListScene::setupMenu()
                 .fpsWhenFocused = 8,
                 .fpsWhenNotFocused = 2
             },
-            .bounds = {2, 0, 20, 20}
+            .bounds = {0, 1, 20, 20}
         },
         .titleNotFocused = {
             .fontId = arialId_,
