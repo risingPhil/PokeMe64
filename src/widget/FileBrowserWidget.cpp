@@ -277,6 +277,8 @@ void FileBrowserWidget::loadDirectoryItems()
         itemData.context = this;
         itemData.itemParam = titleString;
 
+        itemStyle.icon.sprite = (dirEnt.d_type == DT_REG) ? style_.fileIconSprite : style_.directoryIconSprite;
+
         itemWidget = new MenuItemWidget();
         itemWidget->setData(itemData);
         itemWidget->setStyle(itemStyle);
