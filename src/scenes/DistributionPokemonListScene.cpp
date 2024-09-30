@@ -24,7 +24,10 @@ DistributionPokemonListScene::DistributionPokemonListScene(SceneDependencies& de
     , saveManager_(deps.tpakManager)
     , gen1Reader_(romReader_, saveManager_, static_cast<Gen1GameType>(deps.specificGenVersion))
     , gen2Reader_(romReader_, saveManager_, static_cast<Gen2GameType>(deps.specificGenVersion))
+    , iconFactory_(romReader_)
+    , customListFiller_(menuList_)
     , diag_()
+    , iconBackgroundSprite_(nullptr)
     , pokeToInject_(nullptr)
 {
 }
@@ -35,6 +38,7 @@ DistributionPokemonListScene::~DistributionPokemonListScene()
 
 void DistributionPokemonListScene::init()
 {
+    iconBackgroundSprite_ = sprite_load("rom://bg-party-icon.sprite");
     loadDistributionPokemonList();
     MenuScene::init();
 }
@@ -46,6 +50,9 @@ void DistributionPokemonListScene::destroy()
     delete[] context_->menuEntries;
     context_->menuEntries = nullptr;
     context_->numMenuEntries = 0;
+
+    sprite_free(iconBackgroundSprite_);
+    iconBackgroundSprite_ = nullptr;
 }
 
 bool DistributionPokemonListScene::handleUserInput(joypad_port_t port, const joypad_inputs_t& inputs)
@@ -150,16 +157,11 @@ void DistributionPokemonListScene::onDialogDone()
 void DistributionPokemonListScene::setupMenu()
 {
     const VerticalListStyle listStyle = {
-        .background = {
-            .sprite = menu9SliceSprite_,
-            .spriteSettings = {
-                .renderMode = SpriteRenderMode::NINESLICE,
-                .srcRect = { 6, 6, 6, 6 }
-            }
-        },
         .margin = {
-            .top = 5
+            .top = 5,
+            .bottom = 5
         },
+        .verticalSpacingBetweenWidgets = 1,
         .autogrow = {
             .enabled = true,
             .maxHeight = 200
@@ -173,8 +175,29 @@ void DistributionPokemonListScene::setupMenu()
 
     cursorWidget_.setVisible(false);
 
-    const MenuItemStyle itemStyle = {
-        .size = {280, 16},
+    const DistributionPokemonMenuItemStyle itemStyle = {
+        .size = {280, 22},
+        .background = {
+            .sprite = menu9SliceSprite_,
+            .spriteSettings = {
+                .renderMode = SpriteRenderMode::NINESLICE,
+                .srcRect = { 6, 6, 6, 6 }
+            }
+        },
+        .icon = {
+            .style = {
+                .background = {
+                    .sprite = iconBackgroundSprite_
+                },
+                .icon = {
+                    .bounds = { 2, 2, 16, 16 },
+                    .yOffsetWhenTheresNoFrame2 = -1
+                },
+                .fpsWhenFocused = 8,
+                .fpsWhenNotFocused = 2
+            },
+            .bounds = {0, 1, 20, 20}
+        },
         .titleNotFocused = {
             .fontId = arialId_,
             .fontStyleId = fontStyleWhiteId_
@@ -183,11 +206,11 @@ void DistributionPokemonListScene::setupMenu()
             .fontId = arialId_,
             .fontStyleId = fontStyleYellowId_
         },
-        .leftMargin = 10,
-        .topMargin = 1
+        .leftMargin = 24,
+        .topMargin = 4
     };
 
-    menuListFiller_.addItems(context_->menuEntries, context_->numMenuEntries, itemStyle);
+    customListFiller_.addItems(static_cast<DistributionPokemonMenuItemData*>(context_->menuEntries), context_->numMenuEntries, itemStyle);
 
     const ImageWidgetStyle scrollArrowUpStyle = {
         .image = {
@@ -218,6 +241,7 @@ void DistributionPokemonListScene::loadDistributionPokemonList()
     const Gen2DistributionPokemon** gen2List;
     uint32_t listSize;
     uint32_t i;
+    uint8_t iconType;
 
     DistributionPokemonListSceneContext* context = convert(context_);
 
@@ -246,27 +270,51 @@ void DistributionPokemonListScene::loadDistributionPokemonList()
     {
         return;
     }
-    context->menuEntries = new MenuItemData[listSize];
+    context->menuEntries = new DistributionPokemonMenuItemData[listSize];
     context->numMenuEntries = listSize;
 
     if(gen1List)
     {
         for(i = 0; i < listSize; ++i)
         {
-            context->menuEntries[i].title = gen1List[i]->name;
-            context->menuEntries[i].onConfirmAction = injectDistributionPokemon;
-            context->menuEntries[i].context = this;
-            context->menuEntries[i].itemParam = gen1List[i];
+            DistributionPokemonMenuItemData* menuEntry =  static_cast<DistributionPokemonMenuItemData*>(context_->menuEntries) + i;
+            menuEntry->title = gen1List[i]->name;
+            menuEntry->onConfirmAction = injectDistributionPokemon;
+            menuEntry->context = this;
+            menuEntry->itemParam = gen1List[i];
+            menuEntry->iconData = {
+                .iconFactory = &iconFactory_,
+                .generation = deps_.generation,
+                .specificGenVersion = deps_.specificGenVersion,
+                .iconType = (uint8_t)gen1Reader_.getPokemonIconType(gen1List[i]->poke.poke_index)
+            };
         }
     }
     else if(gen2List)
     {
         for(i = 0; i < listSize; ++i)
         {
-            context->menuEntries[i].title = gen2List[i]->name;
-            context->menuEntries[i].onConfirmAction = injectDistributionPokemon;
-            context->menuEntries[i].context = this;
-            context->menuEntries[i].itemParam = gen2List[i];
+            DistributionPokemonMenuItemData* menuEntry =  static_cast<DistributionPokemonMenuItemData*>(context_->menuEntries) + i;
+            
+            if(gen2List[i]->isEgg)
+            {
+                iconType = (uint8_t)Gen2PokemonIconType::GEN2_ICONTYPE_EGG;
+            }
+            else
+            {
+                iconType = (uint8_t)gen2Reader_.getPokemonIconType(gen2List[i]->poke.poke_index);
+            }
+
+            menuEntry->title = gen2List[i]->name;
+            menuEntry->onConfirmAction = injectDistributionPokemon;
+            menuEntry->context = this;
+            menuEntry->itemParam = gen2List[i];
+            menuEntry->iconData = {
+                .iconFactory = &iconFactory_,
+                .generation = deps_.generation,
+                .specificGenVersion = deps_.specificGenVersion,
+                .iconType = iconType
+            };
         }
     }
 }

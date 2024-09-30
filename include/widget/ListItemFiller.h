@@ -29,7 +29,7 @@ public:
         deleteWidgets();
     }
 
-    void addItems(ListDataType* dataList, size_t dataListSize, const MenuItemStyle& itemStyle)
+    void addItems(ListDataType* dataList, size_t dataListSize, const ListItemWidgetStyleType& itemStyle)
     {
         ListItemWidgetType* itemWidget;
         for(size_t i = 0; i < dataListSize; ++i)
