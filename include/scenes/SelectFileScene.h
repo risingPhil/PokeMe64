@@ -52,6 +52,8 @@ private:
     sprite_t* dialogWidgetBackgroundSprite_;
     sprite_t* uiArrowUpSprite_;
     sprite_t* uiArrowDownSprite_;
+    sprite_t* uiIconFile_;
+    sprite_t* uiIconDirectory_;
     bool bButtonPressed_;
 };
 

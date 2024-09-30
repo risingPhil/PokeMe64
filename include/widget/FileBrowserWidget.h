@@ -17,6 +17,8 @@ typedef struct FileBrowserWidgetStyle
     MenuItemStyle itemStyle;
     ImageWidgetStyle scrollArrowUpStyle;
     ImageWidgetStyle scrollArrowDownStyle;
+    sprite_t* fileIconSprite;
+    sprite_t* directoryIconSprite;
 } FileBrowserWidgetStyle;
 
 typedef struct FileBrowserWidgetStatus

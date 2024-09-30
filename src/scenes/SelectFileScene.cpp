@@ -29,6 +29,8 @@ SelectFileScene::SelectFileScene(SceneDependencies& deps, void* context)
     , dialogWidgetBackgroundSprite_(nullptr)
     , uiArrowUpSprite_(nullptr)
     , uiArrowDownSprite_(nullptr)
+    , uiIconFile_(nullptr)
+    , uiIconDirectory_(nullptr)
     , bButtonPressed_(false)
 {
 }
@@ -51,6 +53,8 @@ void SelectFileScene::init()
     dialogWidgetBackgroundSprite_ = sprite_load("rom://menu-bg-9slice.sprite");
     uiArrowUpSprite_ = sprite_load("rom://ui-arrow-up.sprite");
     uiArrowDownSprite_ = sprite_load("rom://ui-arrow-down.sprite");
+    uiIconFile_ = sprite_load("rom://ui-icon-file.sprite");
+    uiIconDirectory_ = sprite_load("rom://ui-icon-folder.sprite");
 
     SceneWithDialogWidget::init();
 
@@ -69,7 +73,10 @@ void SelectFileScene::init()
             }
         },
         .itemStyle = {
-            .size = {280, 16},
+            .size = {280, 20},
+            .icon = {
+                .spriteBounds = { 5, 2, 16, 16}
+            },
             .titleNotFocused = {
                 .fontId = arialId_,
                 .fontStyleId = fontStyleWhiteId_
@@ -78,8 +85,8 @@ void SelectFileScene::init()
                 .fontId = arialId_,
                 .fontStyleId = fontStyleYellowId_
             },
-            .leftMargin = 10,
-            .topMargin = 1
+            .leftMargin = 24,
+            .topMargin = 4
         },
         .scrollArrowUpStyle = {
             .image = {
@@ -92,7 +99,9 @@ void SelectFileScene::init()
                 .sprite = uiArrowDownSprite_,
                 .spriteBounds = Rectangle{0, 0, uiArrowDownSprite_->width, uiArrowDownSprite_->height}
             }
-        }
+        },
+        .fileIconSprite = uiIconFile_,
+        .directoryIconSprite = uiIconDirectory_
     };
 
     setFocusChain(&fileBrowserFocusSegment_);
@@ -106,6 +115,18 @@ void SelectFileScene::init()
 void SelectFileScene::destroy()
 {
     SceneWithDialogWidget::destroy();
+
+    if(uiIconDirectory_)
+    {
+        sprite_free(uiIconDirectory_);
+        uiIconDirectory_ = nullptr;
+    }
+
+    if(uiIconFile_)
+    {
+        sprite_free(uiIconFile_);
+        uiIconFile_ = nullptr;
+    }
 
     if(dialogWidgetBackgroundSprite_)
     {

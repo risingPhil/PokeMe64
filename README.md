@@ -4,7 +4,7 @@ This project lets you acquire past Distribution Event Pok√©mon in Gen1/Gen2 Pok√
 
 The rom is based on [libpokemegb](https://github.com/risingPhil/libpokemegb) and [libdragon](https://github.com/DragonMinded/libdragon).
 
-![Screenshot 1](docs/images/screen1.png)![Screenshot 2](docs/images/screen2.png)![Screenshot 3](docs/images/screen3.png)![Screenshot 4](docs/images/screen4.png)![Screenshot 5](docs/images/screen5.png)![Screenshot 6](docs/images/screen6.png)![Screenshot 7](docs/images/screen7.png)
+![Screenshot 1](docs/images/screen1.png)![Screenshot 2](docs/images/screen2.png)![Screenshot 3](docs/images/screen3.png)![Screenshot 4](docs/images/screen4.png)![Screenshot 5](docs/images/screen5.png)![Screenshot 6](docs/images/screen6.png)![Screenshot 7](docs/images/screen7.png)![Screenshot 8](docs/images/screen8.png)
 
 Right now the UI is still barebones. I aim to improve this in future versions.
 
