@@ -4,6 +4,7 @@
 #include "transferpak/TransferPakSaveManager.h"
 #include "gen1/Gen1GameReader.h"
 #include "gen2/Gen2GameReader.h"
+#include "gen2/Gen2ReproSaveManager.h"
 #include "tpak.h"
 
 /**
@@ -35,6 +36,7 @@ TransferPakDetectionWidget::TransferPakDetectionWidget(AnimationManager& animMan
     , animManager_(animManager)
     , tpakManager_(pakManager)
     , bounds_({0})
+    , previousState_(TransferPakWidgetState::UNKNOWN)
     , currentState_(TransferPakWidgetState::UNKNOWN)
     , previousInputState_({0})
     , gen1Type_(Gen1GameType::INVALID)
@@ -116,14 +118,45 @@ bool TransferPakDetectionWidget::handleUserInput(const joypad_inputs_t& userInpu
     }
     else if(currentState_ == TransferPakWidgetState::VALIDATING_GAME_SAVE)
     {
+        TransferPakWidgetState newState;
         // We don't want to do this in the switchState flow in order to have the widget actually render something before starting this step
         // (because validating the game save CRC might take a few seconds)
         tpakManager_.setRAMEnabled(true);
         const bool ret = validateGameSave();
         tpakManager_.setRAMEnabled(false);
-        const TransferPakWidgetState newState = (ret) ? TransferPakWidgetState::VALID_SAVE_FOUND : TransferPakWidgetState::NO_SAVE_FOUND;
+
+        if(ret)
+        {
+            newState = TransferPakWidgetState::VALID_SAVE_FOUND;
+        }
+        else
+        {
+            newState = (previousState_ == TransferPakWidgetState::CHECK_FOR_REPRO) ? TransferPakWidgetState::NO_SAVE_FOUND : TransferPakWidgetState::CHECK_FOR_REPRO;
+        }
 
         switchState(currentState_, newState);
+    }
+    else if(currentState_ == TransferPakWidgetState::CHECK_FOR_REPRO)
+    {
+        // REPLACEME:
+        // SHORTCUT: we assume we're dealing with our gold reproduction cart.
+        uint8_t saveBankBuffer[0x2000];
+        TransferPakRomReader romReader(tpakManager_);
+        Gen2ReproSaveManager reproSaveReader(romReader, Gen2ReproType::ALIEXPRESS_TYPE1, false);
+        uint8_t bankIndex;
+
+        tpakManager_.setRAMEnabled(true);
+        
+        for(bankIndex = 0; bankIndex < 4; ++bankIndex)
+        {
+            tpakManager_.switchGBSRAMBank(bankIndex);
+            reproSaveReader.read(saveBankBuffer, 0x2000);
+            tpakManager_.writeSRAM(0, saveBankBuffer, 0x2000);
+        }
+
+        tpakManager_.setRAMEnabled(false);
+        switchState(currentState_, TransferPakWidgetState::VALIDATING_GAME_SAVE);
+
     }
 
     previousInputState_ = userInput;
@@ -146,6 +179,12 @@ void TransferPakDetectionWidget::render(RDPQGraphics& gfx, const Rectangle& pare
     {
     case TransferPakWidgetState::UNKNOWN:
         renderUnknownState(gfx, parentBounds);
+        break;
+    case TransferPakWidgetState::VALIDATING_GAME_SAVE:
+        renderValidatingSaveState(gfx, parentBounds);
+        break;
+    case TransferPakWidgetState::CHECK_FOR_REPRO:
+        renderCheckForReproState(gfx, parentBounds);
         break;
     case TransferPakWidgetState::NO_TRANSFER_PAK_FOUND:
     case TransferPakWidgetState::GB_HEADER_VALIDATION_FAILED:
@@ -183,6 +222,7 @@ void TransferPakDetectionWidget::switchState(TransferPakWidgetState previousStat
     TransferPakWidgetState newState;
     bool ret;
 
+    previousState_ = previousState;
     currentState_ = state;
     switch(state)
     {
@@ -227,6 +267,12 @@ void TransferPakDetectionWidget::renderValidatingSaveState(RDPQGraphics& gfx, co
 {
     const Rectangle absoluteTextBounds = addOffset(textBounds, bounds_);
     gfx.drawText(absoluteTextBounds, "Checking save...", style_.textSettings);
+}
+
+void TransferPakDetectionWidget::renderCheckForReproState(RDPQGraphics& gfx, const Rectangle& parentBounds)
+{
+    const Rectangle absoluteTextBounds = addOffset(textBounds, bounds_);
+    gfx.drawText(absoluteTextBounds, "Checking for reproduction cart...", style_.textSettings);
 }
 
 void TransferPakDetectionWidget::renderErrorState(RDPQGraphics& gfx, const Rectangle& parentBounds)

@@ -17,6 +17,7 @@ enum class TransferPakWidgetState
     VALIDATING_GB_HEADER,
     DETECTING_GAME,
     VALIDATING_GAME_SAVE,
+    CHECK_FOR_REPRO,
     GB_HEADER_VALIDATION_FAILED,
     NO_TRANSFER_PAK_FOUND,
     NO_GAME_FOUND,
@@ -112,6 +113,7 @@ private:
 
     void renderUnknownState(RDPQGraphics& gfx, const Rectangle& parentBounds);
     void renderValidatingSaveState(RDPQGraphics& gfx, const Rectangle& parentBounds);
+    void renderCheckForReproState(RDPQGraphics& gfx, const Rectangle& parentBounds);
     void renderErrorState(RDPQGraphics& gfx, const Rectangle& parentBounds);
 
     /**
@@ -142,6 +144,7 @@ private:
     AnimationManager& animManager_;
     TransferPakManager& tpakManager_;
     Rectangle bounds_;
+    TransferPakWidgetState previousState_;
     TransferPakWidgetState currentState_;
     joypad_inputs_t previousInputState_;
     Gen1GameType gen1Type_;
