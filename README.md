@@ -64,7 +64,8 @@ But having it done with a Nintendo 64 feels more "real"/"official" and is easier
 - Have a "music" widget that shows up to name the song(s) that I end up using when it/they start(s) playing. (similar to how [Need For Speed - Most Wanted (original)](https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWk37230YvbMHaMchN8dzQiRrO66VofThpcbvUTFMoplDbkQKBVUFcIabbNCnzZ0KpuxcAQmrXQjBlqv_bvi6v6xpjmPxs3tJ-ZI_GhOn3xe5DW7XpMbtnCKFcbBQ-l_zzbrIIV4smBpth/s1600/_mwmusic.jpg) used to show this)
 
 ## Feature ideas
-- Support reproduction cartridges
+
+- [~~Support batteryless reproduction cartridges~~](docs/Why_I_Had_To_Give_Up_On_Batteryless_Repros.md)
 - Support other language versions (in libpokemegb)
 - Make it possible to display your cartridge save file as a QR code and contribute to the 3DS' [PKSM](https://github.com/FlagBrew/PKSM) project to migrate the save file easily from gameboy cartridge to 3DS.
 - Make it possible to swap gameboy cartridge after using the reset button on the N64. (suggested by /u/bluemooncinco on reddit)
@@ -74,6 +75,18 @@ I'm likely going to postpone the 3D stuff (intro and "trade" sequence) until I h
 Maybe at some point I might introduce a professor character in PokeMe64. I originally had this idea when starting the project, but when I discovered the existence of the Poke Transporter GB project by GearsProgress, I kinda let that go.
 
 Anyway, how many of these ideas actually get implemented kinda depends on how quickly I get burned out of the project. We'll see how far we get.
+
+# Reproduction carts
+
+Reproduction cartridge support is a bit of a problem for PokeMe64.
+
+The most common ones are "batteryless". Those don't have a battery to hold the save data in SRAM and instead store the save data in unused portions of the ROM. Unfortunately PokeMe64 can't support these due to a Nintendo 64 Transfer Pak hardware limitation.
+
+Battery-backed reproduction carts, however, should theoretically work fine, because their save procedure functions exactly like the original cartridge.
+
+Several posts can be found online about people being successful in converting a batteryless reproduction cartridge to a battery-backed one by soldering a battery and flashing the original (non-batteryless-save-patched) rom to it using a cartridge flasher such as a GBxCart RW.
+
+[I've wrote an article detailing the problem with Batteryless reproduction cartridges](docs/Why_I_Had_To_Give_Up_On_Batteryless_Repros.md)
 
 # Credits
 You can find the Credits and special thanks section here: [Credits](CREDITS.md)
