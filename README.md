@@ -27,6 +27,8 @@ I'm happy to accept pull requests if the community wants to do them.
 
 But I've heard from /u/bluemooncinco on reddit that PokeMe64 crashes on gen 1 French and Spanish, but Spanish gen 2 games appear to work. But your mileage may vary, as I haven't personally tested any games besides the international (English) ones. The main reason why other languages may or may not work is because the relevant data is at different positions inside the game data.
 
+PokeMe64 also doesn't support batteryless reproduction carts. (see "Reproduction carts" below)
+
 # Build
 
 To build it, set up a [build environment for libdragon](https://github.com/DragonMinded/libdragon/wiki/Installing-libdragon).
