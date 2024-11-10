@@ -16,7 +16,7 @@ In fact, I've read posts that people have managed to convert a batteryless repro
 
 As you may or may not have read already, reproduction cartridges usually don't have a battery embedded on the cartridge board. Instead, they have specific patches applied to use unused sections of the rom data to store the save data instead. That means that these cartridges actually re-flash part of their rom to store the save data when you try to save in-game. And when the game is starting, it copies the save data from flash to SRAM. (since there's no battery, SRAM loses its content every time the gameboy powers off). 
 
-The patches applied to these repro's are so-called "batteryless save patches". In fact, there's a whole community out there (check the [BennVenn discord](https://discord.gg/KYxpSRgB)) that is actually backing up such patches and writing new ones, because they like having cartridges that don't require battery replacements.
+The patches applied to these repros are so-called "batteryless save patches". In fact, there's a whole community out there (check the [BennVenn discord](https://discord.gg/KYxpSRgB)) that is actually backing up such patches and writing new ones, because they like having cartridges that don't require battery replacements.
 
 ## Flashing reproduction cartridges
 
