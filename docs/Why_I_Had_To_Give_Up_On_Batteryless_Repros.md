@@ -30,7 +30,7 @@ Instead, reproduction/bootleg cartridge types have specific commands to trigger 
 
 People have managed to reflash entire bootleg/reproduction cartridges with completely different games (once again, check the [BennVenn discord](https://discord.gg/KYxpSRgB)) using some of the cartridge flashers (such as GbxCart RW). 
 
-I'm not entirely sure how they work. I didn't research that in depth. However, while they probably use the aforementioned commands, I have also seen that there are cartridges out there that may use Pin 31 (AUDIO IN) to put the cartridge in flash mode. Then again, the latter does not seem to be relevant, because the gameboy can't change the signal of PIN 31, so it would still need separate commands to trigger the flash/erase operations while running the cartridge in the gameboy.
+I'm not entirely sure how these cartridge flashers work. (I didn't research that in depth.) However, while they probably use the aforementioned commands, I have also seen that there are cartridges out there that may use Pin 31 (AUDIO IN) to put the cartridge in flash mode. Then again, the latter does not seem to be relevant, because the gameboy can't change the signal of PIN 31, so it would still need separate commands to trigger the flash/erase operations while running the cartridge in the gameboy.
 
 ## The problem(s)
 
