@@ -35,7 +35,7 @@ PokemonPartyIconFactory::~PokemonPartyIconFactory()
     }
 }
 
-surface_t PokemonPartyIconFactory::getIcon(uint8_t generation, uint8_t specificGenType, uint8_t iconType, bool firstFrame)
+surface_t PokemonPartyIconFactory::getIcon(uint8_t generation, uint8_t specificGenType, uint8_t localization, uint8_t iconType, bool firstFrame)
 {
     BufferBasedSaveManager dummy(nullptr, 0);
     SpriteRenderer spriteRenderer;
@@ -53,7 +53,7 @@ surface_t PokemonPartyIconFactory::getIcon(uint8_t generation, uint8_t specificG
 
     if(generation == 1)
     {
-        Gen1GameReader gameReader(romReader_, dummy, (Gen1GameType)specificGenType);
+        Gen1GameReader gameReader(romReader_, dummy, static_cast<Gen1GameType>(specificGenType), static_cast<Gen1LocalizationLanguage>(localization));
         iconWidthInPixels = GEN1_ICON_WIDTH_IN_TILES * 8;
         iconHeightInPixels = GEN1_ICON_HEIGHT_IN_TILES * 8;
 
@@ -67,7 +67,7 @@ surface_t PokemonPartyIconFactory::getIcon(uint8_t generation, uint8_t specificG
     }
     else if(generation == 2)
     {
-        Gen2GameReader gameReader(romReader_, dummy, (Gen2GameType)specificGenType);
+        Gen2GameReader gameReader(romReader_, dummy, static_cast<Gen2GameType>(specificGenType), static_cast<Gen2LocalizationLanguage>(localization));
         iconWidthInPixels = GEN2_ICON_WIDTH_IN_TILES * 8;
         iconHeightInPixels = GEN2_ICON_HEIGHT_IN_TILES * 8;
 
@@ -147,8 +147,8 @@ void PokemonPartyIconWidget::setData(const PokemonPartyIconWidgetData& data)
         return;
     }
 
-    iconFrame1_ = data.iconFactory->getIcon(data_.generation, data_.specificGenVersion, data_.iconType, true);
-    iconFrame2_ = data.iconFactory->getIcon(data_.generation, data_.specificGenVersion, data_.iconType, false);
+    iconFrame1_ = data.iconFactory->getIcon(data_.generation, data_.specificGenVersion, data_.localization, data_.iconType, true);
+    iconFrame2_ = data.iconFactory->getIcon(data_.generation, data_.specificGenVersion, data_.localization, data_.iconType, false);
 
     reset();
 }

@@ -271,14 +271,20 @@ void InitTransferPakScene::loadSaveMetadata()
 
     if(gen1Type != Gen1GameType::INVALID)
     {
-        Gen1GameReader gameReader(romReader, saveManager, gen1Type);
+        const Gen1LocalizationLanguage language = gen1_determineGameLanguage(romReader, gen1Type);
+
+        Gen1GameReader gameReader(romReader, saveManager, gen1Type, language);
         const char* trainerName = gameReader.getTrainerName();
+        deps_.localization = static_cast<uint8_t>(language);
         strncpy(deps_.playerName, trainerName, sizeof(deps_.playerName) - 1);
     }
     else if(gen2Type != Gen2GameType::INVALID)
     {
-        Gen2GameReader gameReader(romReader, saveManager, gen2Type);
+        const Gen2LocalizationLanguage language = gen2_determineGameLanguage(romReader, gen2Type);
+
+        Gen2GameReader gameReader(romReader, saveManager, gen2Type, language);
         const char* trainerName = gameReader.getTrainerName();
+        deps_.localization = static_cast<uint8_t>(language);
         strncpy(deps_.playerName, trainerName, sizeof(deps_.playerName) - 1);
     }
 }

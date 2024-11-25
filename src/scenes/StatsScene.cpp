@@ -59,8 +59,8 @@ StatsScene::StatsScene(SceneDependencies& deps, void* context)
     , diag_({0})
     , romReader_(deps.tpakManager)
     , saveManager_(deps.tpakManager)
-    , gen1GameReader_(romReader_, saveManager_, getGen1TypeFor(deps.generation, deps.specificGenVersion))
-    , gen2GameReader_(romReader_, saveManager_, getGen2TypeFor(deps.generation, deps.specificGenVersion))
+    , gen1GameReader_(romReader_, saveManager_, getGen1TypeFor(deps.generation, deps.specificGenVersion), static_cast<Gen1LocalizationLanguage>(deps.localization))
+    , gen2GameReader_(romReader_, saveManager_, getGen2TypeFor(deps.generation, deps.specificGenVersion), static_cast<Gen2LocalizationLanguage>(deps.localization))
     , menu9SliceSprite_(nullptr)
     , backgroundRenderSettings_({
             .renderMode = SpriteRenderMode::NINESLICE,

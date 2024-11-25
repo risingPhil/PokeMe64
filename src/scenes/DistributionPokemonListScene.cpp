@@ -22,8 +22,8 @@ DistributionPokemonListScene::DistributionPokemonListScene(SceneDependencies& de
     : MenuScene(deps, context)
     , romReader_(deps.tpakManager)
     , saveManager_(deps.tpakManager)
-    , gen1Reader_(romReader_, saveManager_, static_cast<Gen1GameType>(deps.specificGenVersion))
-    , gen2Reader_(romReader_, saveManager_, static_cast<Gen2GameType>(deps.specificGenVersion))
+    , gen1Reader_(romReader_, saveManager_, static_cast<Gen1GameType>(deps.specificGenVersion), static_cast<Gen1LocalizationLanguage>(deps.localization))
+    , gen2Reader_(romReader_, saveManager_, static_cast<Gen2GameType>(deps.specificGenVersion), static_cast<Gen2LocalizationLanguage>(deps.localization))
     , iconFactory_(romReader_)
     , customListFiller_(menuList_)
     , diag_()
@@ -286,6 +286,7 @@ void DistributionPokemonListScene::loadDistributionPokemonList()
                 .iconFactory = &iconFactory_,
                 .generation = deps_.generation,
                 .specificGenVersion = deps_.specificGenVersion,
+                .localization = deps_.localization,
                 .iconType = (uint8_t)gen1Reader_.getPokemonIconType(gen1List[i]->poke.poke_index)
             };
         }
@@ -313,6 +314,7 @@ void DistributionPokemonListScene::loadDistributionPokemonList()
                 .iconFactory = &iconFactory_,
                 .generation = deps_.generation,
                 .specificGenVersion = deps_.specificGenVersion,
+                .localization = deps_.localization,
                 .iconType = iconType
             };
         }
