@@ -31,7 +31,7 @@ github.com/LinusU/pokemon-sprite-compression
 github.com/xvillaneau/poke-sprite-python
 )delim";
 
-static const char* headerTextString = R"delim(PokeMe64 Version 0.2
+static const char* headerTextString = R"delim(PokeMe64 Version 0.3
 by risingPhil
 
 SPECIAL THANKS TO:
