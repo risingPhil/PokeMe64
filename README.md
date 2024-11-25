@@ -23,11 +23,11 @@ I'm happy to accept pull requests if the community wants to do them.
 - Make it easy to reset/reconfigure the Generation II game clock
 
 # Limitations
-- Right now, this rom only supports the international (English) versions of the games.
+When using a Korean gen II pokémon game, the Pokémon names won't show correctly. This is because the character set of the Korean games is vastly different and much more complex. I don't have any personal stakes or interest in these games, so I just made them show as "poke-\<number\>" instead.
 
-But I've heard from /u/bluemooncinco on reddit that PokeMe64 crashes on gen 1 French and Spanish, but Spanish gen 2 games appear to work. But your mileage may vary, as I haven't personally tested any games besides the international (English) ones. The main reason why other languages may or may not work is because the relevant data is at different positions inside the game data.
+PokeMe64 also doesn't support batteryless reproduction carts due to technical limitations. Unfortunately this means most reproduction carts can't be supported. (see the "Reproduction carts" section below).
 
-PokeMe64 also doesn't support batteryless reproduction carts. (see "Reproduction carts" below)
+Flashcarts also unfortunately can't be supported, because those load into a menu first. (and likely also run into the same hardware limitation as with batteryless repro carts)
 
 # Build
 
@@ -68,9 +68,11 @@ But having it done with a Nintendo 64 feels more "real"/"official" and is easier
 ## Feature ideas
 
 - [~~Support batteryless reproduction cartridges~~](docs/Why_I_Had_To_Give_Up_On_Batteryless_Repros.md)
-- Support other language versions (in libpokemegb)
 - Make it possible to display your cartridge save file as a QR code and contribute to the 3DS' [PKSM](https://github.com/FlagBrew/PKSM) project to migrate the save file easily from gameboy cartridge to 3DS.
 - Make it possible to swap gameboy cartridge after using the reset button on the N64. (suggested by /u/bluemooncinco on reddit)
+- Add support for the Japanese distribution event pokémon
+- Make it possible to delete pokémon moves
+- Force reset of RTC on backed up save file after backing up a Gen II save.
 
 I'm likely going to postpone the 3D stuff (intro and "trade" sequence) until I have implemented a lot of the other ideas here.
 
