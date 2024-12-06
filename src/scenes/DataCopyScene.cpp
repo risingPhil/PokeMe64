@@ -178,7 +178,7 @@ void DataCopyScene::init()
         case DataCopyOperation::BACKUP_SAVE:
             generateSaveFileName(savOutputPath, sizeof(savOutputPath), gameTitle, deps_.playerName);
             copySource_ = new TransferPakSaveManagerCopySource(saveManager_);
-            copyDestination_ = new TransferPakFileCopyDestination(savOutputPath);
+            copyDestination_ = new TransferPakFileCopyDestination(savOutputPath, (deps_.generation == 2));
             totalBytesToCopy_ = convertSRAMSizeIntoNumBytes(gbHeader.ram_size_code);
             setDialogDataText(*msg2, "The save was backed up to %s!", savOutputPath);
             break;

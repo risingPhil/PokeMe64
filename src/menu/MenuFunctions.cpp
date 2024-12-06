@@ -498,13 +498,6 @@ void askConfirmationWipeSave(void* context, const void* param)
 
 void resetRTC(void* context, const void* param)
 {
-    // The game checks bit 7 on the sRTCStatusFlags field in SRAM
-    // this is set when the game detects wrong RTC register values.
-    // In order to let the game prompt to reconfigure the RTC clock, we just have to set this bit
-    // Based on sRTCStatusFlags, RecordRTCStatus, .set_bit_7 in
-    // https://github.com/pret/pokecrystal
-    // https://github.com/pret/pokegold
-    const uint8_t rtcStatusFieldValue = 0xC0;
     MenuScene* scene = static_cast<MenuScene*>(context);
 
     auto diag = new DialogData{
@@ -518,14 +511,17 @@ void resetRTC(void* context, const void* param)
         return;
     }
 
+    const Gen2GameType gameType = static_cast<Gen2GameType>(scene->getDependencies().specificGenVersion);
+    const Gen2LocalizationLanguage language = static_cast<Gen2LocalizationLanguage>(scene->getDependencies().localization);
     TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
+    TransferPakRomReader romReader(tpakManager);
+    TransferPakSaveManager saveManager(tpakManager);
+    Gen2GameReader gameReader(romReader, saveManager, gameType, language);
 
     tpakManager.setRAMEnabled(true);
-
-    tpakManager.switchGBSRAMBank(0);
-
-    tpakManager.writeSRAM(0xC60, &rtcStatusFieldValue, 1);
+    gameReader.resetRTC();
     tpakManager.finishWrites();
+    tpakManager.setRAMEnabled(false);
 
     setDialogDataText(*diag, "The games' clock was reset! Start the game to reconfigure it! Don't forget to save!");
     scene->showDialog(diag);
