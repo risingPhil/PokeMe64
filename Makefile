@@ -36,8 +36,8 @@ filesystem/%.sprite: assets/%.png
 	@echo "    [SPRITE] $@"
 	$(N64_MKSPRITE) $(MKSPRITE_FLAGS) -o filesystem "$<"
 
-filesystem/Arial.font64: MKFONT_FLAGS+=--size 11 --outline 1.0 --char-spacing 1.0 --range 20-E9
-filesystem/Arial-small.font64: MKFONT_FLAGS+=--size 10 --outline 1.0 --char-spacing 1.0 --range 20-E9
+filesystem/Arial.font64: MKFONT_FLAGS+=--size 11 --outline 1.0 --char-spacing 1.0 --range 20-E9 --range 3040-309F
+filesystem/Arial-small.font64: MKFONT_FLAGS+=--size 10 --outline 1.0 --char-spacing 1.0 --range 20-E9 --range 3040-309F
 
 filesystem/logo-libdragon.sprite: MKSPRITE_FLAGS += -f RGBA32
 filesystem/logo-bulbagarden.sprite: MKSPRITE_FLAGS += -f RGBA32
