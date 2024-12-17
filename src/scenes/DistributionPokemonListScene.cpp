@@ -199,11 +199,11 @@ void DistributionPokemonListScene::setupMenu()
             .bounds = {0, 1, 20, 20}
         },
         .titleNotFocused = {
-            .fontId = arialId_,
+            .fontId = mainFontId_,
             .fontStyleId = fontStyleWhiteId_
         },
         .titleFocused = {
-            .fontId = arialId_,
+            .fontId = mainFontId_,
             .fontStyleId = fontStyleYellowId_
         },
         .leftMargin = 24,

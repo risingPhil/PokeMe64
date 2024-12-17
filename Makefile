@@ -36,8 +36,12 @@ filesystem/%.sprite: assets/%.png
 	@echo "    [SPRITE] $@"
 	$(N64_MKSPRITE) $(MKSPRITE_FLAGS) -o filesystem "$<"
 
-filesystem/Arial.font64: MKFONT_FLAGS+=--size 11 --outline 1.0 --char-spacing 1.0 --range 20-E9 --range 3040-309F
-filesystem/Arial-small.font64: MKFONT_FLAGS+=--size 10 --outline 1.0 --char-spacing 1.0 --range 20-E9 --range 3040-309F
+# We also need Japanese characters
+# I wrote a program to determine the character ranges for the japanese characters actually used by
+# the gameboy games.
+filesystem/Arial.font64: MKFONT_FLAGS+= -v --size 11 --outline 1.0 --char-spacing 1.0 --range 20-E9 --range 2026-2026 --range 25B6-25B7 --range 25BC-25BC --range 2640-2640 --range 2642-2642 --range 3002-3002 --range 300C-300F --range 3041-3089 --range 308B-308D --range 308F-308F --range 3092-309C --range 30A1-30D7 --range 30DB-30EF --range 30F2-30F4 --range 30FB-30FC --range 5186-5186 --range FF1A-FF1A
+
+filesystem/Arial-small.font64: MKFONT_FLAGS+=-v --size 10 --outline 1.0 --char-spacing 1.0 --range 20-E9 --range 2026-2026 --range 25B6-25B7 --range 25BC-25BC --range 2640-2640 --range 2642-2642 --range 3002-3002 --range 300C-300F --range 3041-3089 --range 308B-308D --range 308F-308F --range 3092-309C --range 30A1-30D7 --range 30DB-30EF --range 30F2-30F4 --range 30FB-30FC --range 5186-5186 --range FF1A-FF1A
 
 filesystem/logo-libdragon.sprite: MKSPRITE_FLAGS += -f RGBA32
 filesystem/logo-bulbagarden.sprite: MKSPRITE_FLAGS += -f RGBA32

@@ -23,7 +23,7 @@ protected:
 
     DialogWidget dialogWidget_;
     WidgetFocusChainSegment dialogFocusChainSegment_;
-    uint8_t arialId_;
+    uint8_t mainFontId_;
     uint8_t fontStyleWhiteId_;
     uint8_t fontStyleYellowId_;
 private:

@@ -40,7 +40,7 @@ void SceneWithProgressBar::setupProgressBar(ProgressBarWidgetStyle& style)
         .color = RGBA32(0x0, 0x61, 0xFF, 0xFF)
     };
     style.textSettings = {
-        .fontId = arialId_,
+        .fontId = mainFontId_,
         .fontStyleId = fontStyleWhiteId_,
         .halign = ALIGN_CENTER,
         .valign = VALIGN_CENTER

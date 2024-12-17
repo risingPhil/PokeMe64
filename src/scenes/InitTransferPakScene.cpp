@@ -49,7 +49,7 @@ void InitTransferPakScene::init()
     setFocusChain(&tpakDetectWidgetSegment_);
 
     pokeMe64TextSettings_ = TextRenderSettings{
-        .fontId = arialId_,
+        .fontId = mainFontId_,
         .fontStyleId = fontStyleWhiteId_,
         .halign = ALIGN_CENTER
     };
@@ -185,7 +185,7 @@ void InitTransferPakScene::setupTPakDetectWidget()
 {
     const TransferPakDetectionWidgetStyle style = {
         .textSettings = {
-            .fontId = arialId_,
+            .fontId = mainFontId_,
             .fontStyleId = fontStyleWhiteId_,
             .halign = ALIGN_CENTER
         }

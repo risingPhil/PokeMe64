@@ -66,18 +66,18 @@ StatsScene::StatsScene(SceneDependencies& deps, void* context)
             .renderMode = SpriteRenderMode::NINESLICE,
             .srcRect = Rectangle{6, 6, 6, 6}
         })
-    , fontArialSmallId_(2)
-    , fontArialSmallWhiteId_(0)
+    , fontMainFontSmallId_(2)
+    , fontMainFontSmallWhiteId_(0)
     , textSettings_(TextRenderSettings{
-        .fontId = arialId_,
+        .fontId = mainFontId_,
         .fontStyleId = fontStyleWhiteId_
     })
     , smallTextSettings_(TextRenderSettings{
-        .fontId = fontArialSmallId_,
-        .fontStyleId = fontArialSmallWhiteId_
+        .fontId = fontMainFontSmallId_,
+        .fontStyleId = fontMainFontSmallWhiteId_
     })
     , statsSettings_(TextRenderSettings{
-        .fontId = arialId_,
+        .fontId = mainFontId_,
         .fontStyleId = fontStyleWhiteId_,
     })
     , spriteBounds_(spriteBounds)
@@ -118,16 +118,16 @@ void StatsScene::init()
     bool shiny;
 
     menu9SliceSprite_ = sprite_load("rom://menu-bg-9slice.sprite");
-    fontArialSmallId_ = deps_.fontManager.getFont("rom://Arial-small.font64");
+    fontMainFontSmallId_ = deps_.fontManager.getFont("rom://Arial-small.font64");
     trainerName = deps_.playerName;
 
     SceneWithDialogWidget::init();
 
-    const rdpq_fontstyle_t arialWhite = {
+    const rdpq_fontstyle_t mainFontWhite = {
         .color = RGBA32(0xFF, 0xFF, 0xFF, 0xFF),
         .outline_color = RGBA32(0, 0, 0, 0xFF)
     };
-    deps_.fontManager.registerFontStyle(fontArialSmallId_, fontArialSmallWhiteId_, arialWhite);
+    deps_.fontManager.registerFontStyle(fontMainFontSmallId_, fontMainFontSmallWhiteId_, mainFontWhite);
     deps_.tpakManager.setRAMEnabled(true);
     switch(deps_.generation)
     {
