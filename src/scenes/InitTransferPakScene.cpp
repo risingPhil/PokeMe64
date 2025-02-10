@@ -8,7 +8,10 @@
 #include "gen2/Gen2GameReader.h"
 #include "menu/MenuEntries.h"
 
+#include <unistd.h>
+
 static const Rectangle tpakDetectWidgetBounds = {60, 44, 200, 116};
+
 
 static void dialogFinishedCallback(void* context)
 {
@@ -41,6 +44,7 @@ InitTransferPakScene::~InitTransferPakScene()
 
 void InitTransferPakScene::init()
 {
+    uint8_t systemEntropy[4];
     menu9SliceSprite_ = sprite_load("rom://menu-bg-9slice.sprite");
 
     SceneWithDialogWidget::init();
@@ -53,6 +57,14 @@ void InitTransferPakScene::init()
         .fontStyleId = fontStyleWhiteId_,
         .halign = ALIGN_CENTER
     };
+
+    // add some entropy for our rand() function.
+    // we'll apply this later. Right before we go to the main menu.
+    getentropy(systemEntropy, sizeof(systemEntropy));
+    for(uint8_t i=0; i < sizeof(systemEntropy); ++i)
+    {
+        randomSeed_ += static_cast<unsigned int>(systemEntropy[i]) << (i * 8);
+    }
 }
 
 void InitTransferPakScene::destroy()
@@ -123,6 +135,11 @@ void InitTransferPakScene::onDialogDone()
         debugf("ERROR: Not gen 1 nor gen 2. This shouldn't be happening!\r\n");
         return;
     }
+
+    // add the number of ticks it took before we got to this point to our random seed
+    randomSeed_ += static_cast<uint32_t>(get_ticks());
+    // Now apply random seed to srand() before we get to the main menu.
+    srand(randomSeed_);
 
     deps_.sceneManager.switchScene(SceneType::MENU, deleteMenuSceneContext, menuContext);
 }
@@ -266,6 +283,7 @@ void InitTransferPakScene::loadSaveMetadata()
     TransferPakSaveManager saveManager(deps_.tpakManager);
     Gen1GameType gen1Type;
     Gen2GameType gen2Type;
+    uint16_t trainerID = 0;
 
     tpakDetectWidget_.retrieveGameType(gen1Type, gen2Type);
 
@@ -275,6 +293,7 @@ void InitTransferPakScene::loadSaveMetadata()
 
         Gen1GameReader gameReader(romReader, saveManager, gen1Type, language);
         const char* trainerName = gameReader.getTrainerName();
+        trainerID = gameReader.getTrainerID();
         deps_.localization = static_cast<uint8_t>(language);
         strncpy(deps_.playerName, trainerName, sizeof(deps_.playerName) - 1);
     }
@@ -284,7 +303,23 @@ void InitTransferPakScene::loadSaveMetadata()
 
         Gen2GameReader gameReader(romReader, saveManager, gen2Type, language);
         const char* trainerName = gameReader.getTrainerName();
+        trainerID = gameReader.getTrainerID();
         deps_.localization = static_cast<uint8_t>(language);
-        strncpy(deps_.playerName, trainerName, sizeof(deps_.playerName) - 1);
+        if(language != Gen2LocalizationLanguage::KOREAN)
+        {
+            strncpy(deps_.playerName, trainerName, sizeof(deps_.playerName) - 1);
+        }
+        else
+        {
+            const char fakePlayerName[] = "Trainer";
+            memcpy(deps_.playerName, fakePlayerName, sizeof(fakePlayerName));
+        }
+    }
+
+    // add to our random seed to make sure our random numbers will be randomized.
+    randomSeed_ += trainerID;
+    for(uint8_t i=0; i < strlen(deps_.playerName); ++i)
+    {
+        randomSeed_ += deps_.playerName[i];
     }
 }

@@ -166,7 +166,7 @@ void StatsScene::init()
             move2Str = getMoveString(static_cast<Move>(context_->poke_g2.index_move2));
             move3Str = getMoveString(static_cast<Move>(context_->poke_g2.index_move3));
             move4Str = getMoveString(static_cast<Move>(context_->poke_g2.index_move4));
-            pokeName = gen2GameReader_.getPokemonName(pokeIndex);
+            pokeName = (deps_.localization != (uint8_t)Gen2LocalizationLanguage::KOREAN) ? gen2GameReader_.getPokemonName(pokeIndex) : "Pokémon";
             shiny = gen2_isPokemonShiny(context_->poke_g2);
             snprintf(pokeStatsString_, sizeof(pokeStatsString_), "ATK:            %u\nDEF:            %u\nSPEC. ATK:  %u\nSPEC. DEF:  %u\nSPEED:        %u", atk, def, specAtk, specDef, speed);
             break;
