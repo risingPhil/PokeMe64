@@ -23,11 +23,15 @@ I'm happy to accept pull requests if the community wants to do them.
 - Make it easy to reset/reconfigure the Generation II game clock
 
 # Limitations
-When using a Korean gen II pokémon game, neither the trainer name (in various screens) nor the pokémon name (in the stats screen) will be displayed in the UI. This is because our font doesn't have the Korean characters and I don't sufficiently care to add them because they're such niche versions.
+- When using a Korean gen II pokémon game, neither the trainer name (in various screens) nor the pokémon name (in the stats screen) will be displayed in the UI. This is because our font doesn't have the Korean characters and I don't sufficiently care to add them because they're such niche versions.
 
-PokeMe64 also doesn't support batteryless reproduction carts due to technical limitations. Unfortunately this means most reproduction carts can't be supported. (see the "Reproduction carts" section below).
+- When adding a Japanese pokémon to a non-Japanese cart, the trainer name will be replaced with "PokeMe64". This is because the non-japanese games don't include the Japanese character sets, so they can't display them. 
 
-Flashcarts also unfortunately can't be supported, because those load into a menu first. (and likely also run into the same hardware limitation as with batteryless repro carts)
+- When adding a non-Japanese pokémon to a Japanese cart, the trainer name will be replaced with "ポケメ64". (which, according to Google Translate, translates to Pokeme 64)
+
+- PokeMe64 also doesn't support batteryless reproduction carts due to technical limitations. Unfortunately this means most reproduction carts can't be supported. (see the "Reproduction carts" section below).
+
+- Flashcarts also unfortunately can't be supported, because those load into a menu first. (and likely also run into the same hardware limitation as with batteryless repro carts)
 
 # Build
 
