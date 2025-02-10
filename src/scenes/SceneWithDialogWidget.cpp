@@ -8,7 +8,7 @@ SceneWithDialogWidget::SceneWithDialogWidget(SceneDependencies& deps)
     , dialogFocusChainSegment_({
         .current = &dialogWidget_
     })
-    , arialId_(1)
+    , mainFontId_(1)
     , fontStyleWhiteId_(0)
     , fontStyleYellowId_(1)
 {
@@ -26,11 +26,11 @@ void SceneWithDialogWidget::init()
             .style = {
                 .size = {140, 16},
                 .titleNotFocused = {
-                    .fontId = arialId_,
+                    .fontId = mainFontId_,
                     .fontStyleId = fontStyleWhiteId_
                 },
                 .titleFocused = {
-                    .fontId = arialId_,
+                    .fontId = mainFontId_,
                     .fontStyleId = fontStyleYellowId_
                 },
                 .leftMargin = 5,
@@ -38,7 +38,7 @@ void SceneWithDialogWidget::init()
             }
         },
         .textSettings = {
-            .fontId = arialId_,
+            .fontId = mainFontId_,
             .fontStyleId = fontStyleWhiteId_
         },
         .margin = {
@@ -81,19 +81,19 @@ void SceneWithDialogWidget::showDialog(DialogData* diagData)
 
 void SceneWithDialogWidget::setupFonts()
 {
-    arialId_ = deps_.fontManager.getFont("rom://Arial.font64");
+    mainFontId_ = deps_.fontManager.getFont("rom://Arial.font64");
 
-    const rdpq_fontstyle_t arialWhite = {
+    const rdpq_fontstyle_t mainFontWhite = {
         .color = RGBA32(0xFF, 0xFF, 0xFF, 0xFF),
         .outline_color = RGBA32(0, 0, 0, 0xFF)
     };
-    const rdpq_fontstyle_t arialYellow = {
+    const rdpq_fontstyle_t mainFontYellow = {
         .color = RGBA32(0xFF, 0xFF, 0x00, 0xFF),
         .outline_color = RGBA32(0, 0, 0, 0xFF)
     };
 
-    deps_.fontManager.registerFontStyle(arialId_, fontStyleWhiteId_, arialWhite);
-    deps_.fontManager.registerFontStyle(arialId_, fontStyleYellowId_, arialYellow);
+    deps_.fontManager.registerFontStyle(mainFontId_, fontStyleWhiteId_, mainFontWhite);
+    deps_.fontManager.registerFontStyle(mainFontId_, fontStyleYellowId_, mainFontYellow);
 }
 
 void SceneWithDialogWidget::setupDialog(DialogWidgetStyle& style)

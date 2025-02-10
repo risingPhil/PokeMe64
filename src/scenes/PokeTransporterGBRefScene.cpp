@@ -20,8 +20,8 @@ PokeTransporterGBRefScene::PokeTransporterGBRefScene(SceneDependencies& deps, vo
     , pokeTransporterGBLogoSprite_(nullptr)
     , qrCodeSprite_(nullptr)
     , fennelPictureSprite_(nullptr)
-    , fontArialSmallId_(0)
-    , fontArialSmallWhiteId_(0)
+    , fontMainFontSmallId_(0)
+    , fontMainFontSmallWhiteId_(0)
 {
 }
 
@@ -35,13 +35,13 @@ void PokeTransporterGBRefScene::init()
     pokeTransporterGBLogoSprite_ = sprite_load("rom://logo-poketransporter-gb.sprite");
     qrCodeSprite_ = sprite_load("rom://qrcode-poketransporter-gb.sprite");
     fennelPictureSprite_ = sprite_load("rom://fennel-picture.sprite");
-    fontArialSmallId_ = deps_.fontManager.getFont("rom://Arial-small.font64");
+    fontMainFontSmallId_ = deps_.fontManager.getFont("rom://Arial-small.font64");
     
-    const rdpq_fontstyle_t arialWhite = {
+    const rdpq_fontstyle_t mainFontWhite = {
         .color = RGBA32(0xFF, 0xFF, 0xFF, 0xFF),
         .outline_color = RGBA32(0, 0, 0, 0xFF)
     };
-    deps_.fontManager.registerFontStyle(fontArialSmallId_, fontArialSmallWhiteId_, arialWhite);
+    deps_.fontManager.registerFontStyle(fontMainFontSmallId_, fontMainFontSmallWhiteId_, mainFontWhite);
 
     SceneWithDialogWidget::init();
 
@@ -80,8 +80,8 @@ void PokeTransporterGBRefScene::render(RDPQGraphics& gfx, const Rectangle& scene
         .renderMode = SpriteRenderMode::NORMAL
     };
     TextRenderSettings textSettings = {
-        .fontId = fontArialSmallId_,
-        .fontStyleId = fontArialSmallWhiteId_
+        .fontId = fontMainFontSmallId_,
+        .fontStyleId = fontMainFontSmallWhiteId_
     };
 
     gfx.drawSprite(logoRectangle, pokeTransporterGBLogoSprite_, renderSettings);

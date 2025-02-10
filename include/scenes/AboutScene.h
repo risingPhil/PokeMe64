@@ -22,8 +22,8 @@ public:
     void render(RDPQGraphics& gfx, const Rectangle& sceneBounds) override;
 protected:
 private:
-    uint8_t fontIdArial_;
-    uint8_t fontArialStyleWhiteId_;
+    uint8_t fontIdMainFont_;
+    uint8_t fontMainFontStyleWhiteId_;
     sprite_t* logoLibDragon_;
     sprite_t* logoBulbagarden_;
     sprite_t* logoRetroGameMechanicsExplained_;
