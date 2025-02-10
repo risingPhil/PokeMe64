@@ -151,7 +151,7 @@ private:
 class TransferPakFileCopyDestination : public ITransferPakDataCopyDestination
 {
 public:
-    TransferPakFileCopyDestination(const char *pathOnSDCard);
+    TransferPakFileCopyDestination(const char *pathOnSDCard, bool resetRTC = false);
     virtual ~TransferPakFileCopyDestination();
 
     bool readyForTransfer() const override;
@@ -167,6 +167,7 @@ protected:
 private:
     FILE *outputFile_;
     uint32_t bytesWritten_;
+    bool resetRTC_;
 };
 
 /**
