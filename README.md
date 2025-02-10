@@ -12,7 +12,7 @@ I'm happy to accept pull requests if the community wants to do them.
 
 # Current Features
 - Inject Generation 1 Distribution event Pokémon into Gen 1 cartridges. In practice, this just means all kinds of variants of Mew.
-- Inject Generation 2 Distribution event Pokémon into Gen 2 cartridges. This includes the Pokémon Center New York (PCNY) Distribution event ones.
+- Inject Generation 2 Distribution event Pokémon into Gen 2 cartridges. This includes the Japanese and Pokémon Center New York (PCNY) Distribution event ones!
 - Inject GS Ball into an actual Pokémon Crystal gameboy cartridge
 - Teach Pikachu Surf/Fly on Gen 1 cartridges
 - You don't have to use the transfer pak in controller 1. You can have it in a separate controller if you want. But the UI is still controlled with controller 1.
@@ -23,11 +23,15 @@ I'm happy to accept pull requests if the community wants to do them.
 - Make it easy to reset/reconfigure the Generation II game clock
 
 # Limitations
-- Right now, this rom only supports the international (English) versions of the games.
+- When using a Korean gen II pokémon game, neither the trainer name (in various screens) nor the pokémon name (in the stats screen) will be displayed in the UI. This is because our font doesn't have the Korean characters and I don't sufficiently care to add them because they're such niche versions.
 
-But I've heard from /u/bluemooncinco on reddit that PokeMe64 crashes on gen 1 French and Spanish, but Spanish gen 2 games appear to work. But your mileage may vary, as I haven't personally tested any games besides the international (English) ones. The main reason why other languages may or may not work is because the relevant data is at different positions inside the game data.
+- When adding a Japanese pokémon to a non-Japanese cart, the trainer name will be replaced with "PokeMe64". This is because the non-japanese games don't include the Japanese character sets, so they can't display them. 
 
-PokeMe64 also doesn't support batteryless reproduction carts. (see "Reproduction carts" below)
+- When adding a non-Japanese pokémon to a Japanese cart, the trainer name will be replaced with "ポケメ64". (which, according to Google Translate, translates to Pokeme 64)
+
+- PokeMe64 also doesn't support batteryless reproduction carts due to technical limitations. Unfortunately this means most reproduction carts can't be supported. (see the "Reproduction carts" section below).
+
+- Flashcarts also unfortunately can't be supported, because those load into a menu first. (and likely also run into the same hardware limitation as with batteryless repro carts)
 
 # Build
 
@@ -68,9 +72,10 @@ But having it done with a Nintendo 64 feels more "real"/"official" and is easier
 ## Feature ideas
 
 - [~~Support batteryless reproduction cartridges~~](docs/Why_I_Had_To_Give_Up_On_Batteryless_Repros.md)
-- Support other language versions (in libpokemegb)
 - Make it possible to display your cartridge save file as a QR code and contribute to the 3DS' [PKSM](https://github.com/FlagBrew/PKSM) project to migrate the save file easily from gameboy cartridge to 3DS.
 - Make it possible to swap gameboy cartridge after using the reset button on the N64. (suggested by /u/bluemooncinco on reddit)
+- Make it possible to delete pokémon moves
+- Implement mystery gift.
 
 I'm likely going to postpone the 3D stuff (intro and "trade" sequence) until I have implemented a lot of the other ideas here.
 

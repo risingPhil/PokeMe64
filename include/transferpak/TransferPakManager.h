@@ -67,6 +67,22 @@ public:
     void switchGBSRAMBank(uint8_t bankIndex);
 
     /**
+     * For MBC1 controllers, this will effect the ROM or RAM modes, depending on what is written in $6000-$7FFF. 
+     * If the mode is 0 (default), the RAM bank will be locked to 0, but the extended banks (bankindex > 0x1F)
+     * can be accessed in the 0x0000 - 0x3FFF range (thereby replacing bank 0) by modifying the 0x4000-0x5FFF registers.
+     * However, in this mode, the RAM bank is locked to bank 0
+     *
+     * If the mode is 1, the RAM bank can be switched, but the extended rom banks (bankindex > 0x1F) can't be switched to.
+     * In this mode 0x0000 - 0x3FFF is locked to rom bank 0.
+     * Sources:
+     *  - https://retrocomputing.stackexchange.com/questions/11732/how-does-the-gameboys-memory-bank-switching-work
+     *  - https://gbdev.io/pandocs/MBC1.html
+     *
+     * For our use case though, we don't need mode 0.
+     */
+    void switchMBC1BankingMode(uint8_t mode);
+
+    /**
      * @brief This function reads data from the specified gameboy address
      */
     void read(uint16_t gbAddress, uint8_t* data, uint16_t size);

@@ -48,8 +48,8 @@ private:
     Gen2GameReader gen2GameReader_;
     sprite_t* menu9SliceSprite_;
     SpriteRenderSettings backgroundRenderSettings_;
-    uint8_t fontArialSmallId_;
-    uint8_t fontArialSmallWhiteId_;
+    uint8_t fontMainFontSmallId_;
+    uint8_t fontMainFontSmallWhiteId_;
     TextRenderSettings textSettings_;
     TextRenderSettings smallTextSettings_;
     TextRenderSettings statsSettings_;

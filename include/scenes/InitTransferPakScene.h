@@ -38,6 +38,8 @@ private:
     DialogData diagData_;
     TextRenderSettings pokeMe64TextSettings_;
     const char* gameTypeString_;
+    // build up a random seed for srand(). I'm doing this in an attempt to truly randomize IVs and shininess.
+    unsigned int randomSeed_;
 };
 
 #endif

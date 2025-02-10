@@ -211,7 +211,9 @@ void gen1PrepareToTeachPikachu(void* context, const void* param)
     TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
     TransferPakRomReader romReader(tpakManager);
     TransferPakSaveManager saveManager(tpakManager);
-    Gen1GameReader gameReader(romReader, saveManager, static_cast<Gen1GameType>(scene->getDependencies().specificGenVersion));
+    const Gen1GameType gameType = static_cast<Gen1GameType>(scene->getDependencies().specificGenVersion);
+    const Gen1LocalizationLanguage language = static_cast<Gen1LocalizationLanguage>(scene->getDependencies().localization);
+    Gen1GameReader gameReader(romReader, saveManager, gameType, language);
     DialogData* msg1 = nullptr;
     DialogData* msg2 = nullptr;
     uint8_t foundIndex;
@@ -328,7 +330,9 @@ void gen1TeachPikachu(void* context, const void* param)
     TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
     TransferPakRomReader romReader(tpakManager);
     TransferPakSaveManager saveManager(tpakManager);
-    Gen1GameReader gameReader(romReader, saveManager, static_cast<Gen1GameType>(scene->getDependencies().specificGenVersion));
+    const Gen1GameType gameType = static_cast<Gen1GameType>(scene->getDependencies().specificGenVersion);
+    const Gen1LocalizationLanguage language = static_cast<Gen1LocalizationLanguage>(scene->getDependencies().localization);
+    Gen1GameReader gameReader(romReader, saveManager, gameType, language);
 
     const Gen1TeachPikachuParams* params = static_cast<const Gen1TeachPikachuParams*>(param);
     Gen1TrainerPokemon poke = params->poke;
@@ -410,7 +414,8 @@ void gen2ReceiveGSBall(void* context, const void* param)
     TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
     TransferPakRomReader romReader(tpakManager);
     TransferPakSaveManager saveManager(tpakManager);
-    Gen2GameReader gameReader(romReader, saveManager, Gen2GameType::CRYSTAL);
+    const Gen2LocalizationLanguage language = static_cast<Gen2LocalizationLanguage>(scene->getDependencies().localization);
+    Gen2GameReader gameReader(romReader, saveManager, Gen2GameType::CRYSTAL, language);
     DialogData* messageData = new DialogData{
         .shouldDeleteWhenDone = true
     };
@@ -434,7 +439,8 @@ void gen2SetEventFlag(void* context, const void* param)
     TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
     TransferPakRomReader romReader(tpakManager);
     TransferPakSaveManager saveManager(tpakManager);
-    Gen2GameReader gameReader(romReader, saveManager, static_cast<Gen2GameType>(scene->getDependencies().specificGenVersion));
+    const Gen2LocalizationLanguage language = static_cast<Gen2LocalizationLanguage>(scene->getDependencies().localization);
+    Gen2GameReader gameReader(romReader, saveManager, static_cast<Gen2GameType>(scene->getDependencies().specificGenVersion), language);
     DialogData* messageData = new DialogData{
         .shouldDeleteWhenDone = true
     };

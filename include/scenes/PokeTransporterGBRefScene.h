@@ -22,8 +22,8 @@ private:
     sprite_t* pokeTransporterGBLogoSprite_;
     sprite_t* qrCodeSprite_;
     sprite_t* fennelPictureSprite_;
-    uint8_t fontArialSmallId_;
-    uint8_t fontArialSmallWhiteId_;
+    uint8_t fontMainFontSmallId_;
+    uint8_t fontMainFontSmallWhiteId_;
 };
 
 #endif

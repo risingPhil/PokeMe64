@@ -59,25 +59,25 @@ StatsScene::StatsScene(SceneDependencies& deps, void* context)
     , diag_({0})
     , romReader_(deps.tpakManager)
     , saveManager_(deps.tpakManager)
-    , gen1GameReader_(romReader_, saveManager_, getGen1TypeFor(deps.generation, deps.specificGenVersion))
-    , gen2GameReader_(romReader_, saveManager_, getGen2TypeFor(deps.generation, deps.specificGenVersion))
+    , gen1GameReader_(romReader_, saveManager_, getGen1TypeFor(deps.generation, deps.specificGenVersion), static_cast<Gen1LocalizationLanguage>(deps.localization))
+    , gen2GameReader_(romReader_, saveManager_, getGen2TypeFor(deps.generation, deps.specificGenVersion), static_cast<Gen2LocalizationLanguage>(deps.localization))
     , menu9SliceSprite_(nullptr)
     , backgroundRenderSettings_({
             .renderMode = SpriteRenderMode::NINESLICE,
             .srcRect = Rectangle{6, 6, 6, 6}
         })
-    , fontArialSmallId_(2)
-    , fontArialSmallWhiteId_(0)
+    , fontMainFontSmallId_(2)
+    , fontMainFontSmallWhiteId_(0)
     , textSettings_(TextRenderSettings{
-        .fontId = arialId_,
+        .fontId = mainFontId_,
         .fontStyleId = fontStyleWhiteId_
     })
     , smallTextSettings_(TextRenderSettings{
-        .fontId = fontArialSmallId_,
-        .fontStyleId = fontArialSmallWhiteId_
+        .fontId = fontMainFontSmallId_,
+        .fontStyleId = fontMainFontSmallWhiteId_
     })
     , statsSettings_(TextRenderSettings{
-        .fontId = arialId_,
+        .fontId = mainFontId_,
         .fontStyleId = fontStyleWhiteId_,
     })
     , spriteBounds_(spriteBounds)
@@ -118,16 +118,16 @@ void StatsScene::init()
     bool shiny;
 
     menu9SliceSprite_ = sprite_load("rom://menu-bg-9slice.sprite");
-    fontArialSmallId_ = deps_.fontManager.getFont("rom://Arial-small.font64");
+    fontMainFontSmallId_ = deps_.fontManager.getFont("rom://Arial-small.font64");
     trainerName = deps_.playerName;
 
     SceneWithDialogWidget::init();
 
-    const rdpq_fontstyle_t arialWhite = {
+    const rdpq_fontstyle_t mainFontWhite = {
         .color = RGBA32(0xFF, 0xFF, 0xFF, 0xFF),
         .outline_color = RGBA32(0, 0, 0, 0xFF)
     };
-    deps_.fontManager.registerFontStyle(fontArialSmallId_, fontArialSmallWhiteId_, arialWhite);
+    deps_.fontManager.registerFontStyle(fontMainFontSmallId_, fontMainFontSmallWhiteId_, mainFontWhite);
     deps_.tpakManager.setRAMEnabled(true);
     switch(deps_.generation)
     {
@@ -166,7 +166,7 @@ void StatsScene::init()
             move2Str = getMoveString(static_cast<Move>(context_->poke_g2.index_move2));
             move3Str = getMoveString(static_cast<Move>(context_->poke_g2.index_move3));
             move4Str = getMoveString(static_cast<Move>(context_->poke_g2.index_move4));
-            pokeName = gen2GameReader_.getPokemonName(pokeIndex);
+            pokeName = (deps_.localization != (uint8_t)Gen2LocalizationLanguage::KOREAN) ? gen2GameReader_.getPokemonName(pokeIndex) : "Pokémon";
             shiny = gen2_isPokemonShiny(context_->poke_g2);
             snprintf(pokeStatsString_, sizeof(pokeStatsString_), "ATK:            %u\nDEF:            %u\nSPEC. ATK:  %u\nSPEC. DEF:  %u\nSPEED:        %u", atk, def, specAtk, specDef, speed);
             break;

@@ -35,6 +35,7 @@ typedef struct SceneDependencies
     char playerName[16];
     uint8_t generation;
     uint8_t specificGenVersion;
+    uint8_t localization;
 } SceneDependencies;
 
 class IScene
