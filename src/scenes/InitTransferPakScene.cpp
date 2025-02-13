@@ -246,6 +246,9 @@ void InitTransferPakScene::loadGameType()
             case Gen1GameType::RED:
                 gameTypeString_ = "Red";
                 break;
+            case Gen1GameType::GREEN:
+                gameTypeString_ = "Green";
+                break;
             case Gen1GameType::YELLOW:
                 gameTypeString_ = "Yellow";
                 break;

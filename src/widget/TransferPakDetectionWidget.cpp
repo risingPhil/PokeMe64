@@ -345,6 +345,9 @@ void TransferPakDetectionWidget::updateCartridgeIcon()
             cartridgeIconRenderSettings_.customPalette.colorsRGBA16 = paletteYellow;
             labelSpritePath = "rom://cartridge-label-yellow.sprite";
             break;
+        case Gen1GameType::GREEN:
+            labelSpritePath = "rom://cartridge-label-green.sprite";
+            break;
         default:
             break;
         }
