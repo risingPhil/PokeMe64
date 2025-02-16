@@ -474,6 +474,17 @@ void gen1MoveDeleterSelectPokemon(void* context, const void* param)
         .shouldDeleteWhenDone = true
     };
 
+    if(!gen1_isAPokeCenter(gameReader.getCurrentMap()))
+    {
+        delete[] msg->options.items;
+        msg->options = {0};
+        tpakManager.setRAMEnabled(false);
+
+        setDialogDataText(*msg, "Sorry! You need to save in a Pokémon Center first!");
+        scene->showDialog(msg);
+        return;
+    }
+
     for(uintptr_t i=0; i < numberOfPokemon; ++i)
     {
         // every call to getPokemonNickname overwrites the data of the last one
