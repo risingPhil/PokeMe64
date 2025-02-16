@@ -15,6 +15,7 @@ I'm happy to accept pull requests if the community wants to do them.
 - Inject Generation 2 Distribution event Pokémon into Gen 2 cartridges. This includes the Japanese and Pokémon Center New York (PCNY) Distribution event ones!
 - Inject GS Ball into an actual Pokémon Crystal gameboy cartridge
 - Teach Pikachu Surf/Fly on Gen 1 cartridges
+- Gen I move deleter
 - You don't have to use the transfer pak in controller 1. You can have it in a separate controller if you want. But the UI is still controlled with controller 1.
 - Unlock Mystery Gift decorations like the Pikachu Bed and Tentacool Doll that were left inaccessible in Gold/Silver/Crystal due to bugs in Pokemon Stadium 2 (suggested by /u/MermaidRaccoon on reddit)
 - Make it possible to backup your cartridge save file onto the flashcart PokeMe64 is running from.

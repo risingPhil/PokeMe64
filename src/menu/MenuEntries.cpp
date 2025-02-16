@@ -11,14 +11,8 @@ MenuItemData gen1MenuEntries[] = {
         .onConfirmAction = goToGen1DistributionPokemonMenu
     },
     {
-        .title = "Teach Pikachu Surf",
-        .onConfirmAction = gen1PrepareToTeachPikachu,
-        .itemParam = &MOVE_SURF
-    },
-    {
-        .title = "Teach Pikachu Fly",
-        .onConfirmAction = gen1PrepareToTeachPikachu,
-        .itemParam = &MOVE_FLY
+        .title = "Pokémon Moves",
+        .onConfirmAction = goToGen1MovesMenu
     },
     {
         .title = "Gen 3 Transfer Info",
@@ -31,6 +25,25 @@ MenuItemData gen1MenuEntries[] = {
 };
 
 const uint32_t gen1MenuEntriesSize = sizeof(gen1MenuEntries);
+
+MenuItemData gen1MovesMenuEntries[] = {
+    {
+        .title = "Teach Pikachu Surf",
+        .onConfirmAction = gen1PrepareToTeachPikachu,
+        .itemParam = &MOVE_SURF
+    },
+    {
+        .title = "Teach Pikachu Fly",
+        .onConfirmAction = gen1PrepareToTeachPikachu,
+        .itemParam = &MOVE_FLY
+    },
+    {
+        .title = "Delete Move",
+        .onConfirmAction = gen1MoveDeleterSelectPokemon
+    }
+};
+
+const uint32_t gen1MovesMenuEntriesSize = sizeof(gen1MovesMenuEntries);
 
 MenuItemData gen2MenuEntries[] = {
     {
