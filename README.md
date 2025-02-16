@@ -25,7 +25,7 @@ I'm happy to accept pull requests if the community wants to do them.
 # Limitations
 - When using a Korean gen II pokémon game, neither the trainer name (in various screens) nor the pokémon name (in the stats screen) will be displayed in the UI. This is because our font doesn't have the Korean characters and I don't sufficiently care to add them because they're such niche versions.
 
-- When adding a Japanese pokémon to a non-Japanese cart, the trainer name will be replaced with "PokeMe64". This is because the non-japanese games don't include the Japanese character sets, so they can't display them. 
+- When adding a Japanese pokémon to a non-Japanese cart, the trainer name will be replaced with "PM64". This is because the non-japanese games don't include the Japanese character sets, so they can't display them.
 
 - When adding a non-Japanese pokémon to a Japanese cart, the trainer name will be replaced with "ポケメ64". (which, according to Google Translate, translates to Pokeme 64)
 
