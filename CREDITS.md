@@ -25,5 +25,7 @@ I've listed the specific resources I used for reading the rom/save game data in 
 Thank you to all folks who reached out with feedback and who did some testing. Some even went above and beyond, therefore I would like to specifically name them here.
 
 /u/ImranFZakhaev
+
 /u/bluemooncinco
+
 MajorUpgrade
