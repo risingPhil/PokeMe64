@@ -247,6 +247,15 @@ void VerticalList::clearWidgets()
     widgetBoundsList_.clear();
     focusedWidgetIndex_ = 0;
     windowMinY_ = 0;
+
+    // when autogrowing, the list shifts upwards everytime an entry was added.
+    // but when all widgets are removed, the bounds should reset again.
+    if(listStyle_.autogrow.enabled)
+    {
+        bounds_.y += bounds_.height;
+        bounds_.height = 0;
+    }
+
     notifyScrollWindowListeners();
 }
 

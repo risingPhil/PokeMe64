@@ -180,10 +180,24 @@ void TransferPakManager::switchGBSRAMBank(uint8_t bankIndex)
     writeBufferSRAMBankOffset_ = 0xFFFF;
 }
 
+void TransferPakManager::switchMBC1BankingMode(uint8_t mode)
+{
+    uint8_t data[TPAK_BLOCK_SIZE];
+
+    debugf("[TransferPakManager]: %s(%hhu)\r\n", __FUNCTION__, mode);
+    // make sure to finish any writes in the write buffer before switching
+    finishWrites();
+
+    memset(data, mode, TPAK_BLOCK_SIZE);
+    tpak_write(port_, 0x6000, data, TPAK_BLOCK_SIZE);
+
+    // invalidate read and write buffer
+    readBufferBankOffset_ = 0xFFFF;
+    writeBufferSRAMBankOffset_ = 0xFFFF;
+}
+
 void TransferPakManager::read(uint16_t gbAddress, uint8_t* data, uint16_t size)
 {
-//  debugf("[TransferPakManager]: %s(0x%x, %p, %u)\r\n", __FUNCTION__, gbAddress, data, size);
-
     uint16_t bytesRemaining = size;
     uint8_t* cur = data;
 

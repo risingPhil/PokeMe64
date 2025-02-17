@@ -293,6 +293,20 @@ bool TransferPakDetectionWidget::validateGameboyHeader()
         return false;
     }
 
+    // For MBC1 cartridges, we need to set the MBC1 banking mode to 1.
+    // If we don't, we can't actually switch SRAM banks.
+    // It looks like only the Japanese cartridges use MBC1 though.
+    switch(cartridgeHeader.cartridge_type)
+    {
+    case GB_MBC1_RAM:
+    case GB_MBC1_RAM_BATTERY:
+        tpakManager_.switchMBC1BankingMode(1);
+        break;
+    default:
+        // We don't need to do anything
+        break;
+    }
+
     return true;
 }
 
@@ -330,6 +344,9 @@ void TransferPakDetectionWidget::updateCartridgeIcon()
             cartridgeIconRenderSettings_.customPalette.numColors = sizeof(paletteYellow) / sizeof(paletteYellow[0]);
             cartridgeIconRenderSettings_.customPalette.colorsRGBA16 = paletteYellow;
             labelSpritePath = "rom://cartridge-label-yellow.sprite";
+            break;
+        case Gen1GameType::GREEN:
+            labelSpritePath = "rom://cartridge-label-green.sprite";
             break;
         default:
             break;

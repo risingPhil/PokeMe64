@@ -8,7 +8,10 @@
 #include "gen2/Gen2GameReader.h"
 #include "menu/MenuEntries.h"
 
+#include <unistd.h>
+
 static const Rectangle tpakDetectWidgetBounds = {60, 44, 200, 116};
+
 
 static void dialogFinishedCallback(void* context)
 {
@@ -41,6 +44,7 @@ InitTransferPakScene::~InitTransferPakScene()
 
 void InitTransferPakScene::init()
 {
+    uint8_t systemEntropy[4];
     menu9SliceSprite_ = sprite_load("rom://menu-bg-9slice.sprite");
 
     SceneWithDialogWidget::init();
@@ -49,10 +53,18 @@ void InitTransferPakScene::init()
     setFocusChain(&tpakDetectWidgetSegment_);
 
     pokeMe64TextSettings_ = TextRenderSettings{
-        .fontId = arialId_,
+        .fontId = mainFontId_,
         .fontStyleId = fontStyleWhiteId_,
         .halign = ALIGN_CENTER
     };
+
+    // add some entropy for our rand() function.
+    // we'll apply this later. Right before we go to the main menu.
+    getentropy(systemEntropy, sizeof(systemEntropy));
+    for(uint8_t i=0; i < sizeof(systemEntropy); ++i)
+    {
+        randomSeed_ += static_cast<unsigned int>(systemEntropy[i]) << (i * 8);
+    }
 }
 
 void InitTransferPakScene::destroy()
@@ -65,7 +77,7 @@ void InitTransferPakScene::destroy()
 
 void InitTransferPakScene::render(RDPQGraphics& gfx, const Rectangle& sceneBounds)
 {
-    gfx.drawText(Rectangle{0, 10, 320, 16}, "PokeMe64 by risingPhil. Version 0.2", pokeMe64TextSettings_);
+    gfx.drawText(Rectangle{0, 10, 320, 16}, "PokeMe64 by risingPhil. Version 0.3", pokeMe64TextSettings_);
     tpakDetectWidget_.render(gfx, sceneBounds);
 
     SceneWithDialogWidget::render(gfx, sceneBounds);
@@ -123,6 +135,11 @@ void InitTransferPakScene::onDialogDone()
         debugf("ERROR: Not gen 1 nor gen 2. This shouldn't be happening!\r\n");
         return;
     }
+
+    // add the number of ticks it took before we got to this point to our random seed
+    randomSeed_ += static_cast<uint32_t>(get_ticks());
+    // Now apply random seed to srand() before we get to the main menu.
+    srand(randomSeed_);
 
     deps_.sceneManager.switchScene(SceneType::MENU, deleteMenuSceneContext, menuContext);
 }
@@ -185,7 +202,7 @@ void InitTransferPakScene::setupTPakDetectWidget()
 {
     const TransferPakDetectionWidgetStyle style = {
         .textSettings = {
-            .fontId = arialId_,
+            .fontId = mainFontId_,
             .fontStyleId = fontStyleWhiteId_,
             .halign = ALIGN_CENTER
         }
@@ -229,6 +246,9 @@ void InitTransferPakScene::loadGameType()
             case Gen1GameType::RED:
                 gameTypeString_ = "Red";
                 break;
+            case Gen1GameType::GREEN:
+                gameTypeString_ = "Green";
+                break;
             case Gen1GameType::YELLOW:
                 gameTypeString_ = "Yellow";
                 break;
@@ -266,19 +286,43 @@ void InitTransferPakScene::loadSaveMetadata()
     TransferPakSaveManager saveManager(deps_.tpakManager);
     Gen1GameType gen1Type;
     Gen2GameType gen2Type;
+    uint16_t trainerID = 0;
 
     tpakDetectWidget_.retrieveGameType(gen1Type, gen2Type);
 
     if(gen1Type != Gen1GameType::INVALID)
     {
-        Gen1GameReader gameReader(romReader, saveManager, gen1Type);
+        const Gen1LocalizationLanguage language = gen1_determineGameLanguage(romReader, gen1Type);
+
+        Gen1GameReader gameReader(romReader, saveManager, gen1Type, language);
         const char* trainerName = gameReader.getTrainerName();
+        trainerID = gameReader.getTrainerID();
+        deps_.localization = static_cast<uint8_t>(language);
         strncpy(deps_.playerName, trainerName, sizeof(deps_.playerName) - 1);
     }
     else if(gen2Type != Gen2GameType::INVALID)
     {
-        Gen2GameReader gameReader(romReader, saveManager, gen2Type);
+        const Gen2LocalizationLanguage language = gen2_determineGameLanguage(romReader, gen2Type);
+
+        Gen2GameReader gameReader(romReader, saveManager, gen2Type, language);
         const char* trainerName = gameReader.getTrainerName();
-        strncpy(deps_.playerName, trainerName, sizeof(deps_.playerName) - 1);
+        trainerID = gameReader.getTrainerID();
+        deps_.localization = static_cast<uint8_t>(language);
+        if(language != Gen2LocalizationLanguage::KOREAN)
+        {
+            strncpy(deps_.playerName, trainerName, sizeof(deps_.playerName) - 1);
+        }
+        else
+        {
+            const char fakePlayerName[] = "Trainer";
+            memcpy(deps_.playerName, fakePlayerName, sizeof(fakePlayerName));
+        }
+    }
+
+    // add to our random seed to make sure our random numbers will be randomized.
+    randomSeed_ += trainerID;
+    for(uint8_t i=0; i < strlen(deps_.playerName); ++i)
+    {
+        randomSeed_ += deps_.playerName[i];
     }
 }

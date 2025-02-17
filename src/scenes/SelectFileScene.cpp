@@ -78,11 +78,11 @@ void SelectFileScene::init()
                 .spriteBounds = { 5, 2, 16, 16}
             },
             .titleNotFocused = {
-                .fontId = arialId_,
+                .fontId = mainFontId_,
                 .fontStyleId = fontStyleWhiteId_
             },
             .titleFocused = {
-                .fontId = arialId_,
+                .fontId = mainFontId_,
                 .fontStyleId = fontStyleYellowId_
             },
             .leftMargin = 24,
@@ -187,7 +187,7 @@ void SelectFileScene::render(RDPQGraphics& gfx, const Rectangle& sceneBounds)
     if(context_->titleText && !isZeroSizeRectangle(titleBounds))
     {
         const TextRenderSettings renderSettings = {
-            .fontId = arialId_,
+            .fontId = mainFontId_,
             .fontStyleId = fontStyleWhiteId_,
             .halign = ALIGN_CENTER
         };

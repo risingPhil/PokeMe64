@@ -202,11 +202,11 @@ void MenuScene::setupMenu()
     const MenuItemStyle itemStyle = {
         .size = {160, 16},
         .titleNotFocused = {
-            .fontId = arialId_,
+            .fontId = mainFontId_,
             .fontStyleId = fontStyleWhiteId_
         },
         .titleFocused = {
-            .fontId = arialId_,
+            .fontId = mainFontId_,
             .fontStyleId = fontStyleYellowId_
         },
         .leftMargin = 35,

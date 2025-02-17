@@ -189,9 +189,10 @@ void TransferPakSaveManagerDestination::close()
     // dummy
 }
 
-TransferPakFileCopyDestination::TransferPakFileCopyDestination(const char* pathOnSDCard)
+TransferPakFileCopyDestination::TransferPakFileCopyDestination(const char* pathOnSDCard, bool resetRTC)
     : outputFile_(nullptr)
     , bytesWritten_(0)
+    , resetRTC_(resetRTC)
 {
     outputFile_ = fopen(pathOnSDCard, "w");
 }
@@ -225,11 +226,29 @@ uint32_t TransferPakFileCopyDestination::write(uint8_t* buffer, uint32_t bytesTo
 
 void TransferPakFileCopyDestination::close()
 {
-    if(outputFile_)
+    if(!outputFile_)
     {
-        fclose(outputFile_);
-        outputFile_ = nullptr;
+        return;
     }
+
+    if(resetRTC_)
+    {
+        // The game checks bit 7 on the sRTCStatusFlags field in SRAM
+        // this is set when the game detects wrong RTC register values.
+        // In order to let the game prompt to reconfigure the RTC clock, we just have to set this bit
+        // Based on sRTCStatusFlags, RecordRTCStatus, .set_bit_7 in
+        // https://github.com/pret/pokecrystal
+        // https://github.com/pret/pokegold
+        const uint8_t rtcStatusFieldValue = 0xC0;
+        if(fseek(outputFile_, 0xC60, SEEK_SET) == 0)
+        {
+            // seek successful
+            fwrite(&rtcStatusFieldValue, 1, 1, outputFile_);
+        }
+    }
+
+    fclose(outputFile_);
+    outputFile_ = nullptr;
 }
 
 TransferPakDataCopier::TransferPakDataCopier(ITransferPakDataCopySource& source, ITransferPakDataCopyDestination& destination)

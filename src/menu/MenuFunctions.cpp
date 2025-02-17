@@ -28,11 +28,35 @@ const uint16_t GEN2_EVENTFLAG_DECORATION_TENTACOOL_DOLL = 715;
 
 typedef struct Gen1TeachPikachuParams
 {
+    /**
+     * The move to teach
+     */
     Move moveType;
+    /**
+     * The index of the pokémon in the party
+     */
     uint8_t partyIndex;
+    /**
+     * The index of the move slot in which the move should be inserted
+     */
     uint8_t moveIndex;
+    /**
+     * The data structure of the pokemon we're trying to teach the move
+     */
     Gen1TrainerPokemon poke;
 } Gen1TeachPikachuParams;
+
+/**
+ * This structure is used throughout the move deleter process
+ * to pass the required parameters
+ */
+typedef struct MoveDeleterParams
+{
+    // the index of the selected pokemon in the party
+    uint8_t partyIndex;
+    // the index of the selected move
+    uint8_t moveIndex;
+} MoveDeleterParams;
 
 // here are a few structs I use to pass around parameters to the gen1TeachPikachu() function
 // i want to avoid dynamic allocation for this purpose.
@@ -168,6 +192,17 @@ void goToDataCopyScene(void* context, const void* param)
     }
 }
 
+void goToGen1MovesMenu(void* context, const void* param)
+{
+    MenuScene* scene = static_cast<MenuScene*>(context);
+    auto newSceneContext = new MenuSceneContext{
+        .menuEntries = gen1MovesMenuEntries,
+        .numMenuEntries = gen1MovesMenuEntriesSize / sizeof(gen1MovesMenuEntries[0])
+    };
+
+    scene->getDependencies().sceneManager.switchScene(SceneType::MENU, deleteMenuSceneContext, newSceneContext);
+}
+
 void goToGen1DistributionPokemonMenu(void* context, const void*)
 {
     goToDistributionPokemonListMenu(context, DistributionPokemonListType::GEN1);
@@ -211,7 +246,9 @@ void gen1PrepareToTeachPikachu(void* context, const void* param)
     TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
     TransferPakRomReader romReader(tpakManager);
     TransferPakSaveManager saveManager(tpakManager);
-    Gen1GameReader gameReader(romReader, saveManager, static_cast<Gen1GameType>(scene->getDependencies().specificGenVersion));
+    const Gen1GameType gameType = static_cast<Gen1GameType>(scene->getDependencies().specificGenVersion);
+    const Gen1LocalizationLanguage language = static_cast<Gen1LocalizationLanguage>(scene->getDependencies().localization);
+    Gen1GameReader gameReader(romReader, saveManager, gameType, language);
     DialogData* msg1 = nullptr;
     DialogData* msg2 = nullptr;
     uint8_t foundIndex;
@@ -328,7 +365,9 @@ void gen1TeachPikachu(void* context, const void* param)
     TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
     TransferPakRomReader romReader(tpakManager);
     TransferPakSaveManager saveManager(tpakManager);
-    Gen1GameReader gameReader(romReader, saveManager, static_cast<Gen1GameType>(scene->getDependencies().specificGenVersion));
+    const Gen1GameType gameType = static_cast<Gen1GameType>(scene->getDependencies().specificGenVersion);
+    const Gen1LocalizationLanguage language = static_cast<Gen1LocalizationLanguage>(scene->getDependencies().localization);
+    Gen1GameReader gameReader(romReader, saveManager, gameType, language);
 
     const Gen1TeachPikachuParams* params = static_cast<const Gen1TeachPikachuParams*>(param);
     Gen1TrainerPokemon poke = params->poke;
@@ -404,13 +443,258 @@ void gen1TeachPikachu(void* context, const void* param)
     scene->showDialog(msg1);
 }
 
+void gen1MoveDeleterSelectPokemon(void* context, const void* param)
+{
+    DialogData* msg = nullptr;
+    MenuScene* scene = static_cast<MenuScene*>(context);
+    TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
+    TransferPakRomReader romReader(tpakManager);
+    TransferPakSaveManager saveManager(tpakManager);
+    const Gen1GameType gameType = static_cast<Gen1GameType>(scene->getDependencies().specificGenVersion);
+    const Gen1LocalizationLanguage language = static_cast<Gen1LocalizationLanguage>(scene->getDependencies().localization);
+    Gen1GameReader gameReader(romReader, saveManager, gameType, language);
+
+    // statically allocated storage for storing up to 6 pokemon nicknames.
+    // allocated statically to avoid having to care about memory management when passing them as a dialog option.
+    // see below for the reason why we need to do it like this.
+    static char nickNames[6][11];
+    const char* curNickname;
+
+    tpakManager.setRAMEnabled(true);
+
+    Gen1Party party = gameReader.getParty();
+    const uint8_t numberOfPokemon = party.getNumberOfPokemon();
+
+    msg = new DialogData {
+        .options = {
+            .items = new MenuItemData[numberOfPokemon + 1],
+            .number = (uint8_t)(numberOfPokemon + 1),
+            .shouldDeleteWhenDone = true
+        },
+        .shouldDeleteWhenDone = true
+    };
+
+    if(!gen1_isAPokeCenter(gameReader.getCurrentMap()))
+    {
+        delete[] msg->options.items;
+        msg->options = {0};
+        tpakManager.setRAMEnabled(false);
+
+        setDialogDataText(*msg, "Sorry! You need to save in a Pokémon Center first!");
+        scene->showDialog(msg);
+        return;
+    }
+
+    for(uintptr_t i=0; i < numberOfPokemon; ++i)
+    {
+        // every call to getPokemonNickname overwrites the data of the last one
+        // because the same internal buffer is getting reused on every call.
+        // since we want to preserve that data, we need to copy it before consumption.
+        curNickname = party.getPokemonNickname(i);
+        strncpy(nickNames[i], curNickname, 11);
+        msg->options.items[i] = {
+            .title = nickNames[i],
+            .onConfirmAction = gen1MoveDeleterSelectMove,
+            .context = context,
+            .itemParam = (const void*)i
+        };
+    }
+
+    tpakManager.setRAMEnabled(false);
+
+    // the last option in the option menu should be the Cancel option.
+    msg->options.items[numberOfPokemon] = {
+        .title = "Cancel",
+        .onConfirmAction = advanceDialog,
+        .context = context
+    };
+
+    setDialogDataText(*msg, "Which Pokémon should be made to forget a move?");
+    scene->showDialog(msg);
+}
+
+void gen1MoveDeleterSelectMove(void* context, const void* param)
+{
+    // We statically allocate a MoveDeleterParams struct for every possible move index.
+    // This is because we need to pass this struct as an itemParam for every option in the dialog options.
+    // by having it statically allocated, we don't have to worry about memory managing these instances.
+    // But it does mean they're allocated at all times during the runtime of PokeMe64.
+    // Therefore we're "wasting" 8 bytes while not being used.
+    static MoveDeleterParams moveIndexParams[4];
+
+    Gen1TrainerPokemon poke;
+    DialogData* msg = nullptr;
+    MenuScene* scene = static_cast<MenuScene*>(context);
+    const uint8_t partyIndex = (const uintptr_t)param;
+    uint8_t i;
+    uint8_t moveIndex;
+
+    TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
+    TransferPakRomReader romReader(tpakManager);
+    TransferPakSaveManager saveManager(tpakManager);
+    const Gen1GameType gameType = static_cast<Gen1GameType>(scene->getDependencies().specificGenVersion);
+    const Gen1LocalizationLanguage language = static_cast<Gen1LocalizationLanguage>(scene->getDependencies().localization);
+    Gen1GameReader gameReader(romReader, saveManager, gameType, language);
+
+    tpakManager.setRAMEnabled(true);
+
+    Gen1Party party = gameReader.getParty();
+
+    if(!party.getPokemon(partyIndex, poke, false))
+    {
+        // Could not retrieve pokémon from party at the given index.
+        // this should never happen!
+        tpakManager.setRAMEnabled(false);
+        return;
+    }
+
+    // fill up the moveIndexParams
+    for(i=0; i < 4; ++i)
+    {
+        moveIndexParams[i] = {
+            .partyIndex = partyIndex,
+            .moveIndex = i
+        };
+    }
+
+    msg = new DialogData {
+        .options = {
+            .items = new MenuItemData[5],
+            .number = 0,
+            .shouldDeleteWhenDone = true
+        },
+        .shouldDeleteWhenDone = true
+    };
+
+    // avoid code duplication by adding the index fields into a uint8_t* array
+    const uint8_t* moveIndices[] = { &poke.index_move1, &poke.index_move2, &poke.index_move3, &poke.index_move4 };
+    for(i = 0; i < 4; ++i)
+    {
+        moveIndex = *(moveIndices[i]);
+        if(moveIndex)
+        {
+            msg->options.items[msg->options.number] = {
+                .title = getMoveString((Move)moveIndex),
+                .onConfirmAction = gen1MoveDeleterApply,
+                .context = context,
+                .itemParam = (moveIndexParams + i)
+            };
+            ++msg->options.number;
+        }
+    }
+
+    tpakManager.setRAMEnabled(false);
+
+    // the last option in the option menu should be the Cancel option.
+    msg->options.items[msg->options.number] = {
+        .title = "Cancel",
+        .onConfirmAction = advanceDialog,
+        .context = context
+    };
+    ++msg->options.number;
+
+    setDialogDataText(*msg, "Which move should be forgotten?");
+    scene->showDialog(msg);
+}
+
+void gen1MoveDeleterApply(void* context, const void* param)
+{
+    Gen1TrainerPokemon poke;
+    DialogData* msg1 = nullptr;
+    DialogData* msg2 = nullptr;
+    MenuScene* scene = static_cast<MenuScene*>(context);
+    const MoveDeleterParams* deleteParams = (const MoveDeleterParams*)param;
+    Move previousMove = Move::POUND; // dummy value to avoid uninitialized compiler warning
+    const char* pokeName;
+
+    TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
+    TransferPakRomReader romReader(tpakManager);
+    TransferPakSaveManager saveManager(tpakManager);
+    const Gen1GameType gameType = static_cast<Gen1GameType>(scene->getDependencies().specificGenVersion);
+    const Gen1LocalizationLanguage language = static_cast<Gen1LocalizationLanguage>(scene->getDependencies().localization);
+    Gen1GameReader gameReader(romReader, saveManager, gameType, language);
+
+    tpakManager.setRAMEnabled(true);
+
+    Gen1Party party = gameReader.getParty();
+
+    party.getPokemon(deleteParams->partyIndex, poke, true);
+
+    switch(deleteParams->moveIndex)
+    {
+    case 0:
+        previousMove = (Move)poke.index_move1;
+        break;
+    case 1:
+        previousMove = (Move)poke.index_move2;
+        break;
+    case 2:
+        previousMove = (Move)poke.index_move3;
+        break;
+    case 3:
+        previousMove = (Move)poke.index_move4;
+        break;
+    }
+
+    // apparently the Gen I games can't deal with having a move removed in between 2 moves.
+    // They only accept moves deleted at the end of the list.
+    // So when deleting a move, we need to shift every remaining move accordingly.
+    if(deleteParams->moveIndex < 1)
+    {
+        poke.index_move1 = poke.index_move2;
+        poke.pp_move1 = poke.pp_move2;
+    }
+
+    if(deleteParams->moveIndex < 2)
+    {
+        poke.index_move2 = poke.index_move3;
+        poke.pp_move2 = poke.pp_move3;
+    }
+    if(deleteParams->moveIndex < 3)
+    {
+        poke.index_move3 = poke.index_move4;
+        poke.pp_move3 = poke.pp_move4;
+    }
+
+    poke.index_move4 = 0;
+    poke.pp_move4 = 0;
+
+    if(!party.setPokemon(deleteParams->partyIndex, poke))
+    {
+        tpakManager.setRAMEnabled(false);
+        debugf("%s: ERROR: can't update Pokémon at partyIndex %hu\r\n", __FUNCTION__, deleteParams->partyIndex);
+        return;
+    }
+
+    gameReader.updateMainChecksum();
+    tpakManager.finishWrites();
+
+    pokeName = party.getPokemonNickname(deleteParams->partyIndex);
+
+    tpakManager.setRAMEnabled(false);
+
+    msg2 = new DialogData{
+        .shouldDeleteWhenDone = true
+    };
+    msg1 = new DialogData{
+        .next = msg2,
+        .shouldDeleteWhenDone = true
+    };
+
+    setDialogDataText(*msg1, "1..2..3..Poof!");
+    setDialogDataText(*msg2, "%s forgot %s!", pokeName, getMoveString(static_cast<Move>(previousMove)));
+
+    scene->showDialog(msg1);
+}
+
 void gen2ReceiveGSBall(void* context, const void* param)
 {
     MenuScene* scene = static_cast<MenuScene*>(context);
     TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
     TransferPakRomReader romReader(tpakManager);
     TransferPakSaveManager saveManager(tpakManager);
-    Gen2GameReader gameReader(romReader, saveManager, Gen2GameType::CRYSTAL);
+    const Gen2LocalizationLanguage language = static_cast<Gen2LocalizationLanguage>(scene->getDependencies().localization);
+    Gen2GameReader gameReader(romReader, saveManager, Gen2GameType::CRYSTAL, language);
     DialogData* messageData = new DialogData{
         .shouldDeleteWhenDone = true
     };
@@ -434,7 +718,8 @@ void gen2SetEventFlag(void* context, const void* param)
     TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
     TransferPakRomReader romReader(tpakManager);
     TransferPakSaveManager saveManager(tpakManager);
-    Gen2GameReader gameReader(romReader, saveManager, static_cast<Gen2GameType>(scene->getDependencies().specificGenVersion));
+    const Gen2LocalizationLanguage language = static_cast<Gen2LocalizationLanguage>(scene->getDependencies().localization);
+    Gen2GameReader gameReader(romReader, saveManager, static_cast<Gen2GameType>(scene->getDependencies().specificGenVersion), language);
     DialogData* messageData = new DialogData{
         .shouldDeleteWhenDone = true
     };
@@ -492,13 +777,6 @@ void askConfirmationWipeSave(void* context, const void* param)
 
 void resetRTC(void* context, const void* param)
 {
-    // The game checks bit 7 on the sRTCStatusFlags field in SRAM
-    // this is set when the game detects wrong RTC register values.
-    // In order to let the game prompt to reconfigure the RTC clock, we just have to set this bit
-    // Based on sRTCStatusFlags, RecordRTCStatus, .set_bit_7 in
-    // https://github.com/pret/pokecrystal
-    // https://github.com/pret/pokegold
-    const uint8_t rtcStatusFieldValue = 0xC0;
     MenuScene* scene = static_cast<MenuScene*>(context);
 
     auto diag = new DialogData{
@@ -512,14 +790,17 @@ void resetRTC(void* context, const void* param)
         return;
     }
 
+    const Gen2GameType gameType = static_cast<Gen2GameType>(scene->getDependencies().specificGenVersion);
+    const Gen2LocalizationLanguage language = static_cast<Gen2LocalizationLanguage>(scene->getDependencies().localization);
     TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
+    TransferPakRomReader romReader(tpakManager);
+    TransferPakSaveManager saveManager(tpakManager);
+    Gen2GameReader gameReader(romReader, saveManager, gameType, language);
 
     tpakManager.setRAMEnabled(true);
-
-    tpakManager.switchGBSRAMBank(0);
-
-    tpakManager.writeSRAM(0xC60, &rtcStatusFieldValue, 1);
+    gameReader.resetRTC();
     tpakManager.finishWrites();
+    tpakManager.setRAMEnabled(false);
 
     setDialogDataText(*diag, "The games' clock was reset! Start the game to reconfigure it! Don't forget to save!");
     scene->showDialog(diag);

@@ -26,7 +26,7 @@ public:
     PokemonPartyIconFactory(IRomReader& romReader);
     ~PokemonPartyIconFactory();
 
-    surface_t getIcon(uint8_t generation, uint8_t specificGenType, uint8_t iconType, bool firstFrame);
+    surface_t getIcon(uint8_t generation, uint8_t specificGenType, uint8_t localization, uint8_t iconType, bool firstFrame);
 protected:
 private:
     // This is the map of icons. Gen2 has the most icons, that's why I'm using GEN2_ICONTYPE_MAX as the array size
@@ -66,6 +66,11 @@ typedef struct PokemonPartyIconWidgetData
      * The specific variant of the game
      */
     uint8_t specificGenVersion;
+
+    /**
+     * @brief The specific localization of the game
+     */
+    uint8_t localization;
     /**
      * The pokemon icon type we need to display
      */

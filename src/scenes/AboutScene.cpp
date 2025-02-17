@@ -22,16 +22,22 @@ static const Rectangle imgGBDevIoBounds = {28, 280, 34, 55};
 static const Rectangle gbDevIOTextBounds = {68, 300, 75, 16};
 static const Rectangle imgNESDevWikiBounds = {163, 280, 96, 60};
 static const Rectangle imgPokeTransporterGBBounds = {96, 350, 128, 39};
-static const Rectangle otherCreditsTextBounds = {5, 400, 310, 80};
+static const Rectangle otherCreditsTextBounds = {5, 400, 310, 160};
 
 static const char* otherCreditsString = R"delim(github.com/magical/pokemon-sprites-rby
 glitchcity.wiki
 github.com/seanmorris/pokemon-parser
 github.com/LinusU/pokemon-sprite-compression
 github.com/xvillaneau/poke-sprite-python
+
+TESTING/VALIDATION
+
+/u/ImranFZakhaev
+/u/bluemooncinco
+MajorUpgrade
 )delim";
 
-static const char* headerTextString = R"delim(PokeMe64 Version 0.2
+static const char* headerTextString = R"delim(PokeMe64 Version 0.3
 by risingPhil
 
 SPECIAL THANKS TO:
@@ -40,8 +46,8 @@ SPECIAL THANKS TO:
 
 AboutScene::AboutScene(SceneDependencies& deps, void*)
     : AbstractUIScene(deps)
-    , fontIdArial_(1)
-    , fontArialStyleWhiteId_(0)
+    , fontIdMainFont_(1)
+    , fontMainFontStyleWhiteId_(0)
     , logoLibDragon_(nullptr)
     , logoBulbagarden_(nullptr)
     , logoRetroGameMechanicsExplained_(nullptr)
@@ -70,14 +76,14 @@ AboutScene::AboutScene(SceneDependencies& deps, void*)
     })
     , bButtonPressed_(false)
 {
-    fontIdArial_ = deps.fontManager.getFont("rom://Arial.font64");
+    fontIdMainFont_ = deps.fontManager.getFont("rom://Arial.font64");
 
-    const rdpq_fontstyle_t arialWhite = {
+    const rdpq_fontstyle_t mainFontWhite = {
         .color = RGBA32(0xFF, 0xFF, 0xFF, 0xFF),
         .outline_color = RGBA32(0, 0, 0, 0xFF)
     };
 
-    deps.fontManager.registerFontStyle(fontIdArial_, fontArialStyleWhiteId_, arialWhite);
+    deps.fontManager.registerFontStyle(fontIdMainFont_, fontMainFontStyleWhiteId_, mainFontWhite);
 }
 
 AboutScene::~AboutScene()
@@ -99,8 +105,8 @@ void AboutScene::init()
 
     const TextWidgetStyle headerTextStyle = {
         .renderSettingsNotFocused = {
-            .fontId = fontIdArial_,
-            .fontStyleId = fontArialStyleWhiteId_,
+            .fontId = fontIdMainFont_,
+            .fontStyleId = fontMainFontStyleWhiteId_,
             .halign = ALIGN_CENTER
         }
  //       ,.backgroundColor_ = 0xF801
@@ -108,15 +114,15 @@ void AboutScene::init()
 
     const TextWidgetStyle commonLeftAlignedTextStyle = {
         .renderSettingsNotFocused = {
-            .fontId = fontIdArial_,
-            .fontStyleId = fontArialStyleWhiteId_,
+            .fontId = fontIdMainFont_,
+            .fontStyleId = fontMainFontStyleWhiteId_,
             .halign = ALIGN_LEFT
         }
     };
     const TextWidgetStyle commonCenterAlignedTextStyle = {
         .renderSettingsNotFocused = {
-            .fontId = fontIdArial_,
-            .fontStyleId = fontArialStyleWhiteId_,
+            .fontId = fontIdMainFont_,
+            .fontStyleId = fontMainFontStyleWhiteId_,
             .halign = ALIGN_CENTER
         }
     };

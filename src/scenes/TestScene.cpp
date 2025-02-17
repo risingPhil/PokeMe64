@@ -53,11 +53,11 @@ void TestScene::init()
         .itemStyle = {
             .size = {280, 16},
             .titleNotFocused = {
-                .fontId = arialId_,
+                .fontId = mainFontId_,
                 .fontStyleId = fontStyleWhiteId_
             },
             .titleFocused = {
-                .fontId = arialId_,
+                .fontId = mainFontId_,
                 .fontStyleId = fontStyleYellowId_
             },
             .leftMargin = 10,
