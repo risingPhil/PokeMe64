@@ -75,8 +75,7 @@ But having it done with a Nintendo 64 feels more "real"/"official" and is easier
 - [~~Support batteryless reproduction cartridges~~](docs/Why_I_Had_To_Give_Up_On_Batteryless_Repros.md)
 - Make it possible to display your cartridge save file as a QR code and contribute to the 3DS' [PKSM](https://github.com/FlagBrew/PKSM) project to migrate the save file easily from gameboy cartridge to 3DS.
 - Make it possible to swap gameboy cartridge after using the reset button on the N64. (suggested by /u/bluemooncinco on reddit)
-- Make it possible to delete pokémon moves
-- Implement mystery gift.
+- Implement mystery gift. (idea by MajorUpgrade)
 
 I'm likely going to postpone the 3D stuff (intro and "trade" sequence) until I have implemented a lot of the other ideas here.
 

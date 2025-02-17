@@ -1,5 +1,7 @@
 # Credits
 
+## Documentation / Other Projects
+
 First of all, I want to thank the people behind [Bulbapedia](https://bulbapedia.bulbagarden.net/wiki/Main_Page). The documentation was extensive and without it, I never would've started on this project.
 
 Secondly, I'd like to extend my thanks to Alex "IsoFrieze" Losego from the [Retro Game Mechanics Explained](https://www.youtube.com/c/retrogamemechanicsexplained) Youtube channel. His videos on the topic of Gen 1 sprite decompression were pretty helpful.
@@ -18,3 +20,10 @@ And of course I'd like to extend my thanks to everyone else in the pokémunity w
 
 I've listed the specific resources I used for reading the rom/save game data in the CREDITS.md file of the libpokemegb project.
 
+## Testing/Validation
+
+Thank you to all folks who reached out with feedback and who did some testing. Some even went above and beyond, therefore I would like to specifically name them here.
+
+/u/ImranFZakhaev
+/u/bluemooncinco
+MajorUpgrade

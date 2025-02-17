@@ -22,13 +22,19 @@ static const Rectangle imgGBDevIoBounds = {28, 280, 34, 55};
 static const Rectangle gbDevIOTextBounds = {68, 300, 75, 16};
 static const Rectangle imgNESDevWikiBounds = {163, 280, 96, 60};
 static const Rectangle imgPokeTransporterGBBounds = {96, 350, 128, 39};
-static const Rectangle otherCreditsTextBounds = {5, 400, 310, 80};
+static const Rectangle otherCreditsTextBounds = {5, 400, 310, 160};
 
 static const char* otherCreditsString = R"delim(github.com/magical/pokemon-sprites-rby
 glitchcity.wiki
 github.com/seanmorris/pokemon-parser
 github.com/LinusU/pokemon-sprite-compression
 github.com/xvillaneau/poke-sprite-python
+
+TESTING/VALIDATION
+
+/u/ImranFZakhaev
+/u/bluemooncinco
+MajorUpgrade
 )delim";
 
 static const char* headerTextString = R"delim(PokeMe64 Version 0.3
