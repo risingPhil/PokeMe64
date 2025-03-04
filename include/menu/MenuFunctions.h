@@ -32,7 +32,7 @@ void goToGen1MovesMenu(void* context, const void* param);
 void goToGen1DistributionPokemonMenu(void* context, const void* param);
 void goToGen2DistributionPokemonMenu(void* context, const void* param);
 void goToGen2PCNYDistributionPokemonMenu(void* context, const void* param);
-void goToGen2DecorationMenu(void* context, const void* param);
+void goToGen2MysteryGiftMenu(void* context, const void* param);
 void goToBackupRestoreMenu(void* context, const void* param);
 
 /**
@@ -115,6 +115,15 @@ void askConfirmationWipeSave(void* context, const void* param);
  * @param param a nullpointer (dummy param)
  */
 void resetRTC(void* context, const void* param);
+
+/**
+ * @brief This function will activate the mystery gift functionality.
+ * If the player hasn't hit the 5-gift limit yet, he/she will obtain a random mystery gift
+ *
+ * @param context a MenuScene* context
+ * @param param a nullpointer (dummy param)
+ */
+void gen2ReceiveMysteryGift(void* context, const void* param);
 
 void printClock(void* context, const void* param);
 

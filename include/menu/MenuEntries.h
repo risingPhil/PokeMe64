@@ -15,8 +15,8 @@ extern const uint32_t gen2MenuEntriesSize;
 extern MenuItemData gen2CrystalMenuEntries[];
 extern const uint32_t gen2CrystalMenuEntriesSize;
 
-extern MenuItemData gen2DecorationMenuEntries[];
-extern const uint32_t gen2DecorationMenuEntriesSize;
+extern MenuItemData gen2MysteryGiftMenuEntries[];
+extern const uint32_t gen2MysteryGiftMenuEntriesSize;
 
 extern MenuItemData backupRestoreMenuEntries[];
 extern const uint32_t backupRestoreMenuEntriesSize;

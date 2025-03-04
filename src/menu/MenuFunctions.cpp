@@ -7,6 +7,7 @@
 #include "scenes/SelectFileScene.h"
 #include "scenes/SceneManager.h"
 #include "gen2/Gen2GameReader.h"
+#include "gen2/Gen2Items.h"
 #include "transferpak/TransferPakManager.h"
 #include "transferpak/TransferPakRomReader.h"
 #include "transferpak/TransferPakSaveManager.h"
@@ -219,12 +220,12 @@ void goToGen2PCNYDistributionPokemonMenu(void* context, const void* param)
     goToDistributionPokemonListMenu(context, DistributionPokemonListType::GEN2_POKEMON_CENTER_NEW_YORK);
 }
 
-void goToGen2DecorationMenu(void* context, const void* param)
+void goToGen2MysteryGiftMenu(void* context, const void* param)
 {
     MenuScene* scene = static_cast<MenuScene*>(context);
     auto newSceneContext = new MenuSceneContext{
-        .menuEntries = gen2DecorationMenuEntries,
-        .numMenuEntries = gen2DecorationMenuEntriesSize / sizeof(gen2DecorationMenuEntries[0])
+        .menuEntries = gen2MysteryGiftMenuEntries,
+        .numMenuEntries = gen2MysteryGiftMenuEntriesSize / sizeof(gen2MysteryGiftMenuEntries[0])
     };
 
     scene->getDependencies().sceneManager.switchScene(SceneType::MENU, deleteMenuSceneContext, newSceneContext);
@@ -735,7 +736,28 @@ void gen2SetEventFlag(void* context, const void* param)
     }
     else
     {
+        Gen2MysteryGiftManager mysteryGiftManager = gameReader.getMysteryGiftManager();
         gameReader.setEventFlag(eventFlagIndex, true);
+
+        // For the decoration eventflags, also set the mysterygift decorationsReceived flag.
+        // PokeMe64 has allowed to obtain these 3 decorations directly from the main menu from before version 0.3.
+        // to keep this funtionality intact while also supporting mystery gift, we need to ensure these mystery gift flags are
+        // maintained correctly.
+        switch(eventFlagIndex)
+        {
+            case GEN2_EVENTFLAG_DECORATION_PIKACHU_BED:
+                mysteryGiftManager.setDecorationIDReceivedFlag((uint8_t)Gen2Decoration::PIKACHU_BED);
+                break;
+            case GEN2_EVENTFLAG_DECORATION_TENTACOOL_DOLL:
+                mysteryGiftManager.setDecorationIDReceivedFlag((uint8_t)Gen2Decoration::TENTACOOL_DOLL);
+                break;
+            case GEN2_EVENTFLAG_DECORATION_UNOWN_DOLL:
+                mysteryGiftManager.setDecorationIDReceivedFlag((uint8_t)Gen2Decoration::UNOWN_DOLL);
+                break;
+            default:
+                break;
+        }
+
         gameReader.finishSave();
         tpakManager.finishWrites();
 
@@ -805,6 +827,70 @@ void resetRTC(void* context, const void* param)
     tpakManager.setRAMEnabled(false);
 
     setDialogDataText(*diag, "The games' clock was reset! Start the game to reconfigure it! Don't forget to save!");
+    scene->showDialog(diag);
+}
+
+void gen2ReceiveMysteryGift(void* context, const void* param)
+{
+    MenuScene* scene = static_cast<MenuScene*>(context);
+    const char* trainerName;
+
+    auto diag = new DialogData{
+        .shouldDeleteWhenDone = true
+    };
+
+    if(scene->getDependencies().generation != 2)
+    {
+        setDialogDataText(*diag, "Sorry! This is only supported for Gen 2 Pokémon games!");
+        scene->showDialog(diag);
+        return;
+    }
+
+    const Gen2GameType gameType = static_cast<Gen2GameType>(scene->getDependencies().specificGenVersion);
+    const Gen2LocalizationLanguage language = static_cast<Gen2LocalizationLanguage>(scene->getDependencies().localization);
+    TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
+    TransferPakRomReader romReader(tpakManager);
+    TransferPakSaveManager saveManager(tpakManager);
+    TransferPakRTCReader rtcReader(tpakManager);
+    Gen2GameReader gameReader(romReader, saveManager, gameType, language);
+    Gen2MysteryGiftManager mysteryGiftManager = gameReader.getMysteryGiftManager();
+
+    tpakManager.setRAMEnabled(true);
+    trainerName = gameReader.getTrainerName();
+    if(!mysteryGiftManager.isUnlocked())
+    {
+        mysteryGiftManager.unlock();
+    }
+
+    const MysteryGiftSelection selectedGift = selectRandomGift();
+    MysteryGiftResult result = mysteryGiftManager.obtain(gameReader, rtcReader, selectedGift);
+
+    switch(result)
+    {
+    case MYSTERYGIFT_RESULT_DECORATION:
+        setDialogDataText(*diag, "A %s was transferred to %s's house!", getGen2DecorationString((Gen2Decoration)selectedGift.decorationID), trainerName);
+        break;
+    case MYSTERYGIFT_RESULT_ITEM_ITEMPOCKET:
+        setDialogDataText(*diag, "%s received a %s! %s put the %s in the ITEM POCKET.", trainerName, getGen2ItemString((Gen2Items)selectedGift.itemID), trainerName, getGen2ItemString((Gen2Items)selectedGift.itemID));
+        break;
+    case MYSTERYGIFT_RESULT_ITEM_BALLPOCKET:
+        setDialogDataText(*diag, "%s received a %s! %s put the %s in the BALL POCKET.", trainerName, getGen2ItemString((Gen2Items)selectedGift.itemID), trainerName, getGen2ItemString((Gen2Items)selectedGift.itemID));
+        break;
+    case MYSTERYGIFT_RESULT_ERROR_NOT_UNLOCKED:
+        // should never happen, given that we unlocked it earlier in this function
+        setDialogDataText(*diag, "Sorry! It seems you don't have access to Mystery Gift yet! Unlock it and try again!");
+        break;
+    case MYSTERYGIFT_RESULT_ERROR_TOO_MANY_GIFTS:
+        setDialogDataText(*diag, "Sorry! I'm out of gifts today. Try again tomorrow!");
+        break;
+    case MYSTERYGIFT_RESULT_ERROR_NO_ROOM_FOR_ITEM:
+        setDialogDataText(*diag, "It seems you have no room for the item! Please get rid of an item first!");
+        break;
+    }
+
+    gameReader.finishSave();
+    tpakManager.finishWrites();
+    tpakManager.setRAMEnabled(false);
     scene->showDialog(diag);
 }
 

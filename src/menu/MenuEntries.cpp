@@ -59,8 +59,8 @@ MenuItemData gen2MenuEntries[] = {
         .onConfirmAction = goToGen2PCNYDistributionPokemonMenu
     },
     {
-        .title = "Unlock Decoration",
-        .onConfirmAction = goToGen2DecorationMenu
+        .title = "Mystery Gift",
+        .onConfirmAction = goToGen2MysteryGiftMenu
     },
     {
         .title = "Gen 3 Transfer Info",
@@ -100,8 +100,8 @@ MenuItemData gen2CrystalMenuEntries[] = {
         .onConfirmAction = gen2ReceiveGSBall
     },
     {
-        .title = "Unlock Decoration",
-        .onConfirmAction = goToGen2DecorationMenu
+        .title = "Mystery Gift",
+        .onConfirmAction = goToGen2MysteryGiftMenu
     },
     {
         .title = "Gen 3 Transfer Info",
@@ -123,25 +123,29 @@ MenuItemData gen2CrystalMenuEntries[] = {
 
 const uint32_t gen2CrystalMenuEntriesSize = sizeof(gen2CrystalMenuEntries);
 
-MenuItemData gen2DecorationMenuEntries[] = {
+MenuItemData gen2MysteryGiftMenuEntries[] = {
     {
-        .title = "Pikachu Bed",
+        .title = "Get Mystery Gift",
+        .onConfirmAction = gen2ReceiveMysteryGift
+    },
+    {
+        .title = "Get Pikachu Bed",
         .onConfirmAction = gen2SetEventFlag,
         .itemParam = &GEN2_EVENTFLAG_DECORATION_PIKACHU_BED
     },
     {
-        .title = "Unown Doll",
+        .title = "Get Unown Doll",
         .onConfirmAction = gen2SetEventFlag,
         .itemParam = &GEN2_EVENTFLAG_DECORATION_UNOWN_DOLL
     },
     {
-        .title = "Tentacool Doll",
+        .title = "Get Tentacool Doll",
         .onConfirmAction = gen2SetEventFlag,
         .itemParam = &GEN2_EVENTFLAG_DECORATION_TENTACOOL_DOLL
     }
 };
 
-const uint32_t gen2DecorationMenuEntriesSize = sizeof(gen2DecorationMenuEntries);
+const uint32_t gen2MysteryGiftMenuEntriesSize = sizeof(gen2MysteryGiftMenuEntries);
 
 MenuItemData backupRestoreMenuEntries[] = {
     {
