@@ -71,6 +71,10 @@ MenuItemData gen2MenuEntries[] = {
         .onConfirmAction = resetRTC
     },
     {
+        .title = "Print Game Clock",
+        .onConfirmAction = printClock
+    },
+    {
         .title = "About",
         .onConfirmAction = goToAboutScene
     }
@@ -106,6 +110,10 @@ MenuItemData gen2CrystalMenuEntries[] = {
     {
         .title = "Reset Game Clock",
         .onConfirmAction = resetRTC
+    },
+    {
+        .title = "Print Game Clock",
+        .onConfirmAction = printClock
     },
     {
         .title = "About",

@@ -32,6 +32,7 @@ private:
     void loadSaveMetadata();
     const char* getGameTypeString();
 
+    char pokeMe64String_[48];
     sprite_t* menu9SliceSprite_;
     TransferPakDetectionWidget tpakDetectWidget_;
     WidgetFocusChainSegment tpakDetectWidgetSegment_;

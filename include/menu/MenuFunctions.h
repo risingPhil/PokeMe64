@@ -116,4 +116,6 @@ void askConfirmationWipeSave(void* context, const void* param);
  */
 void resetRTC(void* context, const void* param);
 
+void printClock(void* context, const void* param);
+
 #endif

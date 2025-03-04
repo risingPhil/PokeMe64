@@ -10,6 +10,7 @@
 #include "transferpak/TransferPakManager.h"
 #include "transferpak/TransferPakRomReader.h"
 #include "transferpak/TransferPakSaveManager.h"
+#include "transferpak/TransferPakRTCReader.h"
 
 #define POKEMON_CRYSTAL_ITEM_ID_GS_BALL 0x73
 
@@ -795,13 +796,47 @@ void resetRTC(void* context, const void* param)
     TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
     TransferPakRomReader romReader(tpakManager);
     TransferPakSaveManager saveManager(tpakManager);
+    TransferPakRTCReader rtcReader(tpakManager);
     Gen2GameReader gameReader(romReader, saveManager, gameType, language);
 
     tpakManager.setRAMEnabled(true);
-    gameReader.resetRTC();
+    gameReader.getClockManager(rtcReader).resetRTC();
     tpakManager.finishWrites();
     tpakManager.setRAMEnabled(false);
 
     setDialogDataText(*diag, "The games' clock was reset! Start the game to reconfigure it! Don't forget to save!");
+    scene->showDialog(diag);
+}
+
+void printClock(void* context, const void* param)
+{
+    MenuScene* scene = static_cast<MenuScene*>(context);
+
+    auto diag = new DialogData{
+        .shouldDeleteWhenDone = true
+    };
+
+    if(scene->getDependencies().generation != 2)
+    {
+        setDialogDataText(*diag, "Sorry! This is only supported for Gen 2 Pokémon games!");
+        scene->showDialog(diag);
+        return;
+    }
+
+    const Gen2GameType gameType = static_cast<Gen2GameType>(scene->getDependencies().specificGenVersion);
+    const Gen2LocalizationLanguage language = static_cast<Gen2LocalizationLanguage>(scene->getDependencies().localization);
+    TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
+    TransferPakRomReader romReader(tpakManager);
+    TransferPakSaveManager saveManager(tpakManager);
+    TransferPakRTCReader rtcReader(tpakManager);
+    Gen2GameReader gameReader(romReader, saveManager, gameType, language);
+    Gen2ClockManager clockManager = gameReader.getClockManager(rtcReader);
+
+    tpakManager.setRAMEnabled(true);
+    clockManager.latchRTC();
+    tpakManager.setRAMEnabled(false);
+
+    setDialogDataText(*diag, "The current time is set to %s, %02hhu:%02hhu:%02hhu!\nRTC: %04hx %02hhx %02hhx %02hhx, off: %02hhx %02hhx %02hhx %02hhx", toString(clockManager.getDay()), clockManager.getHours(), clockManager.getMinutes(), clockManager.getSeconds(), rtcReader.getDaysCounter(), rtcReader.getHours(), rtcReader.getMinutes(), rtcReader.getSeconds(), clockManager.getRTCDayOffset(), clockManager.getRTCHourOffset(), clockManager.getRTCMinuteOffset(), clockManager.getRTCSecondOffset());
+
     scene->showDialog(diag);
 }

@@ -55,6 +55,11 @@ public:
     void switchGBROMBank(uint8_t bankIndex);
 
     /**
+     * @brief Returns whether we called setRAMEnabled(true) on this TransferPakManager instance before
+     */
+    bool isRAMEnabled() const;
+
+    /**
      * @brief This function enables/disables gameboy RAM/RTC access.
      * WARNING: it switches to transfer pak bank 0
      */
@@ -110,6 +115,7 @@ protected:
 private:
     joypad_port_t port_;
     bool isPoweredOn_;
+    bool ramEnabled_;
     uint8_t currentSRAMBank_;
     uint16_t readBufferBankOffset_;
     uint16_t writeBufferSRAMBankOffset_;

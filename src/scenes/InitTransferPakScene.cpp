@@ -7,6 +7,7 @@
 #include "gen1/Gen1GameReader.h"
 #include "gen2/Gen2GameReader.h"
 #include "menu/MenuEntries.h"
+#include "version.h"
 
 #include <unistd.h>
 
@@ -27,6 +28,7 @@ static void tpakWidgetStateChangedCallback(void* context, TransferPakWidgetState
 
 InitTransferPakScene::InitTransferPakScene(SceneDependencies& deps, void*)
     : SceneWithDialogWidget(deps)
+    , pokeMe64String_()
     , menu9SliceSprite_(nullptr)
     , tpakDetectWidget_(deps.animationManager, deps.tpakManager)
     , tpakDetectWidgetSegment_(WidgetFocusChainSegment{
@@ -45,6 +47,8 @@ InitTransferPakScene::~InitTransferPakScene()
 void InitTransferPakScene::init()
 {
     uint8_t systemEntropy[4];
+
+    snprintf(pokeMe64String_, sizeof(pokeMe64String_), "PokeMe64 by risingPhil. Version %s", getPokeMe64VersionString());
     menu9SliceSprite_ = sprite_load("rom://menu-bg-9slice.sprite");
 
     SceneWithDialogWidget::init();
@@ -77,7 +81,7 @@ void InitTransferPakScene::destroy()
 
 void InitTransferPakScene::render(RDPQGraphics& gfx, const Rectangle& sceneBounds)
 {
-    gfx.drawText(Rectangle{0, 10, 320, 16}, "PokeMe64 by risingPhil. Version 0.3", pokeMe64TextSettings_);
+    gfx.drawText(Rectangle{0, 10, 320, 16}, pokeMe64String_, pokeMe64TextSettings_);
     tpakDetectWidget_.render(gfx, sceneBounds);
 
     SceneWithDialogWidget::render(gfx, sceneBounds);
