@@ -96,6 +96,10 @@ MenuItemData gen2CrystalMenuEntries[] = {
         .onConfirmAction = gen2ReceiveGSBall
     },
     {
+        .title = "Unlock Egg Ticket",
+        .onConfirmAction = gen2ReceiveEggTicket
+    },
+    {
         .title = "Unlock Decoration",
         .onConfirmAction = goToGen2DecorationMenu
     },
