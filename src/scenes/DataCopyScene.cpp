@@ -378,7 +378,10 @@ void DataCopyScene::processUserInput()
                     .shouldDeleteWhenDone = true,
                 };
                 setDialogDataText(*errMsg, "ERROR: Validation failed! Check Controller or Transfer Pak connection please!");
-                unlink(savOutputPath_);
+                if(sceneContext_->operation == DataCopyOperation::BACKUP_SAVE)
+                {
+                    unlink(savOutputPath_);
+                }
                 showDialog(errMsg);
                 return;
             }
@@ -398,9 +401,10 @@ void DataCopyScene::processUserInput()
         {
             isValidating_ = true;
             needsValidation_ = false;
+            const char* savPath = (sceneContext_->operation == DataCopyOperation::BACKUP_SAVE) ? savOutputPath_ : sceneContext_->saveToRestorePath.get();
 
             copySource_ = new TransferPakSaveManagerCopySource(saveManager_);
-            copyDestination_ = new FileValidationCopyDestination(savOutputPath_);
+            copyDestination_ = new FileValidationCopyDestination(savPath);
             copier_ = new TransferPakDataCopier(*copySource_, *copyDestination_);
 
             deps_.tpakManager.setRAMEnabled(true);
