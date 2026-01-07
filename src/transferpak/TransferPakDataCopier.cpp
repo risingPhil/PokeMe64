@@ -189,10 +189,9 @@ void TransferPakSaveManagerDestination::close()
     // dummy
 }
 
-TransferPakFileCopyDestination::TransferPakFileCopyDestination(const char* pathOnSDCard, bool resetRTC)
+TransferPakFileCopyDestination::TransferPakFileCopyDestination(const char* pathOnSDCard)
     : outputFile_(nullptr)
     , bytesWritten_(0)
-    , resetRTC_(resetRTC)
 {
     outputFile_ = fopen(pathOnSDCard, "w");
 }
@@ -231,24 +230,87 @@ void TransferPakFileCopyDestination::close()
         return;
     }
 
-    if(resetRTC_)
-    {
-        // The game checks bit 7 on the sRTCStatusFlags field in SRAM
-        // this is set when the game detects wrong RTC register values.
-        // In order to let the game prompt to reconfigure the RTC clock, we just have to set this bit
-        // Based on sRTCStatusFlags, RecordRTCStatus, .set_bit_7 in
-        // https://github.com/pret/pokecrystal
-        // https://github.com/pret/pokegold
-        const uint8_t rtcStatusFieldValue = 0xC0;
-        if(fseek(outputFile_, 0xC60, SEEK_SET) == 0)
-        {
-            // seek successful
-            fwrite(&rtcStatusFieldValue, 1, 1, outputFile_);
-        }
-    }
-
     fclose(outputFile_);
     outputFile_ = nullptr;
+}
+
+FileValidationCopyDestination::FileValidationCopyDestination(const char *pathOnSDCard)
+    : inputFile_(nullptr)
+    , bytesValidated_(0)
+    , isValid_(true)
+{
+    inputFile_ = fopen(pathOnSDCard, "r");
+}
+
+FileValidationCopyDestination::~FileValidationCopyDestination()
+{
+    close();
+}
+
+bool FileValidationCopyDestination::readyForTransfer() const
+{
+    return (inputFile_ != nullptr);
+}
+
+uint16_t FileValidationCopyDestination::getCurrentBankIndex() const
+{
+    return 1;
+}
+
+uint32_t FileValidationCopyDestination::getNumberOfBytesWritten() const
+{
+    return bytesValidated_;
+}
+
+uint32_t FileValidationCopyDestination::write(uint8_t *buffer, uint32_t bytesToWrite)
+{
+    if(!inputFile_)
+    {
+        return 0;
+    }
+
+    uint8_t fileBuffer[256];
+    uint32_t bytesRemaining = bytesToWrite;
+    uint32_t bytesToRead;
+    size_t ret;
+
+    while(bytesRemaining > 0)
+    {
+        bytesToRead = (sizeof(fileBuffer) < bytesRemaining) ? sizeof(fileBuffer) : bytesRemaining;
+
+        ret = fread(fileBuffer, sizeof(char), bytesToRead, inputFile_);
+        if(ret != bytesToRead)
+        {
+            // couldn't read enough bytes
+            isValid_ = false;
+            break;
+        }
+
+        if(memcmp(buffer + (bytesToWrite - bytesRemaining), fileBuffer, bytesToRead) != 0)
+        {
+            // data mismatch
+            isValid_ = false;
+        }
+
+        bytesRemaining -= bytesToRead;
+        bytesValidated_ += bytesToRead;
+    }
+
+    return bytesToWrite - bytesRemaining;
+}
+
+void FileValidationCopyDestination::close()
+{
+    if(inputFile_)
+    {
+        fclose(inputFile_);
+        inputFile_ = nullptr;
+    }
+}
+
+bool FileValidationCopyDestination::isDataValid() const
+{
+    return isValid_;
 }
 
 TransferPakDataCopier::TransferPakDataCopier(ITransferPakDataCopySource& source, ITransferPakDataCopyDestination& destination)

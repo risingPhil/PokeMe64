@@ -151,7 +151,7 @@ private:
 class TransferPakFileCopyDestination : public ITransferPakDataCopyDestination
 {
 public:
-    TransferPakFileCopyDestination(const char *pathOnSDCard, bool resetRTC = false);
+    TransferPakFileCopyDestination(const char *pathOnSDCard);
     virtual ~TransferPakFileCopyDestination();
 
     bool readyForTransfer() const override;
@@ -167,7 +167,30 @@ protected:
 private:
     FILE *outputFile_;
     uint32_t bytesWritten_;
-    bool resetRTC_;
+};
+
+/** This class is used to validate the copied data. */
+class FileValidationCopyDestination : public ITransferPakDataCopyDestination
+{
+public:
+    FileValidationCopyDestination(const char *pathOnSDCard);
+    virtual ~FileValidationCopyDestination();
+
+    bool readyForTransfer() const override;
+
+    uint16_t getCurrentBankIndex() const override;
+    uint32_t getNumberOfBytesWritten() const override;
+
+    uint32_t write(uint8_t *buffer, uint32_t bytesToWrite) override;
+
+    void close() override;
+
+    bool isDataValid() const;
+protected:
+private:
+    FILE *inputFile_;
+    uint32_t bytesValidated_;
+    bool isValid_;
 };
 
 /**

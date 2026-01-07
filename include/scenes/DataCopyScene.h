@@ -48,6 +48,10 @@ private:
     sprite_t* progressBackgroundSprite_;
     DialogData diag_;
     uint32_t totalBytesToCopy_;
+    bool needsValidation_;
+    bool isValidating_;
+    bool shouldResetRTC_;
+    char savOutputPath_[4096];
 };
 
 void deleteDataCopySceneContext(void* context);

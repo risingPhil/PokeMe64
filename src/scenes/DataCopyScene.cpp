@@ -6,6 +6,8 @@
 #include "gen2/Gen2Common.h"
 
 #include <system.h>
+#include <unistd.h>
+#include <cstdio>
 
 //missing function declaration in libdragons' system.h, but the definition exists in system.c
 int mkdir( const char * path, mode_t mode );
@@ -119,6 +121,29 @@ static void generateSaveFileName(char* savOutputPath, size_t bufferSize, const c
     }
 }
 
+/**
+ * @brief This function forces a Gen II game to request the user to reconfigure the RTC clock.
+ */
+static void resetGen2RTCInSavFile(const char* pathOnSDCard)
+{
+    FILE* outputFile = fopen(pathOnSDCard, "w");
+
+    // The game checks bit 7 on the sRTCStatusFlags field in SRAM
+    // this is set when the game detects wrong RTC register values.
+    // In order to let the game prompt to reconfigure the RTC clock, we just have to set this bit
+    // Based on sRTCStatusFlags, RecordRTCStatus, .set_bit_7 in
+    // https://github.com/pret/pokecrystal
+    // https://github.com/pret/pokegold
+    const uint8_t rtcStatusFieldValue = 0xC0;
+    if(fseek(outputFile, 0xC60, SEEK_SET) == 0)
+    {
+        // seek successful
+        fwrite(&rtcStatusFieldValue, 1, 1, outputFile);
+    }
+
+    fclose(outputFile);
+}
+
 DataCopyScene::DataCopyScene(SceneDependencies& deps, void* context)
     : SceneWithProgressBar(deps)
     , romReader_(deps.tpakManager)
@@ -131,6 +156,10 @@ DataCopyScene::DataCopyScene(SceneDependencies& deps, void* context)
     , progressBackgroundSprite_(nullptr)
     , diag_({0})
     , totalBytesToCopy_(0)
+    , needsValidation_(false)
+    , isValidating_(false)
+    , shouldResetRTC_(false)
+    , savOutputPath_()
 {
     (void)context;
 }
@@ -141,9 +170,9 @@ DataCopyScene::~DataCopyScene()
 
 void DataCopyScene::init()
 {
-    char savOutputPath[4096];
     char romOutputPath[4096];
     char gameTitle[12];
+
     dialogWidgetSprite_ = sprite_load("rom://menu-bg-9slice.sprite");
     progressBackgroundSprite_ = sprite_load("rom://bg-nineslice-transparant-border.sprite");
 
@@ -179,14 +208,16 @@ void DataCopyScene::init()
     switch(sceneContext_->operation)
     {
         case DataCopyOperation::BACKUP_SAVE:
-            generateSaveFileName(savOutputPath, sizeof(savOutputPath), gameTitle, deps_.playerName);
+            generateSaveFileName(savOutputPath_, sizeof(savOutputPath_), gameTitle, deps_.playerName);
             copySource_ = new TransferPakSaveManagerCopySource(saveManager_);
-            copyDestination_ = new TransferPakFileCopyDestination(savOutputPath, (deps_.generation == 2));
+            copyDestination_ = new TransferPakFileCopyDestination(savOutputPath_);
             totalBytesToCopy_ = convertSRAMSizeIntoNumBytes(gbHeader.ram_size_code);
-            setDialogDataText(*msg2, "The save was backed up to %s!", savOutputPath);
+            setDialogDataText(*msg2, "The save was backed up to %s!", savOutputPath_);
+            needsValidation_ = true;
+            shouldResetRTC_ = (deps_.generation == 2);
             break;
         case DataCopyOperation::BACKUP_ROM:
-            snprintf(romOutputPath, sizeof(savOutputPath) - 1, "sd:/PokeMe64/%s.gbc", gameTitle);
+            snprintf(romOutputPath, sizeof(savOutputPath_) - 1, "sd:/PokeMe64/%s.gbc", gameTitle);
             copySource_ = new TransferPakRomReaderCopySource(romReader_);
             copyDestination_ = new TransferPakFileCopyDestination(romOutputPath);
             totalBytesToCopy_ = convertROMSizeIntoNumBytes(gbHeader.rom_size_code);
@@ -196,6 +227,7 @@ void DataCopyScene::init()
             copySource_ = new TransferPakFileCopySource(sceneContext_->saveToRestorePath.get());
             copyDestination_ = new TransferPakSaveManagerDestination(saveManager_);
             totalBytesToCopy_ = convertSRAMSizeIntoNumBytes(gbHeader.ram_size_code);
+            needsValidation_ = true;
             setDialogDataText(*msg2, "The save was restored to the cartridge!", romOutputPath);
             break;
         case DataCopyOperation::WIPE_SAVE:
@@ -234,7 +266,7 @@ void DataCopyScene::init()
         }
         else
         {
-            const char* outputPath = (sceneContext_->operation == DataCopyOperation::BACKUP_SAVE) ? savOutputPath : romOutputPath;
+            const char* outputPath = (sceneContext_->operation == DataCopyOperation::BACKUP_SAVE) ? savOutputPath_ : romOutputPath;
             setDialogDataText(diag_, "ERROR: Could not write to file %s!", outputPath);
         }
 
@@ -253,8 +285,24 @@ void DataCopyScene::init()
     {
         setDialogDataText(diag_, "Copying. Please Wait...");
     }
+
+    if(needsValidation_)
+    {
+        auto validationMsg = new DialogData{
+            .next = msg2,
+            .shouldDeleteWhenDone = true,
+            .userAdvanceBlocked = true
+        };
+
+        setDialogDataText(*validationMsg, "Validating. Please Wait...");
+        diag_.next = validationMsg;
+    }
+    else
+    {
+        diag_.next = msg2;
+    }
+
     diag_.userAdvanceBlocked = true;
-    diag_.next = msg2;
     showDialog(&diag_);
 
     deps_.tpakManager.setRAMEnabled(true);
@@ -302,6 +350,15 @@ void DataCopyScene::processUserInput()
 
     if(copier_ && copyDestination_ && copyDestination_->getNumberOfBytesWritten() >= totalBytesToCopy_)
     {
+        bool isDataValid = false;
+
+        // if validating, we need to retrieve the result before destroying copyDestination_
+        if(isValidating_)
+        {
+            auto validationDest = static_cast<FileValidationCopyDestination*>(copyDestination_);
+            isDataValid = validationDest->isDataValid();
+        }
+
         deps_.tpakManager.setRAMEnabled(false);
         copyDestination_->close();
         delete copySource_;
@@ -310,7 +367,46 @@ void DataCopyScene::processUserInput()
         copyDestination_ = nullptr;
         delete copier_;
 
-        // The copy operation is done, now advance the blocked dialog entry to the final one
+        // we reached the end of a phase (either copy or validation)
+        // if the current phase was the validation phase, we need to
+        // check the validation result and show error dialog if validation failed
+        if(isValidating_)
+        {
+            if(!isDataValid)
+            {
+                auto errMsg = new DialogData{
+                    .shouldDeleteWhenDone = true,
+                };
+                setDialogDataText(*errMsg, "ERROR: Validation failed! Check Controller or Transfer Pak connection please!");
+                unlink(savOutputPath_);
+                showDialog(errMsg);
+                return;
+            }
+
+            // Validation succeeded. But for gen 2 saves, we want to reset the RTC data to make sure
+            // the clock can be reconfigured after restoring the save to a cartridge after a cartridge swap,
+            // a different cartridge alltogether or when using it in an emulator
+            // We do this step AFTER validation to avoid tampering with the save data before validation
+            if(shouldResetRTC_)
+            {
+                resetGen2RTCInSavFile(savOutputPath_);
+            }
+        }
+
+        // Set up validation phase if needed
+        if(needsValidation_)
+        {
+            isValidating_ = true;
+            needsValidation_ = false;
+
+            copySource_ = new TransferPakSaveManagerCopySource(saveManager_);
+            copyDestination_ = new FileValidationCopyDestination(savOutputPath_);
+            copier_ = new TransferPakDataCopier(*copySource_, *copyDestination_);
+
+            deps_.tpakManager.setRAMEnabled(true);
+        }
+
+        // The copy operation is done, now advance the blocked dialog entry
         advanceDialog();
     }
 

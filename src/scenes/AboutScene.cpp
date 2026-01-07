@@ -37,7 +37,7 @@ TESTING/VALIDATION
 MajorUpgrade
 )delim";
 
-static const char* headerTextString = R"delim(PokeMe64 Version 0.3
+static const char* headerTextString = R"delim(PokeMe64 Version 0.3.1-dev
 by risingPhil
 
 SPECIAL THANKS TO:
