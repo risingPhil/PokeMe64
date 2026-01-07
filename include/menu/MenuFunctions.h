@@ -92,6 +92,15 @@ void gen1MoveDeleterApply(void* context, const void* param);
  * @param param a nullpointer (dummy param)
  */
 void gen2ReceiveGSBall(void* context, const void* param);
+
+/**
+ * This function will unlock the Egg Ticket event in a Pokémon Crystal save
+ *
+ * @param context a MenuScene*
+ * @param param a nullpointer (dummy param)
+ */
+void gen2ReceiveEggTicket(void* context, const void* param);
+
 /**
  * This function will set a gen II event flag
  *

@@ -712,6 +712,39 @@ void gen2ReceiveGSBall(void* context, const void* param)
     scene->showDialog(messageData);
 }
 
+void gen2ReceiveEggTicket(void* context, const void* param)
+{
+    MenuScene* scene = static_cast<MenuScene*>(context);
+    TransferPakManager& tpakManager = scene->getDependencies().tpakManager;
+    TransferPakRomReader romReader(tpakManager);
+    TransferPakSaveManager saveManager(tpakManager);
+    const Gen2LocalizationLanguage language = static_cast<Gen2LocalizationLanguage>(scene->getDependencies().localization);
+    Gen2GameReader gameReader(romReader, saveManager, Gen2GameType::CRYSTAL, language);
+    
+    DialogData* messageData = new DialogData{
+        .shouldDeleteWhenDone = true
+    };
+
+    if(scene->getDependencies().localization != (uint8_t)Gen2LocalizationLanguage::JAPANESE)
+    {
+        setDialogDataText(*messageData, "Sorry! This can only be unlocked Japanese version!");
+        scene->showDialog(messageData);
+        return;
+    }
+
+    tpakManager.setRAMEnabled(true);
+  
+    // the unlockEggTicketEvent() function does all the work.
+    gameReader.unlockEggTicketEvent();
+    gameReader.finishSave();
+    tpakManager.finishWrites();
+    tpakManager.setRAMEnabled(false);
+    
+    setDialogDataText(*messageData, "Egg Ticket unlocked! Please go talk to the day-care man on route 34!");
+
+    scene->showDialog(messageData);
+}
+
 void gen2SetEventFlag(void* context, const void* param)
 {
     MenuScene* scene = static_cast<MenuScene*>(context);
