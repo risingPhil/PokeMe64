@@ -1,6 +1,7 @@
 #include "scenes/AboutScene.h"
 #include "core/FontManager.h"
 #include "scenes/SceneManager.h"
+#include "version.h"
 
 static const ScrollWidgetStyle scrollWidgetStyle = {
     .scrollStep = 15,
@@ -37,7 +38,7 @@ TESTING/VALIDATION
 MajorUpgrade
 )delim";
 
-static const char* headerTextString = R"delim(PokeMe64 Version 0.3
+static const char* headerTextStringFormat = R"delim(PokeMe64 Version %s
 by risingPhil
 
 SPECIAL THANKS TO:
@@ -46,6 +47,7 @@ SPECIAL THANKS TO:
 
 AboutScene::AboutScene(SceneDependencies& deps, void*)
     : AbstractUIScene(deps)
+    , headerTextString_()
     , fontIdMainFont_(1)
     , fontMainFontStyleWhiteId_(0)
     , logoLibDragon_(nullptr)
@@ -76,6 +78,7 @@ AboutScene::AboutScene(SceneDependencies& deps, void*)
     })
     , bButtonPressed_(false)
 {
+    snprintf(headerTextString_, sizeof(headerTextString_), headerTextStringFormat, getPokeMe64VersionString());
     fontIdMainFont_ = deps.fontManager.getFont("rom://Arial.font64");
 
     const rdpq_fontstyle_t mainFontWhite = {
@@ -129,7 +132,7 @@ void AboutScene::init()
 
     headerText_.setBounds(headerTextBounds);
     headerText_.setStyle(headerTextStyle);
-    headerText_.setData(headerTextString);
+    headerText_.setData(headerTextString_);
     scrollWidget_.addWidget(&headerText_);
 
     const ImageWidgetStyle imgDragonStyle = {

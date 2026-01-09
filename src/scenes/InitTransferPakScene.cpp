@@ -4,9 +4,11 @@
 #include "transferpak/TransferPakManager.h"
 #include "transferpak/TransferPakRomReader.h"
 #include "transferpak/TransferPakSaveManager.h"
+#include "transferpak/TransferPakRTCReader.h"
 #include "gen1/Gen1GameReader.h"
 #include "gen2/Gen2GameReader.h"
 #include "menu/MenuEntries.h"
+#include "version.h"
 
 #include <unistd.h>
 
@@ -27,6 +29,7 @@ static void tpakWidgetStateChangedCallback(void* context, TransferPakWidgetState
 
 InitTransferPakScene::InitTransferPakScene(SceneDependencies& deps, void*)
     : SceneWithDialogWidget(deps)
+    , pokeMe64String_()
     , menu9SliceSprite_(nullptr)
     , tpakDetectWidget_(deps.animationManager, deps.tpakManager)
     , tpakDetectWidgetSegment_(WidgetFocusChainSegment{
@@ -45,6 +48,8 @@ InitTransferPakScene::~InitTransferPakScene()
 void InitTransferPakScene::init()
 {
     uint8_t systemEntropy[4];
+
+    snprintf(pokeMe64String_, sizeof(pokeMe64String_), "PokeMe64 by risingPhil. Version %s", getPokeMe64VersionString());
     menu9SliceSprite_ = sprite_load("rom://menu-bg-9slice.sprite");
 
     SceneWithDialogWidget::init();
@@ -77,7 +82,7 @@ void InitTransferPakScene::destroy()
 
 void InitTransferPakScene::render(RDPQGraphics& gfx, const Rectangle& sceneBounds)
 {
-    gfx.drawText(Rectangle{0, 10, 320, 16}, "PokeMe64 by risingPhil. Version 0.3", pokeMe64TextSettings_);
+    gfx.drawText(Rectangle{0, 10, 320, 16}, pokeMe64String_, pokeMe64TextSettings_);
     tpakDetectWidget_.render(gfx, sceneBounds);
 
     SceneWithDialogWidget::render(gfx, sceneBounds);
@@ -284,6 +289,7 @@ void InitTransferPakScene::loadSaveMetadata()
 {
     TransferPakRomReader romReader(deps_.tpakManager);
     TransferPakSaveManager saveManager(deps_.tpakManager);
+    TransferPakRTCReader rtcReader(deps_.tpakManager);
     Gen1GameType gen1Type;
     Gen2GameType gen2Type;
     uint16_t trainerID = 0;
@@ -303,8 +309,16 @@ void InitTransferPakScene::loadSaveMetadata()
     else if(gen2Type != Gen2GameType::INVALID)
     {
         const Gen2LocalizationLanguage language = gen2_determineGameLanguage(romReader, gen2Type);
-
         Gen2GameReader gameReader(romReader, saveManager, gen2Type, language);
+        Gen2ClockManager clockManager = gameReader.getClockManager(rtcReader);
+
+        // add more entropy to the randomSeed by adding the current daycounter + time to it.
+        clockManager.latchRTC();
+        randomSeed_ += (static_cast<unsigned int>(clockManager.getDayCounter() & 0xFF) << 24);
+        randomSeed_ += (static_cast<unsigned int>(clockManager.getHours()) << 16);
+        randomSeed_ += (static_cast<unsigned int>(clockManager.getMinutes()) << 8);
+        randomSeed_ += static_cast<unsigned int>(clockManager.getSeconds());
+
         const char* trainerName = gameReader.getTrainerName();
         trainerID = gameReader.getTrainerID();
         deps_.localization = static_cast<uint8_t>(language);

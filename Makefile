@@ -11,6 +11,9 @@ N64_ROM_REGIONFREE=1
 N64_ROM_CONTROLLER_TYPE1=n64,pak=transfer
 N64_ROM_TITLE="PokeMe64"
 
+# Uncomment this when generating a dev build
+N64_C_AND_CXX_FLAGS += -DDEV_BUILD
+
 SRCS := $(shell find $(SOURCE_DIR) -type f -name '*.cpp')
 OBJS := $(patsubst $(SOURCE_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
 

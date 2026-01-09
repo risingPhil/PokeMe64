@@ -11,6 +11,7 @@ static const uint16_t sramBankStartGBAddress = 0xA000;
 TransferPakManager::TransferPakManager()
     : port_(JOYPAD_PORT_1)
     , isPoweredOn_(false)
+    , ramEnabled_(false)
     , currentSRAMBank_(0)
     , readBufferBankOffset_(0xFFFF)
     , writeBufferSRAMBankOffset_(0xFFFF)
@@ -139,6 +140,11 @@ void TransferPakManager::switchGBROMBank(uint8_t bankIndex)
     readBufferBankOffset_ = 0xFFFF;
 }
 
+bool TransferPakManager::isRAMEnabled() const
+{
+    return ramEnabled_;
+}
+
 void TransferPakManager::setRAMEnabled(bool enabled)
 {
     uint8_t data[TPAK_BLOCK_SIZE];
@@ -157,6 +163,7 @@ void TransferPakManager::setRAMEnabled(bool enabled)
         debugf("[TransferPakManager]: %s: ERROR: transfer pak not ready yet. Current status is %hu\r\n", __FUNCTION__, status);
         status = getStatus();
     }
+    ramEnabled_ = enabled;
 }
 
 void TransferPakManager::switchGBSRAMBank(uint8_t bankIndex)

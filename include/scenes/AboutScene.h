@@ -22,6 +22,7 @@ public:
     void render(RDPQGraphics& gfx, const Rectangle& sceneBounds) override;
 protected:
 private:
+    char headerTextString_[128];
     uint8_t fontIdMainFont_;
     uint8_t fontMainFontStyleWhiteId_;
     sprite_t* logoLibDragon_;
