@@ -6,6 +6,8 @@
 
 #include <cstdint>
 
+//#define PRINT_CLOCK_FUNCTION_ENABLED 1
+
 // these are used to pass as a pointer to the gen1PrepareToTeachPikachu function
 extern const Move MOVE_SURF;
 extern const Move MOVE_FLY;
@@ -125,6 +127,8 @@ void resetRTC(void* context, const void* param);
  */
 void gen2ReceiveMysteryGift(void* context, const void* param);
 
+#ifdef PRINT_CLOCK_FUNCTION_ENABLED
 void printClock(void* context, const void* param);
+#endif
 
 #endif

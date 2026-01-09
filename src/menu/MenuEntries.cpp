@@ -70,10 +70,12 @@ MenuItemData gen2MenuEntries[] = {
         .title = "Reset Game Clock",
         .onConfirmAction = resetRTC
     },
+#ifdef PRINT_CLOCK_FUNCTION_ENABLED
     {
         .title = "Print Game Clock",
         .onConfirmAction = printClock
     },
+#endif
     {
         .title = "About",
         .onConfirmAction = goToAboutScene
@@ -111,10 +113,12 @@ MenuItemData gen2CrystalMenuEntries[] = {
         .title = "Reset Game Clock",
         .onConfirmAction = resetRTC
     },
+#ifdef PRINT_CLOCK_FUNCTION_ENABLED
     {
         .title = "Print Game Clock",
         .onConfirmAction = printClock
     },
+#endif
     {
         .title = "About",
         .onConfirmAction = goToAboutScene
