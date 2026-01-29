@@ -1775,416 +1775,416 @@ static Gen2PokeShopEntry dummyGen2Entries[] = {};
 static Gen1PokeShopEntry g1_shop_red_entries[] = {
     {
         .pokemon = &g1_starter_Charmander,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g1_starter_Squirtle,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g1_starter_Bulbasaur,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g1_versionexclusive_Sandshrew,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g1_versionexclusive_Vulpix,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g1_versionexclusive_Meowth,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g1_versionexclusive_Bellsprout,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g1_versionexclusive_Magmar,
-        .price = 3000
+        .price = 7500
     },
     {
         .pokemon = &g1_versionexclusive_Pinsir,
-        .price = 3000
+        .price = 7500
     }
 };
 
 static Gen1PokeShopEntry g1_shop_green_entries[] = {
     {
         .pokemon = &g1_starter_Charmander,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g1_starter_Squirtle,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g1_starter_Bulbasaur,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g1_versionexclusive_Ekans,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g1_versionexclusive_Oddish,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g1_versionexclusive_Mankey,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g1_versionexclusive_Growlithe,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g1_versionexclusive_Scyther,
-        .price = 3000
+        .price = 7500
     },
     {
         .pokemon = &g1_versionexclusive_Electabuzz,
-        .price = 3000
+        .price = 7500
     }
 };
 
 static Gen1PokeShopEntry g1_shop_jpn_blue_entries[] = {
     {
         .pokemon = &g1_starter_Charmander,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g1_starter_Squirtle,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g1_starter_Bulbasaur,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g1_versionexclusive_Ekans,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g1_versionexclusive_Vulpix,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g1_versionexclusive_Mankey,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g1_versionexclusive_Bellsprout,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g1_versionexclusive_Electabuzz,
-        .price = 3000
+        .price = 7500
     },
     {
         .pokemon = &g1_versionexclusive_Magmar,
-        .price = 3000
+        .price = 7500
     }
 };
 
 static Gen1PokeShopEntry g1_shop_yellow_entries[] = {
     {
         .pokemon = &g1_starter_Charmander,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g1_starter_Squirtle,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g1_starter_Bulbasaur,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g1_versionexclusive_Weedle,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g1_versionexclusive_Ekans,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g1_versionexclusive_Pikachu,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g1_versionexclusive_Meowth,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g1_versionexclusive_Koffing,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g1_versionexclusive_Jynx,
-        .price = 3000
+        .price = 7500
     },
     {
         .pokemon = &g1_versionexclusive_Electabuzz,
-        .price = 3000
+        .price = 7500
     },
     {
         .pokemon = &g1_versionexclusive_Magmar,
-        .price = 3000
+        .price = 7500
     }
 };
 
 static Gen2PokeShopEntry g2_shop_gold_entries[] = {
     {
         .pokemon = &g2_starter_Cyndaquil,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g2_starter_Totodile,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g2_starter_Chikorita,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g2_starter_Charmander,
-        .price = 3000
+        .price = 12500
     },
     {
         .pokemon = &g2_starter_Squirtle,
-        .price = 3000
+        .price = 12500
     },
     {
         .pokemon = &g2_starter_Bulbasaur,
-        .price = 3000
+        .price = 12500
     },
     {
         .pokemon = &g2_versionexclusive_Vulpix,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g2_versionexclusive_Meowth,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g2_versionexclusive_Ledyba,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g2_versionexclusive_Delibird,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g2_versionexclusive_Skarmory,
-        .price = 3000
+        .price = 7500
     },
     {
         .pokemon = &g2_versionexclusive_Phanpy,
-        .price = 3000
+        .price = 7500
     }
 };
 
 static Gen2PokeShopEntry g2_shop_silver_entries[] = {
     {
         .pokemon = &g2_starter_Cyndaquil,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g2_starter_Totodile,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g2_starter_Chikorita,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g2_starter_Charmander,
-        .price = 3000
+        .price = 12500
     },
     {
         .pokemon = &g2_starter_Squirtle,
-        .price = 3000
+        .price = 12500
     },
     {
         .pokemon = &g2_starter_Bulbasaur,
-        .price = 3000
+        .price = 12500
     },
     {
         .pokemon = &g2_versionexclusive_Mankey,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g2_versionexclusive_Growlithe,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g2_versionexclusive_Spinarak,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g2_versionexclusive_Gligar,
-        .price = 3000
-    },
-    {
-        .pokemon = &g2_versionexclusive_Teddiursa,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g2_versionexclusive_Mantine,
-        .price = 3000
+        .price = 5000
+    },
+    {
+        .pokemon = &g2_versionexclusive_Teddiursa,
+        .price = 7500
     }
 };
 
 static Gen2PokeShopEntry g2_shop_crystal_entries[] = {
     {
         .pokemon = &g2_starter_Cyndaquil,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g2_starter_Totodile,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g2_starter_Chikorita,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g2_starter_Charmander,
-        .price = 3000
+        .price = 12500
     },
     {
         .pokemon = &g2_starter_Squirtle,
-        .price = 3000
+        .price = 12500
     },
     {
         .pokemon = &g2_starter_Bulbasaur,
-        .price = 3000
+        .price = 12500
     },
     {
         .pokemon = &g2_versionexclusive_Vulpix,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g2_versionexclusive_Mankey,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g2_versionexclusive_Mareep,
-        .price = 3000
-    },
-    {
-        .pokemon = &g2_versionexclusive_Girafarig,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g2_versionexclusive_Remoraid,
-        .price = 3000
+        .price = 5000
+    }
+    {
+        .pokemon = &g2_versionexclusive_Girafarig,
+        .price = 7500
     }
 };
 
 static Gen2PokeShopEntry g2_shop_jpn_kor_gold_entries[] = {
     {
         .pokemon = &g2_starter_Cyndaquil,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g2_starter_Totodile,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g2_starter_Chikorita,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g2_starter_Charmander,
-        .price = 3000
+        .price = 12500
     },
     {
         .pokemon = &g2_starter_Squirtle,
-        .price = 3000
+        .price = 12500
     },
     {
         .pokemon = &g2_starter_Bulbasaur,
-        .price = 3000
+        .price = 12500
     },
     {
         .pokemon = &g2_versionexclusive_Vulpix,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g2_versionexclusive_Meowth,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g2_versionexclusive_Ledyba,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g2_versionexclusive_Delibird,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g2_versionexclusive_Skarmory,
-        .price = 3000
+        .price = 7500
     },
     {
         .pokemon = &g2_versionexclusive_Teddiursa,
-        .price = 3000
+        .price = 7500
     }
 };
 
 static Gen2PokeShopEntry g2_shop_jpn_kor_silver_entries[] = {
     {
         .pokemon = &g2_starter_Cyndaquil,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g2_starter_Totodile,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g2_starter_Chikorita,
-        .price = 3000
+        .price = 10000
     },
     {
         .pokemon = &g2_starter_Charmander,
-        .price = 3000
+        .price = 12500
     },
     {
         .pokemon = &g2_starter_Squirtle,
-        .price = 3000
+        .price = 12500
     },
     {
         .pokemon = &g2_starter_Bulbasaur,
-        .price = 3000
+        .price = 12500
     },
     {
         .pokemon = &g2_versionexclusive_Mankey,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g2_versionexclusive_Growlithe,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g2_versionexclusive_Spinarak,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g2_versionexclusive_Gligar,
-        .price = 3000
-    },
-    {
-        .pokemon = &g2_versionexclusive_Phanpy,
-        .price = 3000
+        .price = 5000
     },
     {
         .pokemon = &g2_versionexclusive_Mantine,
-        .price = 3000
-    }
+        .price = 5000
+    },
+    {
+        .pokemon = &g2_versionexclusive_Phanpy,
+        .price = 7500
+    },
 };
 
 void getGen1PokeShopEntries(uint8_t gameVariant, uint8_t localization, const Gen1PokeShopEntry *&entries, uint32_t &outNumEntries)
