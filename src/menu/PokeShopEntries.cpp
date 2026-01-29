@@ -126,6 +126,211 @@ static const Gen1DistributionPokemon g1_starter_Bulbasaur = {
     }
 };
 
+static const Gen1DistributionPokemon g1_mutex_Eevee = {
+    .name = "Eevee",
+    .originalTrainer = "",
+    .originalTrainerID = 0,
+    .iv_data = {0, 0},
+    .setPlayerAsOriginalTrainer = true,
+    .regenerateTrainerID = false,
+    .isJapanese = false,
+    .held_item_override = 0,
+    .poke = {
+        .poke_index = 0x66,
+        .current_hp = 1,
+        .level = 5,
+        .status_condition = 0,
+        .type1 = 0, // NORMAL
+        .type2 = 0, // NORMAL
+        .catch_rate_or_held_item = 0x2D,
+        .index_move1 = (uint8_t)Move::SAND_ATTACK,
+        .index_move2 = (uint8_t)Move::TACKLE,
+        .index_move3 = 0,
+        .index_move4 = 0,
+        .original_trainer_ID = 0,
+        .exp = getExpNeededForLevel(5, GRW_MEDIUM_FAST),
+        .hp_effort_value = 0,
+        .atk_effort_value = 0,
+        .def_effort_value = 0,
+        .speed_effort_value = 0,
+        .special_effort_value = 0,
+        .iv_data = {0, 0},
+        .pp_move1 = 15,
+        .pp_move2 = 35,
+        .pp_move3 = 0,
+        .pp_move4 = 0,
+        .max_hp = 0,
+        .atk = 0,
+        .def = 0,
+        .speed = 0,
+        .special = 0
+    }
+};
+
+static const Gen1DistributionPokemon g1_mutex_Kabuto = {
+    .name = "Kabuto",
+    .originalTrainer = "",
+    .originalTrainerID = 0,
+    .iv_data = {0, 0},
+    .setPlayerAsOriginalTrainer = true,
+    .regenerateTrainerID = false,
+    .isJapanese = false,
+    .held_item_override = 0,
+    .poke = {
+        .poke_index = 0x5A,
+        .current_hp = 1,
+        .level = 5,
+        .status_condition = 0,
+        .type1 = 0x5, // ROCK
+        .type2 = 0x15, // WATER
+        .catch_rate_or_held_item = 0x2D,
+        .index_move1 = (uint8_t)Move::HARDEN,
+        .index_move2 = (uint8_t)Move::SCRATCH,
+        .index_move3 = 0,
+        .index_move4 = 0,
+        .original_trainer_ID = 0,
+        .exp = getExpNeededForLevel(5, GRW_MEDIUM_FAST),
+        .hp_effort_value = 0,
+        .atk_effort_value = 0,
+        .def_effort_value = 0,
+        .speed_effort_value = 0,
+        .special_effort_value = 0,
+        .iv_data = {0, 0},
+        .pp_move1 = 30,
+        .pp_move2 = 35,
+        .pp_move3 = 0,
+        .pp_move4 = 0,
+        .max_hp = 0,
+        .atk = 0,
+        .def = 0,
+        .speed = 0,
+        .special = 0
+    }
+};
+
+static const Gen1DistributionPokemon g1_mutex_Omanyte = {
+    .name = "Omanyte",
+    .originalTrainer = "",
+    .originalTrainerID = 0,
+    .iv_data = {0, 0},
+    .setPlayerAsOriginalTrainer = true,
+    .regenerateTrainerID = false,
+    .isJapanese = false,
+    .held_item_override = 0,
+    .poke = {
+        .poke_index = 0x62,
+        .current_hp = 1,
+        .level = 5,
+        .status_condition = 0,
+        .type1 = 0x5, // ROCK
+        .type2 = 0x15, // WATER
+        .catch_rate_or_held_item = 0x2D,
+        .index_move1 = (uint8_t)Move::WATER_GUN,
+        .index_move2 = (uint8_t)Move::WITHDRAW,
+        .index_move3 = 0,
+        .index_move4 = 0,
+        .original_trainer_ID = 0,
+        .exp = getExpNeededForLevel(5, GRW_MEDIUM_FAST),
+        .hp_effort_value = 0,
+        .atk_effort_value = 0,
+        .def_effort_value = 0,
+        .speed_effort_value = 0,
+        .special_effort_value = 0,
+        .iv_data = {0, 0},
+        .pp_move1 = 25,
+        .pp_move2 = 40,
+        .pp_move3 = 0,
+        .pp_move4 = 0,
+        .max_hp = 0,
+        .atk = 0,
+        .def = 0,
+        .speed = 0,
+        .special = 0
+    }
+};
+
+static const Gen1DistributionPokemon g1_mutex_Hitmonlee = {
+    .name = "Hitmonlee",
+    .originalTrainer = "",
+    .originalTrainerID = 0,
+    .iv_data = {0, 0},
+    .setPlayerAsOriginalTrainer = true,
+    .regenerateTrainerID = false,
+    .isJapanese = false,
+    .held_item_override = 0,
+    .poke = {
+        .poke_index = 0x2B,
+        .current_hp = 1,
+        .level = 5,
+        .status_condition = 0,
+        .type1 = 0x01, // FIGHTING
+        .type2 = 0x01, // FIGHTING
+        .catch_rate_or_held_item = 0x2D,
+        .index_move1 = (uint8_t)Move::DOUBLE_KICK,
+        .index_move2 = (uint8_t)Move::MEDITATE,
+        .index_move3 = 0,
+        .index_move4 = 0,
+        .original_trainer_ID = 0,
+        .exp = getExpNeededForLevel(5, GRW_MEDIUM_FAST),
+        .hp_effort_value = 0,
+        .atk_effort_value = 0,
+        .def_effort_value = 0,
+        .speed_effort_value = 0,
+        .special_effort_value = 0,
+        .iv_data = {0, 0},
+        .pp_move1 = 30,
+        .pp_move2 = 40,
+        .pp_move3 = 0,
+        .pp_move4 = 0,
+        .max_hp = 0,
+        .atk = 0,
+        .def = 0,
+        .speed = 0,
+        .special = 0
+    }
+};
+
+static const Gen1DistributionPokemon g1_mutex_Hitmonchan = {
+    .name = "Hitmonchan",
+    .originalTrainer = "",
+    .originalTrainerID = 0,
+    .iv_data = {0, 0},
+    .setPlayerAsOriginalTrainer = true,
+    .regenerateTrainerID = false,
+    .isJapanese = false,
+    .held_item_override = 0,
+    .poke = {
+        .poke_index = 0x2C,
+        .current_hp = 1,
+        .level = 5,
+        .status_condition = 0,
+        .type1 = 0x01, // FIGHTING
+        .type2 = 0x01, // FIGHTING
+        .catch_rate_or_held_item = 0x2D,
+        .index_move1 = (uint8_t)Move::AGILITY,
+        .index_move2 = (uint8_t)Move::COMET_PUNCH,
+        .index_move3 = 0,
+        .index_move4 = 0,
+        .original_trainer_ID = 0,
+        .exp = getExpNeededForLevel(5, GRW_MEDIUM_FAST),
+        .hp_effort_value = 0,
+        .atk_effort_value = 0,
+        .def_effort_value = 0,
+        .speed_effort_value = 0,
+        .special_effort_value = 0,
+        .iv_data = {0, 0},
+        .pp_move1 = 30,
+        .pp_move2 = 15,
+        .pp_move3 = 0,
+        .pp_move4 = 0,
+        .max_hp = 0,
+        .atk = 0,
+        .def = 0,
+        .speed = 0,
+        .special = 0
+    }
+};
+
 static const Gen1DistributionPokemon g1_versionexclusive_Weedle = {
     .name = "Weedle",
     .originalTrainer = "",
@@ -1064,6 +1269,100 @@ static const Gen2DistributionPokemon g2_starter_Bulbasaur = {
     }
 };
 
+static const Gen2DistributionPokemon g2_mutex_Eevee = {
+    .name = "Eevee",
+    .originalTrainer = "",
+    .originalTrainerID = 0,
+    .setPlayerAsOriginalTrainer = true,
+    .regenerateTrainerID = false,
+    .shinyChance = 0,
+    .overrideLevel = 0,
+    .isEgg = false,
+    .iv_data = {0, 0},
+    .randomizeIVs = true,
+    .isJapanese = false,
+    .poke = {
+        .poke_index = 0x85,
+        .held_item_index = 0,
+        .index_move1 = (uint8_t)Move::TACKLE,
+        .index_move2 = (uint8_t)Move::TAIL_WHIP,
+        .index_move3 = 0,
+        .index_move4 = 0,
+        .original_trainer_ID = 0,
+        .exp = getExpNeededForLevel(5, GEN2_GRW_MEDIUM_FAST),
+        .hp_effort_value = 0,
+        .atk_effort_value = 0,
+        .def_effort_value = 0,
+        .speed_effort_value = 0,
+        .special_effort_value = 0,
+        .iv_data = {0, 0},
+        .pp_move1 = 35,
+        .pp_move2 = 30,
+        .pp_move3 = 0,
+        .pp_move4 = 0,
+        .friendship_or_remaining_egg_cycles = 70,
+        .pokerus = 0,
+        .caught_data = 0,
+        .level = 5,
+        .status_condition = 0,
+        .unused_byte = 0,
+        .current_hp = 0,
+        .max_hp = 0,
+        .atk = 0,
+        .def = 0,
+        .speed = 0,
+        .special_atk = 0,
+        .special_def = 0
+    }
+};
+
+static const Gen2DistributionPokemon g2_mutex_Tyrogue = {
+    .name = "Tyrogue",
+    .originalTrainer = "",
+    .originalTrainerID = 0,
+    .setPlayerAsOriginalTrainer = true,
+    .regenerateTrainerID = false,
+    .shinyChance = 0,
+    .overrideLevel = 0,
+    .isEgg = false,
+    .iv_data = {0, 0},
+    .randomizeIVs = true,
+    .isJapanese = false,
+    .poke = {
+        .poke_index = 0xEC,
+        .held_item_index = 0,
+        .index_move1 = (uint8_t)Move::TACKLE,
+        .index_move2 = 0,
+        .index_move3 = 0,
+        .index_move4 = 0,
+        .original_trainer_ID = 0,
+        .exp = getExpNeededForLevel(5, GEN2_GRW_MEDIUM_FAST),
+        .hp_effort_value = 0,
+        .atk_effort_value = 0,
+        .def_effort_value = 0,
+        .speed_effort_value = 0,
+        .special_effort_value = 0,
+        .iv_data = {0, 0},
+        .pp_move1 = 35,
+        .pp_move2 = 0,
+        .pp_move3 = 0,
+        .pp_move4 = 0,
+        .friendship_or_remaining_egg_cycles = 70,
+        .pokerus = 0,
+        .caught_data = 0,
+        .level = 5,
+        .status_condition = 0,
+        .unused_byte = 0,
+        .current_hp = 0,
+        .max_hp = 0,
+        .atk = 0,
+        .def = 0,
+        .speed = 0,
+        .special_atk = 0,
+        .special_def = 0
+    }
+};
+
 static const Gen2DistributionPokemon g2_versionexclusive_Vulpix = {
     .name = "Vulpix",
     .originalTrainer = "",
@@ -1769,6 +2068,100 @@ static const Gen2DistributionPokemon g2_versionexclusive_Phanpy = {
     }
 };
 
+static const Gen2DistributionPokemon g2_versionexclusive_Kabuto = {
+    .name = "Kabuto",
+    .originalTrainer = "",
+    .originalTrainerID = 0,
+    .setPlayerAsOriginalTrainer = true,
+    .regenerateTrainerID = false,
+    .shinyChance = 0,
+    .overrideLevel = 0,
+    .isEgg = false,
+    .iv_data = {0, 0},
+    .randomizeIVs = true,
+    .isJapanese = false,
+    .poke = {
+        .poke_index = 0x8C,
+        .held_item_index = 0,
+        .index_move1 = (uint8_t)Move::HARDEN,
+        .index_move2 = (uint8_t)Move::SCRATCH,
+        .index_move3 = 0,
+        .index_move4 = 0,
+        .original_trainer_ID = 0,
+        .exp = getExpNeededForLevel(5, GEN2_GRW_MEDIUM_FAST),
+        .hp_effort_value = 0,
+        .atk_effort_value = 0,
+        .def_effort_value = 0,
+        .speed_effort_value = 0,
+        .special_effort_value = 0,
+        .iv_data = {0, 0},
+        .pp_move1 = 30,
+        .pp_move2 = 35,
+        .pp_move3 = 0,
+        .pp_move4 = 0,
+        .friendship_or_remaining_egg_cycles = 70,
+        .pokerus = 0,
+        .caught_data = 0,
+        .level = 5,
+        .status_condition = 0,
+        .unused_byte = 0,
+        .current_hp = 0,
+        .max_hp = 0,
+        .atk = 0,
+        .def = 0,
+        .speed = 0,
+        .special_atk = 0,
+        .special_def = 0
+    }
+};
+
+static const Gen2DistributionPokemon g2_versionexclusive_Omanyte = {
+    .name = "Omanyte",
+    .originalTrainer = "",
+    .originalTrainerID = 0,
+    .setPlayerAsOriginalTrainer = true,
+    .regenerateTrainerID = false,
+    .shinyChance = 0,
+    .overrideLevel = 0,
+    .isEgg = false,
+    .iv_data = {0, 0},
+    .randomizeIVs = true,
+    .isJapanese = false,
+    .poke = {
+        .poke_index = 0x8A,
+        .held_item_index = 0,
+        .index_move1 = (uint8_t)Move::CONSTRICT,
+        .index_move2 = (uint8_t)Move::WITHDRAW,
+        .index_move3 = 0,
+        .index_move4 = 0,
+        .original_trainer_ID = 0,
+        .exp = getExpNeededForLevel(5, GEN2_GRW_MEDIUM_FAST),
+        .hp_effort_value = 0,
+        .atk_effort_value = 0,
+        .def_effort_value = 0,
+        .speed_effort_value = 0,
+        .special_effort_value = 0,
+        .iv_data = {0, 0},
+        .pp_move1 = 35,
+        .pp_move2 = 40,
+        .pp_move3 = 0,
+        .pp_move4 = 0,
+        .friendship_or_remaining_egg_cycles = 70,
+        .pokerus = 0,
+        .caught_data = 0,
+        .level = 5,
+        .status_condition = 0,
+        .unused_byte = 0,
+        .current_hp = 0,
+        .max_hp = 0,
+        .atk = 0,
+        .def = 0,
+        .speed = 0,
+        .special_atk = 0,
+        .special_def = 0
+    }
+};
+
 static Gen1PokeShopEntry dummyGen1Entries[] = {};
 static Gen2PokeShopEntry dummyGen2Entries[] = {};
 
@@ -1808,6 +2201,26 @@ static Gen1PokeShopEntry g1_shop_red_entries[] = {
     {
         .pokemon = &g1_versionexclusive_Pinsir,
         .price = 7500
+    },
+    {
+        .pokemon = &g1_mutex_Eevee,
+        .price = 10000
+    },
+    {
+        .pokemon = &g1_mutex_Hitmonlee,
+        .price = 20000
+    },
+    {
+        .pokemon = &g1_mutex_Hitmonchan,
+        .price = 20000
+    },
+    {
+        .pokemon = &g1_mutex_Kabuto,
+        .price = 30000
+    },
+    {
+        .pokemon = &g1_mutex_Omanyte,
+        .price = 30000
     }
 };
 
@@ -1847,6 +2260,26 @@ static Gen1PokeShopEntry g1_shop_green_entries[] = {
     {
         .pokemon = &g1_versionexclusive_Electabuzz,
         .price = 7500
+    },
+    {
+        .pokemon = &g1_mutex_Eevee,
+        .price = 10000
+    },
+    {
+        .pokemon = &g1_mutex_Hitmonlee,
+        .price = 20000
+    },
+    {
+        .pokemon = &g1_mutex_Hitmonchan,
+        .price = 20000
+    },
+    {
+        .pokemon = &g1_mutex_Kabuto,
+        .price = 30000
+    },
+    {
+        .pokemon = &g1_mutex_Omanyte,
+        .price = 30000
     }
 };
 
@@ -1886,6 +2319,26 @@ static Gen1PokeShopEntry g1_shop_jpn_blue_entries[] = {
     {
         .pokemon = &g1_versionexclusive_Magmar,
         .price = 7500
+    },
+    {
+        .pokemon = &g1_mutex_Eevee,
+        .price = 10000
+    },
+    {
+        .pokemon = &g1_mutex_Hitmonlee,
+        .price = 20000
+    },
+    {
+        .pokemon = &g1_mutex_Hitmonchan,
+        .price = 20000
+    },
+    {
+        .pokemon = &g1_mutex_Kabuto,
+        .price = 30000
+    },
+    {
+        .pokemon = &g1_mutex_Omanyte,
+        .price = 30000
     }
 };
 
@@ -1933,6 +2386,26 @@ static Gen1PokeShopEntry g1_shop_yellow_entries[] = {
     {
         .pokemon = &g1_versionexclusive_Magmar,
         .price = 7500
+    },
+    {
+        .pokemon = &g1_mutex_Eevee,
+        .price = 10000
+    },
+    {
+        .pokemon = &g1_mutex_Hitmonlee,
+        .price = 20000
+    },
+    {
+        .pokemon = &g1_mutex_Hitmonchan,
+        .price = 20000
+    },
+    {
+        .pokemon = &g1_mutex_Kabuto,
+        .price = 30000
+    },
+    {
+        .pokemon = &g1_mutex_Omanyte,
+        .price = 30000
     }
 };
 
@@ -1984,6 +2457,22 @@ static Gen2PokeShopEntry g2_shop_gold_entries[] = {
     {
         .pokemon = &g2_versionexclusive_Phanpy,
         .price = 7500
+    },
+    {
+        .pokemon = &g2_mutex_Eevee,
+        .price = 10000
+    },
+    {
+        .pokemon = &g2_mutex_Tyrogue,
+        .price = 12500
+    },
+    {
+        .pokemon = &g2_versionexclusive_Kabuto,
+        .price = 40000
+    },
+    {
+        .pokemon = &g2_versionexclusive_Omanyte,
+        .price = 40000
     }
 };
 
@@ -2035,6 +2524,22 @@ static Gen2PokeShopEntry g2_shop_silver_entries[] = {
     {
         .pokemon = &g2_versionexclusive_Teddiursa,
         .price = 7500
+    },
+    {
+        .pokemon = &g2_mutex_Eevee,
+        .price = 10000
+    },
+    {
+        .pokemon = &g2_mutex_Tyrogue,
+        .price = 12500
+    },
+    {
+        .pokemon = &g2_versionexclusive_Kabuto,
+        .price = 40000
+    },
+    {
+        .pokemon = &g2_versionexclusive_Omanyte,
+        .price = 40000
     }
 };
 
@@ -2078,10 +2583,26 @@ static Gen2PokeShopEntry g2_shop_crystal_entries[] = {
     {
         .pokemon = &g2_versionexclusive_Remoraid,
         .price = 5000
-    }
+    },
     {
         .pokemon = &g2_versionexclusive_Girafarig,
         .price = 7500
+    },
+    {
+        .pokemon = &g2_mutex_Eevee,
+        .price = 10000
+    },
+    {
+        .pokemon = &g2_mutex_Tyrogue,
+        .price = 12500
+    },
+    {
+        .pokemon = &g2_versionexclusive_Kabuto,
+        .price = 40000
+    },
+    {
+        .pokemon = &g2_versionexclusive_Omanyte,
+        .price = 40000
     }
 };
 
@@ -2133,6 +2654,22 @@ static Gen2PokeShopEntry g2_shop_jpn_kor_gold_entries[] = {
     {
         .pokemon = &g2_versionexclusive_Teddiursa,
         .price = 7500
+    },
+    {
+        .pokemon = &g2_mutex_Eevee,
+        .price = 10000
+    },
+    {
+        .pokemon = &g2_mutex_Tyrogue,
+        .price = 12500
+    },
+    {
+        .pokemon = &g2_versionexclusive_Kabuto,
+        .price = 40000
+    },
+    {
+        .pokemon = &g2_versionexclusive_Omanyte,
+        .price = 40000
     }
 };
 
@@ -2185,6 +2722,22 @@ static Gen2PokeShopEntry g2_shop_jpn_kor_silver_entries[] = {
         .pokemon = &g2_versionexclusive_Phanpy,
         .price = 7500
     },
+    {
+        .pokemon = &g2_mutex_Eevee,
+        .price = 10000
+    },
+    {
+        .pokemon = &g2_mutex_Tyrogue,
+        .price = 12500
+    },
+    {
+        .pokemon = &g2_versionexclusive_Kabuto,
+        .price = 40000
+    },
+    {
+        .pokemon = &g2_versionexclusive_Omanyte,
+        .price = 40000
+    }
 };
 
 void getGen1PokeShopEntries(uint8_t gameVariant, uint8_t localization, const Gen1PokeShopEntry *&entries, uint32_t &outNumEntries)
