@@ -15,6 +15,10 @@ MenuItemData gen1MenuEntries[] = {
         .onConfirmAction = goToGen1MovesMenu
     },
     {
+        .title = "PokéShop",
+        .onConfirmAction = goToPokeShopScene
+    },
+    {
         .title = "Gen 3 Transfer Info",
         .onConfirmAction = goToPokeTransporterGBRef
     },
@@ -61,6 +65,10 @@ MenuItemData gen2MenuEntries[] = {
     {
         .title = "Unlock Decoration",
         .onConfirmAction = goToGen2DecorationMenu
+    },
+    {
+        .title = "PokéShop",
+        .onConfirmAction = goToPokeShopScene
     },
     {
         .title = "Gen 3 Transfer Info",

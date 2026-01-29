@@ -33,6 +33,7 @@ void goToGen1DistributionPokemonMenu(void* context, const void* param);
 void goToGen2DistributionPokemonMenu(void* context, const void* param);
 void goToGen2PCNYDistributionPokemonMenu(void* context, const void* param);
 void goToGen2DecorationMenu(void* context, const void* param);
+void goToPokeShopScene(void* context, const void* param);
 void goToBackupRestoreMenu(void* context, const void* param);
 
 /**

@@ -7,6 +7,7 @@
 #include "scenes/DistributionPokemonListScene.h"
 #include "scenes/SelectFileScene.h"
 #include "scenes/DataCopyScene.h"
+#include "scenes/PokeShopScene.h"
 
 #include <libdragon.h>
 
@@ -147,6 +148,9 @@ void SceneManager::loadScene()
             break;
         case SceneType::COPY_DATA:
             scene_ = new DataCopyScene(sceneDeps_, newSceneContext_);
+            break;
+        case SceneType::POKESHOP:
+            scene_ = new PokeShopScene(sceneDeps_, newSceneContext_);
             break;
         case SceneType::ABOUT:
             scene_ = new AboutScene(sceneDeps_, newSceneContext_);

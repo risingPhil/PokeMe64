@@ -22,6 +22,7 @@ enum class SceneType
     POKETRANSPORTER_GB_REF,
     SELECT_FILE,
     COPY_DATA,
+    POKESHOP,
     ABOUT
 };
 

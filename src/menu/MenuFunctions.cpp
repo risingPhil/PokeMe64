@@ -229,6 +229,18 @@ void goToGen2DecorationMenu(void* context, const void* param)
     scene->getDependencies().sceneManager.switchScene(SceneType::MENU, deleteMenuSceneContext, newSceneContext);
 }
 
+void goToPokeShopScene(void* context, const void* param)
+{
+    MenuScene* scene = static_cast<MenuScene*>(context);
+    SceneManager& sceneManager = scene->getDependencies().sceneManager;
+    auto newSceneContext = new MenuSceneContext{
+        .menuEntries = NULL,
+        .numMenuEntries = 0
+    };
+
+    sceneManager.switchScene(SceneType::POKESHOP, deleteMenuSceneContext, newSceneContext);
+}
+
 void goToBackupRestoreMenu(void* context, const void* param)
 {
     MenuScene* scene = static_cast<MenuScene*>(context);
