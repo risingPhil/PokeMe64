@@ -4,7 +4,7 @@ PokeShopMenuItem::PokeShopMenuItem()
     : partyIconWidget_()
     , style_({0})
     , data_()
-    , priceText_({0})
+    , priceText_("\0")
     , focused_(false)
     , visible_(true)
     , aButtonPressed_(false)
@@ -24,7 +24,7 @@ void PokeShopMenuItem::setData(const PokeShopMenuItemData& data)
 {
     data_ = data;
 
-    snprintf(priceText_, sizeof(priceText_), "$%u", data.price);
+    snprintf(priceText_, sizeof(priceText_), "$%lu", data.price);
     partyIconWidget_.setData(data.iconData);
 }
 
