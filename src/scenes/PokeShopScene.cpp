@@ -23,6 +23,7 @@ PokeShopScene::PokeShopScene(SceneDependencies& deps, void* context)
     , iconFactory_(romReader_)
     , customListFiller_(menuList_)
     , diag_()
+    , backgroundImgSprite_(nullptr)
     , iconBackgroundSprite_(nullptr)
     , pokeToInject_(nullptr)
 {
@@ -34,6 +35,7 @@ PokeShopScene::~PokeShopScene()
 
 void PokeShopScene::init()
 {
+    backgroundImgSprite_ = sprite_load("rom://rocketshop.sprite");
     iconBackgroundSprite_ = sprite_load("rom://bg-party-icon.sprite");
     loadShopList();
     MenuScene::init();
@@ -49,6 +51,8 @@ void PokeShopScene::destroy()
 
     sprite_free(iconBackgroundSprite_);
     iconBackgroundSprite_ = nullptr;
+    sprite_free(backgroundImgSprite_);
+    backgroundImgSprite_ = nullptr;
 }
 
 bool PokeShopScene::handleUserInput(joypad_port_t port, const joypad_inputs_t& inputs)
@@ -63,6 +67,20 @@ bool PokeShopScene::handleUserInput(joypad_port_t port, const joypad_inputs_t& i
     {
         return MenuScene::handleUserInput(port, inputs);
     }
+}
+
+void PokeShopScene::render(RDPQGraphics& gfx, const Rectangle& sceneBounds)
+{
+    // draw the background image
+    if(backgroundImgSprite_)
+    {
+        const SpriteRenderSettings renderSettings = {
+            .renderMode = SpriteRenderMode::NORMAL
+        };
+        gfx.drawSprite({0, 0, backgroundImgSprite_->width, backgroundImgSprite_->height}, backgroundImgSprite_, renderSettings);
+    }
+
+    MenuScene::render(gfx, sceneBounds);
 }
 
 void PokeShopScene::triggerPokemonInjection(const void* data)

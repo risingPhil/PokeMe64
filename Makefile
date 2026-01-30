@@ -51,6 +51,7 @@ filesystem/logo-pkhex.sprite: MKSPRITE_FLAGS += -f RGBA32
 filesystem/logo-gbdevio.sprite: MKSPRITE_FLAGS += -f RGBA32
 filesystem/logo-nesdevwiki.sprite: MKSPRITE_FLAGS += -f RGBA32
 filesystem/menu-bg-9slice.sprite: MKSPRITE_FLAGS += -f RGBA16
+filesystem/rocketshop.sprite: MKSPRITE_FLAGS += -f RGBA32
 
 pokemegb:
 	$(MAKE) -C libpokemegb CC=$(N64_CC) CXX=$(N64_CXX) LD=$(N64_LD) PNG_SUPPORT=0 libpokemegb.a

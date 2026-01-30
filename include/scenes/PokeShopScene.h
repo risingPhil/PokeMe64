@@ -23,6 +23,8 @@ public:
 
     bool handleUserInput(joypad_port_t port, const joypad_inputs_t& inputs) override;
 
+    void render(RDPQGraphics& gfx, const Rectangle& sceneBounds) override;
+
     /**
      * This function will start the pokémon injection. and show a non-skippable "saving" dialog
      * The actual injection will be done on the next handleUserInput() call. 
@@ -50,6 +52,7 @@ private:
     PokemonPartyIconFactory iconFactory_;
     ListItemFiller<VerticalList, PokeShopMenuItemData, PokeShopMenuItem, PokeShopMenuItemStyle> customListFiller_;
     DialogData diag_;
+    sprite_t* backgroundImgSprite_;
     sprite_t* iconBackgroundSprite_;
     const void* pokeToInject_;
 };
