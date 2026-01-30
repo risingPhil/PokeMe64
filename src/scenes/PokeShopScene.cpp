@@ -4,9 +4,9 @@
 #include "transferpak/TransferPakManager.h"
 #include "menu/PokeShopEntries.h"
 
-static const Rectangle menuListBounds = {20, 20, 280, 0};
-static const Rectangle imgScrollArrowUpBounds = {.x = 154, .y = 14, .width = 11, .height = 6};
-static const Rectangle imgScrollArrowDownBounds = {.x = 154, .y = 220, .width = 11, .height = 6};
+static const Rectangle menuListBounds = {165, 20, 150, 0};
+static const Rectangle imgScrollArrowUpBounds = {.x = 235, .y = 14, .width = 11, .height = 6};
+static const Rectangle imgScrollArrowDownBounds = {.x = 235, .y = 170, .width = 11, .height = 6};
 
 static void injectShopPokemon(void* context, const void* data)
 {
@@ -162,7 +162,7 @@ void PokeShopScene::setupMenu()
         .verticalSpacingBetweenWidgets = 1,
         .autogrow = {
             .enabled = true,
-            .maxHeight = 200
+            .maxHeight = 150
         }
     };
 
@@ -174,7 +174,7 @@ void PokeShopScene::setupMenu()
     cursorWidget_.setVisible(false);
 
     const PokeShopMenuItemStyle itemStyle = {
-        .size = {280, 22},
+        .size = {150, 22},
         .background = {
             .sprite = menu9SliceSprite_,
             .spriteSettings = {
@@ -216,7 +216,7 @@ void PokeShopScene::setupMenu()
                 .fontId = mainFontId_,
                 .fontStyleId = fontStyleYellowId_
             },
-            .bounds = {104, 4, 80, 18}
+            .bounds = {100, 4, 80, 18}
         }
     };
 
