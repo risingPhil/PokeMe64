@@ -24,7 +24,7 @@ void PokeShopMenuItem::setData(const PokeShopMenuItemData& data)
 {
     data_ = data;
 
-    snprintf(priceText_, sizeof(priceText_), "$%lu", data.price);
+    snprintf(priceText_, sizeof(priceText_), "$$%lu", data.price);
     partyIconWidget_.setData(data.iconData);
 }
 
