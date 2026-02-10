@@ -3,15 +3,74 @@
 #include "scenes/StatsScene.h"
 #include "transferpak/TransferPakManager.h"
 #include "menu/PokeShopEntries.h"
+#include "menu/MenuFunctions.h"
+
+#include <cstdlib>
 
 static const Rectangle menuListBounds = {165, 20, 150, 0};
 static const Rectangle imgScrollArrowUpBounds = {.x = 235, .y = 14, .width = 11, .height = 6};
 static const Rectangle imgScrollArrowDownBounds = {.x = 235, .y = 170, .width = 11, .height = 6};
 
-static void injectShopPokemon(void* context, const void* data)
+static const char* const shopkeeperDialogTexts[] = {
+    "Fell of a truck, that one. Poor guy.",
+    "Bruises? These just love fighting, man.",
+    "Don't worry about it. It's just a rash!",
+    "Don't mind the black eye. Just bumped its head this morning.",
+    "Real clumsy, this one. Gets cuts almost daily!",
+    "This one's a real champ! But champs get bruises, ya know.",
+    "Welts? Nah man, just birth marks.",
+    "It was like this when we found it.",
+    "A trainer tag? Nah, it just likes cosplaying.",
+    "Stolen? Nah man, the original trainer just dumped it.",
+    "Those lumps? This idiot kept slamming its head yesterday.",
+    "Just keep it away from authorities. It's real scared of them!",
+    "Try to avoid showing this one around. People might -eh- get jealous.",
+    "Yeah it's expensive, but this one was a pain to ..erm.. acquire.",
+    "Don't tell anyone where you got it. We want to keep it exclusive, ya know.",
+    "I like you, so I'll let you buy it. But don't go bragging about it, alright?"
+};
+
+static const char* getRandomShopKeeperText()
+{
+    size_t numEntries = sizeof(shopkeeperDialogTexts) / sizeof(const char*);
+    const int index = rand() % static_cast<int>(numEntries);
+    return shopkeeperDialogTexts[index];
+}
+
+static void triggerPurchaseCallback(void *context, const void* data)
 {
     auto scene = static_cast<PokeShopScene*>(context);
-    scene->triggerPokemonInjection(data);
+    scene->triggerCompletePurchase(data);
+}
+
+static void promptBuyActionCallback(void* context, const void* data)
+{    
+    DialogData *diag = new DialogData{
+        .options = {
+            .items = new MenuItemData[2] {
+                {
+                    .title = "Buy",
+                    .onConfirmAction = triggerPurchaseCallback,
+                    .context = context,
+                    .itemParam = data
+                },
+                {
+                    .title = "Cancel",
+                    .onConfirmAction = advanceDialog,
+                    .context = context
+                }
+            },
+            .number = 2,
+            .shouldDeleteWhenDone = true
+        },
+        .next = nullptr,
+        .shouldDeleteWhenDone = true,
+        .userAdvanceBlocked = false
+    };
+
+    auto scene = static_cast<PokeShopScene*>(context);
+    setDialogDataText(*diag, getRandomShopKeeperText());
+    scene->showDialog(diag);
 }
 
 PokeShopScene::PokeShopScene(SceneDependencies& deps, void* context)
@@ -83,68 +142,75 @@ void PokeShopScene::render(RDPQGraphics& gfx, const Rectangle& sceneBounds)
     MenuScene::render(gfx, sceneBounds);
 }
 
-void PokeShopScene::triggerPokemonInjection(const void* data)
+void PokeShopScene::triggerCompletePurchase(const void* data)
 {
-    pokeToInject_ = data;
+    uint32_t trainerMoney;
+    uint32_t moneyRequired;
 
-    setDialogDataText(diag_, "Saving... Don't turn off the power.");
-    diag_.userAdvanceBlocked = true;
+    deps_.tpakManager.setRAMEnabled(true);
+    switch(deps_.generation)
+    {
+    case 1:
+        trainerMoney = gen1Reader_.getTrainerMoney();
+        moneyRequired = static_cast<const Gen1PokeShopEntry*>(data)->price;
+        break;
+    case 2:
+        trainerMoney = gen2Reader_.getTrainerMoney();
+        moneyRequired = static_cast<const Gen2PokeShopEntry*>(data)->price;
+        break;
+    default:
+        trainerMoney = 0;
+        moneyRequired = 0xFFFFFFFF;
+        break;
+    }
+    deps_.tpakManager.setRAMEnabled(false);
+
+    if(trainerMoney >= moneyRequired)
+    {
+        pokeToInject_ = data;
+        setDialogDataText(diag_, "Saving... Don't turn off the power.");
+        diag_.userAdvanceBlocked = true;
+    }
+    else
+    {
+        setDialogDataText(diag_, "Can't afford it, bud!");
+        diag_.userAdvanceBlocked = false;        
+    }
+
     showDialog(&diag_);
 }
 
 void PokeShopScene::injectPokemon(const void* data)
 {
-#if 0
-    StatsSceneContext* statsContext;
-    const Gen1DistributionPokemon* g1Poke;
-    const Gen2DistributionPokemon* g2Poke;
+    const Gen1PokeShopEntry* g1Entry;
+    const Gen2PokeShopEntry* g2Entry;
     const char* trainerName;
+    const char* pokeName;
 
     deps_.tpakManager.setRAMEnabled(true);
 
-    statsContext = new StatsSceneContext{
-        .showReceivedPokemonDialog = true
-    };
-
-    switch(convert(context_)->listType)
+    switch(deps_.generation)
     {
-    case DistributionPokemonListType::GEN1:
-        g1Poke = static_cast<const Gen1DistributionPokemon*>(data);
-        statsContext->poke_g1 = g1Poke->poke;
-        // I have not used gen1Reader_->addDistributionPokemon here because I want to show the resulting pokemon in a stats screen
-        // gen1_prepareDistributionPokemon() + addPokemon() gives me access to the resulting Gen1TrainerPokemon instance
-        // in which things are done like IV generation, OT name decision, OT id
-        gen1_prepareDistributionPokemon(gen1Reader_, (*g1Poke), statsContext->poke_g1, trainerName);
-        gen1Reader_.addPokemon(statsContext->poke_g1, trainerName);
+    case 1:
+        g1Entry = static_cast<const Gen1PokeShopEntry*>(data);
+        trainerName = gen1Reader_.getTrainerName();
+        pokeName = g1Entry->pokemon->name;
+        gen1Reader_.setTrainerMoney(gen1Reader_.getTrainerMoney() - g1Entry->price);
+        gen1Reader_.addDistributionPokemon(*g1Entry->pokemon);
         break;
-    case DistributionPokemonListType::GEN2:
-    case DistributionPokemonListType::GEN2_POKEMON_CENTER_NEW_YORK:
-        g2Poke = static_cast<const Gen2DistributionPokemon*>(data);
-        statsContext->poke_g2 = g2Poke->poke;
-        statsContext->isEgg = g2Poke->isEgg;
-        // I have not used gen2Reader_->addDistributionPokemon here because I want to show the resulting pokemon in a stats screen
-        // gen2_prepareDistributionPokemon() + addPokemon() gives me access to the resulting Gen2TrainerPokemon instance
-        // in which things are done like IV generation, OT name decision, OT id, shininess
-        gen2_prepareDistributionPokemon(gen2Reader_, (*g2Poke), statsContext->poke_g2, trainerName);
-        gen2Reader_.addPokemon(statsContext->poke_g2, g2Poke->isEgg, trainerName);
+    case 2:
+        g2Entry = static_cast<const Gen2PokeShopEntry*>(data);
+        trainerName = gen2Reader_.getTrainerName();
+        pokeName = g2Entry->pokemon->name;
+        gen2Reader_.setTrainerMoney(gen2Reader_.getTrainerMoney() - g2Entry->price);
+        gen2Reader_.addDistributionPokemon(*g2Entry->pokemon);
         gen2Reader_.finishSave();
         break;
     default:
-        debugf("%s: ERROR: got DistributionPokemonListType::INVALID! This should never happen!\r\n", __FUNCTION__);
-        /* Quote:
-         * "It is recommended to disable external RAM after accessing it, in order to protect its contents from corruption
-         *  during power down of the Game Boy or removal of the cartridge. Once the cartridge has completely lost power from
-         *  the Game Boy, the RAM is automatically disabled to protect it."
-         * 
-         * source: https://gbdev.io/pandocs/MBC1.html 
-         * 
-         * Yes, I'm aware we're dealing with MBC3 here, but there's some overlap and what applies to MBC1 here likely also applies
-         * to MBC3
-         */
-        deps_.tpakManager.setRAMEnabled(false);
-        delete statsContext;
-        statsContext = nullptr;
-        return;
+        trainerName = "Dummy";
+        pokeName = trainerName;
+        debugf("%s: ERROR: Invalid gen %hu This should never happen!\r\n", __FUNCTION__, deps_.generation);
+        break;
     }
 
     deps_.tpakManager.finishWrites();
@@ -152,22 +218,14 @@ void PokeShopScene::injectPokemon(const void* data)
     // The reason is the same as previous setRAMEnabled(false) statement above
     deps_.tpakManager.setRAMEnabled(false);
 
-    strncpy(statsContext->trainerName, trainerName, 12);
-    deps_.sceneManager.switchScene(SceneType::STATS, deleteStatsSceneContext, statsContext);
-
-    // operation done. Now the dialog can be advanced and we can show confirmation that the user got the pokémon
-#endif
+    diag_.userAdvanceBlocked = false;
+    setDialogDataText(diag_, "%s got a %s!", trainerName, pokeName);
+    showDialog(&diag_);
 }
 
 void PokeShopScene::onDialogDone()
 {
-    if(diag_.userAdvanceBlocked)
-    {
-        // ignore this notification. We advanced this one ourselves to get to the next one
-        return;
-    }
-    // We're done with the injection. Go back to the previous menu
-    deps_.sceneManager.goBackToPreviousScene();
+    MenuScene::onDialogDone();
 }
 
 void PokeShopScene::setupMenu()
@@ -319,7 +377,7 @@ void PokeShopScene::loadShopList()
             menuEntry->price = gen2shopEntries[i].price;
         }
 
-        menuEntry->onConfirmAction = injectShopPokemon;
+        menuEntry->onConfirmAction = promptBuyActionCallback;
         menuEntry->context = this;
         menuEntry->iconData = {
             .iconFactory = &iconFactory_,

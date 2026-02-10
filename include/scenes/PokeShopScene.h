@@ -30,7 +30,7 @@ public:
      * The actual injection will be done on the next handleUserInput() call. 
      * That will ensure that at least 1 render() call has been handled before we start doing the work
      */
-    void triggerPokemonInjection(const void* data);
+    void triggerCompletePurchase(const void* data);
 
     /**
      * @brief The core functionality of this class: it will inject the selected pokémon into your cartridge save.

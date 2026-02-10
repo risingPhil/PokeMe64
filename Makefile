@@ -43,15 +43,15 @@ filesystem/Arial.font64: MKFONT_FLAGS+= -v --size 11 --outline 1.0 --char-spacin
 
 filesystem/Arial-small.font64: MKFONT_FLAGS+=-v --size 10 --outline 1.0 --char-spacing 1.0 --range 20-E9 --range 2026-2026 --range 25B6-25B7 --range 25BC-25BC --range 2640-2640 --range 2642-2642 --range 3002-3002 --range 300C-300F --range 3041-3089 --range 308B-308D --range 308F-308F --range 3092-309C --range 30A1-30D7 --range 30DB-30EF --range 30F2-30F4 --range 30FB-30FC --range 5186-5186 --range FF1A-FF1A
 
-filesystem/logo-libdragon.sprite: MKSPRITE_FLAGS += -f RGBA32
-filesystem/logo-bulbagarden.sprite: MKSPRITE_FLAGS += -f RGBA32
-filesystem/logo-retrogamemechanicsexplained.sprite: MKSPRITE_FLAGS += -f RGBA32
-filesystem/logo-datacrystal.sprite: MKSPRITE_FLAGS += -f RGBA32
-filesystem/logo-pkhex.sprite: MKSPRITE_FLAGS += -f RGBA32
-filesystem/logo-gbdevio.sprite: MKSPRITE_FLAGS += -f RGBA32
-filesystem/logo-nesdevwiki.sprite: MKSPRITE_FLAGS += -f RGBA32
+filesystem/logo-libdragon.sprite: MKSPRITE_FLAGS += -f RGBA16
+filesystem/logo-bulbagarden.sprite: MKSPRITE_FLAGS += -f RGBA16
+filesystem/logo-retrogamemechanicsexplained.sprite: MKSPRITE_FLAGS += -f RGBA16
+filesystem/logo-datacrystal.sprite: MKSPRITE_FLAGS += -f RGBA16
+filesystem/logo-pkhex.sprite: MKSPRITE_FLAGS += -f RGBA16
+filesystem/logo-gbdevio.sprite: MKSPRITE_FLAGS += -f RGBA16
+filesystem/logo-nesdevwiki.sprite: MKSPRITE_FLAGS += -f RGBA16
 filesystem/menu-bg-9slice.sprite: MKSPRITE_FLAGS += -f RGBA16
-filesystem/rocketshop.sprite: MKSPRITE_FLAGS += -f RGBA32
+filesystem/rocketshop.sprite: MKSPRITE_FLAGS += -f RGBA16
 
 pokemegb:
 	$(MAKE) -C libpokemegb CC=$(N64_CC) CXX=$(N64_CXX) LD=$(N64_LD) PNG_SUPPORT=0 libpokemegb.a
