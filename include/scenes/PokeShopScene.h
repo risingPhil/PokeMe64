@@ -54,6 +54,7 @@ private:
     DialogData diag_;
     sprite_t* backgroundImgSprite_;
     sprite_t* iconBackgroundSprite_;
+    sprite_t* priceBorderSprite_;
     const void* pokeToInject_;
 };
 

@@ -7,8 +7,8 @@
 
 #include <cstdlib>
 
-static const Rectangle menuListBounds = {165, 20, 150, 0};
-static const Rectangle imgScrollArrowUpBounds = {.x = 235, .y = 14, .width = 11, .height = 6};
+static const Rectangle menuListBounds = {165, 40, 130, 0};
+static const Rectangle imgScrollArrowUpBounds = {.x = 235, .y = 40, .width = 11, .height = 6};
 static const Rectangle imgScrollArrowDownBounds = {.x = 235, .y = 170, .width = 11, .height = 6};
 
 static const char* const shopkeeperDialogTexts[] = {
@@ -84,6 +84,7 @@ PokeShopScene::PokeShopScene(SceneDependencies& deps, void* context)
     , diag_()
     , backgroundImgSprite_(nullptr)
     , iconBackgroundSprite_(nullptr)
+    , priceBorderSprite_(nullptr)
     , pokeToInject_(nullptr)
 {
 }
@@ -96,6 +97,7 @@ void PokeShopScene::init()
 {
     backgroundImgSprite_ = sprite_load("rom://rocketshop.sprite");
     iconBackgroundSprite_ = sprite_load("rom://bg-party-icon.sprite");
+    priceBorderSprite_ = sprite_load("rom://border-bg-9slice.sprite");
     loadShopList();
     MenuScene::init();
 }
@@ -108,6 +110,8 @@ void PokeShopScene::destroy()
     context_->menuEntries = nullptr;
     context_->numMenuEntries = 0;
 
+    sprite_free(priceBorderSprite_);
+    priceBorderSprite_ = nullptr;
     sprite_free(iconBackgroundSprite_);
     iconBackgroundSprite_ = nullptr;
     sprite_free(backgroundImgSprite_);
@@ -238,7 +242,7 @@ void PokeShopScene::setupMenu()
         .verticalSpacingBetweenWidgets = 1,
         .autogrow = {
             .enabled = true,
-            .maxHeight = 150
+            .maxHeight = 130
         }
     };
 
